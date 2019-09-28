@@ -1,5 +1,6 @@
 #' Lipstick for the pitch background plots
 #' @import ggplot2
+#' @export
 theme_pitch <- function () { 
 
    theme_bw(

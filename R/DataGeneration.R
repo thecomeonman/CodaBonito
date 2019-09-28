@@ -207,7 +207,6 @@ if ( F ) {
    )
 
    dtFormation = data.table(
-      playerName = c(''),
       playerId = c(1, 2, 3, 8, 9),
       x = c(5, 20, 20, 50, 80),
       y = c(40, 20, 60, 40, 40)
@@ -217,5 +216,22 @@ if ( F ) {
       list = 'dtFormation',
       file = './data/Formation.rda'
    )
+
+   dtPlayerLabels = data.table(
+      playerId = c(1, 2, 3, 8, 9),
+      playerName = c(
+         'asd qwe',
+         'qwe rty',
+         'ghj zxc',
+         'fgh rty',
+         'cvb dfg'
+      )
+   )
+
+   save(
+      list = 'dtPlayerLabels',
+      file = './data/PlayerLabels.rda'
+   )
+
 
 }

@@ -1,39 +1,67 @@
 #' Draws a block based on the angle bucket and length bucket, respectively 
-#' indicated by x and y
+#' indicated by x and y, used by fPlotSonar
+#'
+#' Hard to describe it. Play with the example
+#'
+#' @examples
+#' plot(
+#'    fCalculatePolygonCoordinate(
+#'       nAngleMin_rad = pi/4,
+#'       nAngleMax_rad = pi/2,
+#'       nRadiusMin = 1,
+#'       nRadiusMax = 2,
+#'       cos   
+#'    ),
+#'    fCalculatePolygonCoordinate(
+#'       nAngleMin_rad = pi/4,
+#'       nAngleMax_rad = pi/2,
+#'       nRadiusMin = 1,
+#'       nRadiusMax = 2,
+#'       sin   
+#'    )      
+#' )
 #' @import ggplot2
 fCalculatePolygonCoordinate = function (
-   xmin2,
-   xmax2,
-   ymin2,
-   ymax2,
+   nAngleMin_rad,
+   nAngleMax_rad,
+   nRadiusMin,
+   nRadiusMax,
    fTrigFunction
 ) {
    
    c(
+      # radial path from in to out along nAngleMin_rad 
       seq(
-         ymin2,
-         ymax2,
-         ( ymax2 - ymin2 ) / 50
-      ) * fTrigFunction(xmin2),
+         nRadiusMin,
+         nRadiusMax,
+         ( nRadiusMax - nRadiusMin ) / 50
+      ) * fTrigFunction(nAngleMin_rad),
+
+      # arc at nRadiusMax from angle min to max
       fTrigFunction(
          seq(
-            xmin2,
-            xmax2,
-            ( xmax2 - xmin2 ) / 50
+            nAngleMin_rad,
+            nAngleMax_rad,
+            pi/50
          )
-      ) * ymax2,
+      ) * nRadiusMax,
+
+      # radial path from out to in along nAngleMax_rad 
       seq(
-         ymax2,
-         ymin2,
-         ( ymin2 - ymax2 ) / 50
-      ) * fTrigFunction(xmax2),
+         nRadiusMax,
+         nRadiusMin,
+         ( nRadiusMin - nRadiusMax ) / 50
+      ) * fTrigFunction(nAngleMax_rad),
+
+      # arc at nRadiusMin from angle max to min
       fTrigFunction(
          seq(
-            xmax2,
-            xmin2,
-            ( xmin2 - xmax2 ) / 50
+            nAngleMax_rad,
+            nAngleMin_rad,
+            pi/50
          )
-      ) * ymin2
+      ) * nRadiusMin
+
    )
    
 }

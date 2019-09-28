@@ -1,11 +1,35 @@
+#' Pitch background
+#'
 #' Adds pitch markings, green background, etc. for plot background to look like
-#' a football pitch.
+#' a football pitch. ggplot adds things in order so initiate a ggplot object, 
+#' add the pitch marking with this function, and then add the data you want to 
+#' add
+#'
+#' @param plotObject a ggplot object. Can just be a blank ggplot object too
+#' @param cLineColour the colour of the line markings on the pitch
+#' @param cPitchColour the colour of the grass on the pitch
+#' @param nXLimit Length of the pitch
+#' @param nYLimit Breadth of the pitch
+#' @examples
+#' p1 = ggplot()
+#' p1 = fAddPitchLines(p1)
+#' p1
+#' p1 = p1 + theme_pitch()
+#' p1
+#' # adding passing data on top now
+#' p1 + 
+#'    geom_point(
+#'       data = dtPasses,
+#'       aes(x = x , y = y)
+#'    )
+#' )
 #' @import data.table
 #' @import ggplot2
+#' @export
 fAddPitchLines = function (
    plotObject,
-   nXLimit = 105,
-   nYLimit = 68,
+   nXLimit = 120,
+   nYLimit = 80,
    cLineColour = 'white',
    cPitchColour = '#038253'
 ) {

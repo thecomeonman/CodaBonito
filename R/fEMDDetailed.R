@@ -1,3 +1,55 @@
+#' emdist:emd is quite restrictive. A more libral alternative.
+#'
+#' So long as you can calculate a distance matrix between the two datasets, you
+#' can use this function to calculate the earth mover's distance between them. 
+#' This lets you calculate EMD beteen any two datasets, unlike emdist::emd 
+#' only lets compare numberic datasets of up to four dimensions.
+#' This additionally gives you the weights when transforming one dataset to 
+#' another so you can make more detailed inferences about which data is 
+#' contributing the most to the distances, etc.
+#'
+#' @param SNO1, index of the obervation number from dataset one,
+#' eg. c(1,2,3,4,1,2,3,4,1,2,3,4)
+#' @param SNO2, index of the obervation number from dataset one,
+#' eg. c(1,1,1,1,2,2,2,2,3,3,3,3)
+#' @param Distance The distance between the data associated with the 
+#' respective SNO1 and SNO2 values,
+#' @examples
+#' # Two random datasets of three dimension
+#' a = data.table(matrix(runif(21), ncol = 3))
+#' b = data.table(matrix(runif(30), ncol = 3))
+#' # adding serial numbers to each observation
+#' a[, SNO := .I]
+#' b[, SNO := .I]
+#' # evaluating distance between all combinations of data in the two datasets
+#' a[, k := 'k']
+#' b[, k := 'k']
+#' dtDistances = merge(a,b,'k',allow.cartesian = T)
+#' dtDistances[,
+#'    Distance := (
+#'       (( V1.x - V1.y) ^ 2) +
+#'       (( V2.x - V2.y) ^ 2) +
+#'       (( V3.x - V3.y) ^ 2)
+#'    ) ^ 0.5
+#' ]
+#' # getting EMD between this dataet
+#' lprec = fEMDDetailed(
+#'    SNO1 = dtDistances[, SNO.x],
+#'    SNO2 = dtDistances[, SNO.y],
+#'    Distance = dtDistances[, Distance]
+#' )
+#' fGetEMDFromDetailedEMD(lprec)
+#' # This value should be the same as that computed by EMD
+#' # EMD needs the weightage of each point, which is assigned as equal in our 
+#' # function, so giving 1/N weightage to each data point
+#' emdist::emd(
+#'    as.matrix(
+#'       a[, list(1/.N, V1,V2,V3)]
+#'    ),
+#'    as.matrix(
+#'       b[, list(1/.N, V1,V2,V3)]
+#'    )
+#' )
 #' @import data.table
 #' @import lpSolveAPI
 #' @export

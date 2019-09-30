@@ -3,11 +3,29 @@
 \name{fCalculatePolygonCoordinate}
 \alias{fCalculatePolygonCoordinate}
 \title{Draws a block based on the angle bucket and length bucket, respectively 
-indicated by x and y}
+indicated by x and y, used by fPlotSonar}
 \usage{
-fCalculatePolygonCoordinate(xmin2, xmax2, ymin2, ymax2, fTrigFunction)
+fCalculatePolygonCoordinate(nAngleMin_rad, nAngleMax_rad, nRadiusMin,
+  nRadiusMax, fTrigFunction)
 }
 \description{
-Draws a block based on the angle bucket and length bucket, respectively 
-indicated by x and y
+Hard to describe it. Play with the example
+}
+\examples{
+plot(
+   fCalculatePolygonCoordinate(
+      nAngleMin_rad = pi/4,
+      nAngleMax_rad = pi/2,
+      nRadiusMin = 1,
+      nRadiusMax = 2,
+      cos   
+   ),
+   fCalculatePolygonCoordinate(
+      nAngleMin_rad = pi/4,
+      nAngleMax_rad = pi/2,
+      nRadiusMin = 1,
+      nRadiusMax = 2,
+      sin   
+   )      
+)
 }

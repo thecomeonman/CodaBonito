@@ -1,4 +1,5 @@
 #' Lipstick for the pitch background plots
+#' Refer to fAddPitchLines
 #' @import ggplot2
 #' @export
 theme_pitch <- function () { 

@@ -149,14 +149,14 @@ if ( F ) {
    )
 
    dtPasses[,
-      pass.length := (
+      passLength := (
          (( x - endX) ^ 2) +
          (( y - endY) ^ 2)
       ) ^ 0.5
    ]
 
    dtPasses[,
-      pass.angle := atan2(
+      passAngle := atan2(
          endY - y, endX - y
       )
    ]
@@ -208,7 +208,7 @@ if ( F ) {
 
    dtFormation = data.table(
       playerId = c(1, 2, 3, 8, 9),
-      x = c(5, 20, 20, 50, 80),
+      x = c(15, 35, 35, 60, 90),
       y = c(40, 20, 60, 40, 40)
    )
 

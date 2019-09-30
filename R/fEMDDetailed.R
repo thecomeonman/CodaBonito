@@ -7,6 +7,9 @@
 #' This additionally gives you the weights when transforming one dataset to 
 #' another so you can make more detailed inferences about which data is 
 #' contributing the most to the distances, etc.
+#' 
+#' The output is an lpExtPtr type of object. The lpSolveAPI library has many 
+#' operations that you can perform on such an object.
 #'
 #' @param SNO1, index of the obervation number from dataset one,
 #' eg. c(1,2,3,4,1,2,3,4,1,2,3,4)

@@ -1,3 +1,4 @@
+#' Refer to fEMDDetailed example
 #' @import lpSolveAPI
 #' @export
 fGetEMDFromDetailedEMD = function (

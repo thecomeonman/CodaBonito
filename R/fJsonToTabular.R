@@ -1,5 +1,9 @@
+#' Helper function to fJsonToListOfTables
+#'
+#' Breaks individual json chunks into tables, takes care of duplicate 
+#' column names.
+#'
 #' @import data.table
-#' @export
 fJsonToTabular = function(
    lEvent
 ) {

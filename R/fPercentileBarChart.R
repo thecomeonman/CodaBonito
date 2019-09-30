@@ -1,4 +1,26 @@
-# Paste the below lines into your console
+#' Ashwin Raman's percentile bar charts
+#'
+#' Each bar denotes the percentile the player is for that respective stat.
+#' This is a much better alternative to radar plots.
+#'
+#' @param dtPlayerMetrics A dataset with one row for each PlayerName, and various
+#' metrics about the PlayerName declared in separate columns. Refer to the 
+#' dtPlayerMetrics dataset packaged with the library for an example
+#' @param vcColumnsToIndex The non-metric columns in your dataset, these are
+#' typically columns like name, age, team, position, etc.
+#' @param dtMetricCategorisation A table with metadata about the variables in 
+#' dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the 
+#' library for an example. 
+#' @param cPlayerName The name of the PlayerName you want visualised
+#' @param cTitle The title on the chart
+#' @examples
+#' fPercentileBarChart(
+#'    dtDataset = dtPlayerMetrics,
+#'    vcColumnsToIndex = c('PlayerName','TeamName'),
+#'    dtMetricCategorisation,
+#'    cPlayerName = "gjn xfv",
+#'    cTitle = 'Sample'
+#' )
 #' @import data.table
 #' @import ggplot2
 #' @import scales
@@ -68,7 +90,8 @@ fPercentileBarChart = function(
             xmax = MappedValue,
             ymax = variableIndex + nColumnWidthByTwo,
             group = paste(PlayerName, variable)
-         )
+         ),
+         fill = 'green'
       ) +
       geom_text(
          data = dtDataset[

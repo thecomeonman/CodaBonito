@@ -2,16 +2,155 @@
 % Please edit documentation in R/fPlotSonar.R
 \name{fPlotSonar}
 \alias{fPlotSonar}
-\title{This function has only been tested with 120 X 80 dimension dataset, in the 
-two ways shown in the charts section. Any deviation from those may 
-produce odd results.}
+\title{A passing sonar alternative to popularly used versions}
 \usage{
 fPlotSonar(dtPassesToPlot, iBlocksInFirstRing = 4, iNbrRings = 8,
-  nZoomFactor = NULL, nLocation2Size = 80, nLocation1Size = 120,
-  bAddPitchBackground = F, cTitle = NULL)
+  nZoomFactor = NULL, nXLimit = 120, nYLimit = 80,
+  bAddPitchBackground = F, cTitle = "Sample")
 }
 \description{
-This function has only been tested with 120 X 80 dimension dataset, in the 
-two ways shown in the charts section. Any deviation from those may 
-produce odd results.
+Think of the chart as a bunch of concentric rings. Each ring captures passes 
+falling within a particular range of lengths. The rings are equally spaced 
+so the increase in range from ring 1 to ring 2 is the same as the increase 
+in range from any ring n to ring n + 1.
+The radius of the circle in the background of each sonar is proportional to 
+the length of the pitch. You can use that as a reference to get an idea of 
+how long a pass actually 
+Each block in the ring captures passes of the respective lengths in a 
+paritcular range of direction - specifically all angles originating from the
+centre of the circles and passing between the left edge and right edge of 
+the block.
+The blocks have been calculated in such a way to cover approximately the 
+same sized area of the pitch as any other block, which is why each block 
+spans a lesser part of the circumference on passes of longer lengths 
+compared to the part of the circumference it covers on passes of shorter 
+lengths.
+The thickness of each block in the ring is proportional to the number of 
+passes of that length and angle. ( It's actuallly proportional to the square 
+root of the number of passes, if I make it proportional then the blocks with 
+few passes become too small to be visible. This is an acceptable workaround 
+to me since the idea is to give an indication of the number of passes, and 
+not really expect people to be able to infer the number of passes. )
+The colour of each block is proportional to the success percent of the 
+passes associated with that block, going from red to dark green for 0% to 
+100%
+This function has only been tested with 120 X 80 pitch dimension dataset.
+The more complex cases where the sonars are broken by pitch area, players,
+etc. have also been tested under narrow conditions. Edge cases may break
+this, in which case please post a bug report on Github or get in touch
+on Twitter.
+}
+\examples{
+# Simple overall sonar
+fPlotSonar(
+   dtPassesToPlot = dtPasses,
+   iBlocksInFirstRing = 4,
+   iNbrRings = 8,
+   nZoomFactor = NULL,
+   nXLimit = 120,
+   nYLimit = 80,
+   bAddPitchBackground = F,
+   cTitle = NULL
+)
+# Sonar broken up by pitch area 
+fPlotSonar(
+   dtPassesToPlot = dtPasses[,
+      list(
+         playerId,
+         passLength,
+         passAngle,      
+         x,
+         y,
+         Success,
+         xBucket = (
+            ifelse(
+               x \%/\% 20 == 120 \%/\% 20,
+               ( x \%/\% 20 ) - 1,
+               x \%/\% 20
+            ) * 20
+         ) + 10,
+         yBucket = ( 
+            ifelse(
+               y \%/\% 20 == 80 \%/\% 20,
+               ( y \%/\% 20 ) - 1,
+               y \%/\% 20
+            ) * 20
+         ) + 10
+      )
+   ],
+   iBlocksInFirstRing = 4,
+   iNbrRings = 8,
+   nZoomFactor = NULL,
+   nXLimit = 120,
+   nYLimit = 80,
+   bAddPitchBackground = T,
+   cTitle = 'Sample'
+)
+# Sonar broken up player, placed at their median passing location 
+fPlotSonar (
+   dtPassesToPlot = merge(
+      dtPasses,
+      merge(
+         dtPasses[, 
+            list(
+               xBucket = median(x), 
+               yBucket = median(y)
+            ), 
+            list(
+               playerId
+            )
+         ],
+         dtPlayerLabels[, 
+            list(
+               playerId,
+               bucketLabel = playerName
+            )
+         ],
+         c(
+            'playerId'
+         )
+      ),
+      c(
+         'playerId'
+      )
+   ),
+   iBlocksInFirstRing = 4,
+   iNbrRings = 8,
+   nYLimit = 80,
+   nXLimit = 120,
+   bAddPitchBackground = T,
+   cTitle = 'Sample'
+)
+# Sonar broken up player, placed at the location dictated by their role
+# in the formations
+fPlotSonar (
+   dtPassesToPlot = merge(
+      dtPasses,
+      merge(
+         dtFormation[,
+            list(
+               xBucket = x,
+               yBucket = y,
+               playerId
+            )
+         ],
+         dtPlayerLabels[, 
+            list(
+               playerId,
+               bucketLabel = playerName
+            )
+         ],
+         c(
+            'playerId'
+         )
+      ),
+      'playerId'
+   ),
+   iBlocksInFirstRing = 4,
+   iNbrRings = 8,
+   nXLimit = 120,
+   nYLimit = 80,
+   bAddPitchBackground = T,
+   cTitle = 'Sample'
+)
 }

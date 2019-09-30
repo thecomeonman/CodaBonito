@@ -1,17 +1,38 @@
+#' Those charts with normailsed metric values and a bright mark indicating
+#' where the PlayerName of interest lies
+#'
+#' @param dtPlayerMetrics A dataset with one row for each PlayerName, and various
+#' metrics about the PlayerName declared in separate columns. Refer to the 
+#' dtPlayerMetrics dataset packaged with the library for an example
+#' @param vcColumnsToIndex The non-metric columns in your dataset, these are
+#' typically columns like name, age, team, position, etc.
+#' @param dtMetricCategorisation A table with metadata about the variables in 
+#' dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the 
+#' library for an example. 
+#' @param cPlayerName The name of the PlayerName you want visualised
+#' @param cTitle The title on the chart
+#' @examples
+#' fNormalisedValueChart (
+#'    dtPlayerMetrics,
+#'    vcColumnsToIndex = c('PlayerName','TeamName'),
+#'    dtMetricCategorisation,
+#'    cPlayerName = "gjn xfv",
+#'    cTitle = 'Sample'
+#' )
 #' @import data.table
 #' @import ggplot2
 #' @export
 fNormalisedValueChart = function (
-   dtDataset,
-   vcColumnsToIndex = c('Player','Team'),
+   dtPlayerMetrics,
+   vcColumnsToIndex,
    dtMetricCategorisation,
-   cPlayerName = "gjn xfv",
-   cTitle = 'Sample'
+   cPlayerName,
+   cTitle
 ) {
 
    viColumnNameOccurrence = table(
       colnames(
-         dtDataset
+         dtPlayerMetrics
       )
    )
 
@@ -38,32 +59,32 @@ fNormalisedValueChart = function (
 
    }
 
-   dtDataset = melt(
-      dtDataset,
+   dtPlayerMetrics = melt(
+      dtPlayerMetrics,
       id.vars = vcColumnsToIndex
    )
 
-   dtDataset = merge(
-      dtDataset,
+   dtPlayerMetrics = merge(
+      dtPlayerMetrics,
       dtMetricCategorisation,
       'variable'
    )
 
-   dtDataset[,
+   dtPlayerMetrics[,
       MappedValue := ( value - min(value) ) / ( max(value) - min(value) ),
       variable
    ]
 
-   dtDataset[
+   dtPlayerMetrics[
       HighValueIsBad == T,
       MappedValue := 1 - MappedValue
    ]
 
-   dtPlayer = dtDataset[Player == cPlayerName]
-   dtDataset = dtDataset[!Player == cPlayerName]
+   dtPlayer = dtPlayerMetrics[PlayerName == cPlayerName]
+   dtPlayerMetrics = dtPlayerMetrics[!PlayerName == cPlayerName]
 
    p1 = ggplot(
-      dtDataset
+      dtPlayerMetrics
    ) +
        geom_jitter(
          aes(

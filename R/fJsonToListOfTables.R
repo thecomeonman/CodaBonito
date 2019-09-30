@@ -1,10 +1,30 @@
+#' Primarily to convert statsbomb files to a list of data.tables
+#' 
+#' The function has been named generically so that tomorrow it can be used 
+#' with other json syntaxes as well. As of right now, it has been coded up
+#' in a manner that it works with StatsBomb data only.
+#' 
+#' @param lMatchJson refer example
+#' @param vcTagsToExtract refer example
+#' @param vcTagsToExtract refer example
+#' @param nXLimit Length of the pitch
+#' @param nYLimit Breadth of the pitch
+#' @examples
+#' # read in the raw json as a list
+#' lMatchJson = rjson::fromJSON(file = cMatchFileName)
+#' 
+#' # get one table each for the starting XI, passes, and shots
+#' lEvents = fJsonToListOfTables (
+#'    lMatchJson = lMatchJson,
+#'    vcTagsToExtract = c('Starting XI','Pass','Shot')
+#' )
 #' @import data.table
 #' @export
 fJsonToListOfTables = function (
    lMatchJson,
    vcTagsToExtract,
-   nLocation1Size = 120,
-   nLocation2Size = 80
+   nXLimit = 120,
+   nYLimit = 80
 ) {
 
    lEvents = list()
@@ -86,7 +106,7 @@ fJsonToListOfTables = function (
 
       for ( i in grep(colnames(lEvents[[iEventIndex]]), pattern = 'location2', value = T) ) {
 
-         lEvents[[iEventIndex]][, i := nLocation2Size - as.numeric(as.character(get(i)))]
+         lEvents[[iEventIndex]][, i := nYLimit - as.numeric(as.character(get(i)))]
          setnames(
             lEvents[[iEventIndex]],
             i,
@@ -146,18 +166,18 @@ fJsonToListOfTables = function (
                               'Right Wing','Center Forward', 'Left Wing'
                            ),
                            location1 = c(
-                              rep(1 * nLocation1Size/5, 1),
-                              rep(2 * nLocation1Size/5, 4),
-                              rep(3 * nLocation1Size/5, 1),
-                              rep(4 * nLocation1Size/5, 2),
-                              rep(5 * nLocation1Size/5, 3)
-                           ) - ( (nLocation1Size/5) / 2),
+                              rep(1 * nXLimit/5, 1),
+                              rep(2 * nXLimit/5, 4),
+                              rep(3 * nXLimit/5, 1),
+                              rep(4 * nXLimit/5, 2),
+                              rep(5 * nXLimit/5, 3)
+                           ) - ( (nXLimit/5) / 2),
                            location2 = c(
-                              ( c(1) - 0.5 ) * ( nLocation2Size / 1 ),
-                              ( c(1:4) - 0.5 ) * ( nLocation2Size / 4 ),
-                              ( c(1) - 0.5 ) * ( nLocation2Size / 1 ),
-                              ( c(1:2) - 0.5 ) * ( nLocation2Size / 2 ),
-                              ( c(1:3) - 0.5 ) * ( nLocation2Size / 3 )
+                              ( c(1) - 0.5 ) * ( nYLimit / 1 ),
+                              ( c(1:4) - 0.5 ) * ( nYLimit / 4 ),
+                              ( c(1) - 0.5 ) * ( nYLimit / 1 ),
+                              ( c(1:2) - 0.5 ) * ( nYLimit / 2 ),
+                              ( c(1:3) - 0.5 ) * ( nYLimit / 3 )
                            )
                         )
                      }
@@ -201,18 +221,18 @@ fJsonToListOfTables = function (
                               'Center Forward'
                            ),
                            location1 = c(
-                              rep(1 * nLocation1Size/5, 1),
-                              rep(2 * nLocation1Size/5, 3),
-                              rep(3 * nLocation1Size/5, 5),
-                              rep(4 * nLocation1Size/5, 1),
-                              rep(5 * nLocation1Size/5, 1)
-                           ) - ( (nLocation1Size/5) / 2),
+                              rep(1 * nXLimit/5, 1),
+                              rep(2 * nXLimit/5, 3),
+                              rep(3 * nXLimit/5, 5),
+                              rep(4 * nXLimit/5, 1),
+                              rep(5 * nXLimit/5, 1)
+                           ) - ( (nXLimit/5) / 2),
                            location2 = c(
-                              ( c(1:1) - 0.5 ) * ( nLocation2Size / 1 ),
-                              ( c(1:3) - 0.5 ) * ( nLocation2Size / 3 ),
-                              ( c(1:5) - 0.5 ) * ( nLocation2Size / 5 ),
-                              ( c(1:1) - 0.5 ) * ( nLocation2Size / 1 ),
-                              ( c(1:1) - 0.5 ) * ( nLocation2Size / 1 )
+                              ( c(1:1) - 0.5 ) * ( nYLimit / 1 ),
+                              ( c(1:3) - 0.5 ) * ( nYLimit / 3 ),
+                              ( c(1:5) - 0.5 ) * ( nYLimit / 5 ),
+                              ( c(1:1) - 0.5 ) * ( nYLimit / 1 ),
+                              ( c(1:1) - 0.5 ) * ( nYLimit / 1 )
                            )
                         )
 

@@ -9,11 +9,12 @@
 #' Success ( 1/0 for whether the pass reached the recipient, ) x ( the 
 #' coordinate along the length of the pitch, 0 is defensive end, nXLimit is 
 #' offensive end, ) and y ( along the breadth of the pitch, 0 is right wing and 
-#' nYLimit is left wing )
+#' nYLimit is left wing. ) Refer to the dtPasses dataset packaged with the 
+#' library 
 #' @param dtPlayerLabels a data.table with the colums playerId ( same as 
 #' dtPasses, ) and playerName ( the label that the point of the respective 
 #' player should be labelled as. ) Leaving this blank will mean no labels in 
-#' the diagram.
+#' the diagram. Refer to the dtPlayerLabels dataset packaged with the library.
 #' @param nXLimit Length of the pitch
 #' @param nYLimit Breadth of the pitch
 #' @examples

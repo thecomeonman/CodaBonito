@@ -1,18 +1,47 @@
+#' A worse but more popular alternative to percentile bar charts
+#'
+#' The radar stretch out across each metric. The farther the radar stretches
+#' on a particular metric, the higher percentile the player is on that metric.
+#' You can create percentile bar charts with the same arguments using the 
+#' fPercentileBarChart function.
+#'
+#' @param dtPlayerMetrics A dataset with one row for each PlayerName, and various
+#' metrics about the PlayerName declared in separate columns. Refer to the 
+#' dtPlayerMetrics dataset packaged with the library for an example
+#' @param vcColumnsToIndex The non-metric columns in your dataset, these are
+#' typically columns like name, age, team, position, etc.
+#' @param dtMetricCategorisation A table with metadata about the variables in 
+#' dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the 
+#' library for an example. 
+#' @param cPlayerName The name of the PlayerName you want visualised
+#' @param cTitle The title on the chart
+#' @examples
+#' fRadarPercentileChart (
+#'    dtPlayerMetrics,
+#'    vcColumnsToIndex = c('PlayerName','TeamName'),
+#'    dtMetricCategorisation,
+#'    cPlayerName = "gjn xfv",
+#'    cTitle = 'Sample'
+#' )
 #' @import data.table
 #' @import ggplot2
 #' @import ggrepel
 #' @export
 fRadarPercentileChart = function (
-   dtDataset,
-   vcColumnsToIndex = c('Player','Team'),
+   dtPlayerMetrics,
+   vcColumnsToIndex,
    dtMetricCategorisation,
-   cPlayerName = "gjn xfv",
-   cTitle = 'Sample'
+   cPlayerName,
+   cTitle
 ) {
+
+   warning(
+      'Radar charts are bad. Use fPercentileBarChart instead.'
+   )
 
    viColumnNameOccurrence = table(
       colnames(
-         dtDataset
+         dtPlayerMetrics
       )
    )
 
@@ -39,18 +68,18 @@ fRadarPercentileChart = function (
 
    }
 
-   dtDataset = melt(
-      dtDataset,
+   dtPlayerMetrics = melt(
+      dtPlayerMetrics,
       id.vars = vcColumnsToIndex
    )
 
-   dtDataset = merge(
-      dtDataset,
+   dtPlayerMetrics = merge(
+      dtPlayerMetrics,
       dtMetricCategorisation,
       'variable'
    )
 
-   dtDataset[,
+   dtPlayerMetrics[,
       MappedValue := rank(
          value,
          ties.method = 'average'
@@ -58,19 +87,19 @@ fRadarPercentileChart = function (
       variable
    ]
 
-   dtDataset[
+   dtPlayerMetrics[
       HighValueIsBad == T,
       MappedValue := 1 - MappedValue
    ]
 
 
-   dtDataset[, Angle := .GRP, variable]
-   dtDataset[, Angle := 2 * pi * Angle / max(Angle)]
-   dtDataset[, RadarX := cos(Angle) * MappedValue]
-   dtDataset[, RadarY := sin(Angle) * MappedValue]
+   dtPlayerMetrics[, Angle := .GRP, variable]
+   dtPlayerMetrics[, Angle := 2 * pi * Angle / max(Angle)]
+   dtPlayerMetrics[, RadarX := cos(Angle) * MappedValue]
+   dtPlayerMetrics[, RadarY := sin(Angle) * MappedValue]
 
-   dtPlayer = dtDataset[Player == cPlayerName]
-   dtDataset = dtDataset[!Player == cPlayerName]
+   dtPlayer = dtPlayerMetrics[PlayerName == cPlayerName]
+   dtPlayerMetrics = dtPlayerMetrics[!PlayerName == cPlayerName]
 
    ggplot() +
       geom_polygon(
@@ -127,7 +156,7 @@ fRadarPercentileChart = function (
       ) +
       geom_segment(
          data = rbind(
-            dtDataset,
+            dtPlayerMetrics,
             dtPlayer
          )[,
             .SD[
@@ -152,7 +181,7 @@ fRadarPercentileChart = function (
       ) +
       geom_text(
          data = rbind(
-            dtDataset,
+            dtPlayerMetrics,
             dtPlayer
          )[,
             .SD[

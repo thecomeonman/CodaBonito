@@ -1,6 +1,149 @@
-#' This function has only been tested with 120 X 80 dimension dataset, in the 
-#' two ways shown in the charts section. Any deviation from those may 
-#' produce odd results.
+#' A passing sonar alternative to popularly used versions
+#'
+#' Think of the chart as a bunch of concentric rings. Each ring captures passes 
+#' falling within a particular range of lengths. The rings are equally spaced 
+#' so the increase in range from ring 1 to ring 2 is the same as the increase 
+#' in range from any ring n to ring n + 1.
+#' The radius of the circle in the background of each sonar is proportional to 
+#' the length of the pitch. You can use that as a reference to get an idea of 
+#' how long a pass actually 
+#' Each block in the ring captures passes of the respective lengths in a 
+#' paritcular range of direction - specifically all angles originating from the
+#' centre of the circles and passing between the left edge and right edge of 
+#' the block.
+#' The blocks have been calculated in such a way to cover approximately the 
+#' same sized area of the pitch as any other block, which is why each block 
+#' spans a lesser part of the circumference on passes of longer lengths 
+#' compared to the part of the circumference it covers on passes of shorter 
+#' lengths.
+#' The thickness of each block in the ring is proportional to the number of 
+#' passes of that length and angle. ( It's actuallly proportional to the square 
+#' root of the number of passes, if I make it proportional then the blocks with 
+#' few passes become too small to be visible. This is an acceptable workaround 
+#' to me since the idea is to give an indication of the number of passes, and 
+#' not really expect people to be able to infer the number of passes. )
+#' The colour of each block is proportional to the success percent of the 
+#' passes associated with that block, going from red to dark green for 0% to 
+#' 100%
+#' This function has only been tested with 120 X 80 pitch dimension dataset.
+#' The more complex cases where the sonars are broken by pitch area, players,
+#' etc. have also been tested under narrow conditions. Edge cases may break
+#' this, in which case please post a bug report on Github or get in touch
+#' on Twitter.
+#'
+#' @examples
+#' # Simple overall sonar
+#' fPlotSonar(
+#'    dtPassesToPlot = dtPasses,
+#'    iBlocksInFirstRing = 4,
+#'    iNbrRings = 8,
+#'    nZoomFactor = NULL,
+#'    nXLimit = 120,
+#'    nYLimit = 80,
+#'    bAddPitchBackground = F,
+#'    cTitle = NULL
+#' )
+#' # Sonar broken up by pitch area 
+#' fPlotSonar(
+#'    dtPassesToPlot = dtPasses[,
+#'       list(
+#'          playerId,
+#'          passLength,
+#'          passAngle,      
+#'          x,
+#'          y,
+#'          Success,
+#'          xBucket = (
+#'             ifelse(
+#'                x %/% 20 == 120 %/% 20,
+#'                ( x %/% 20 ) - 1,
+#'                x %/% 20
+#'             ) * 20
+#'          ) + 10,
+#'          yBucket = ( 
+#'             ifelse(
+#'                y %/% 20 == 80 %/% 20,
+#'                ( y %/% 20 ) - 1,
+#'                y %/% 20
+#'             ) * 20
+#'          ) + 10
+#'       )
+#'    ],
+#'    iBlocksInFirstRing = 4,
+#'    iNbrRings = 8,
+#'    nZoomFactor = NULL,
+#'    nXLimit = 120,
+#'    nYLimit = 80,
+#'    bAddPitchBackground = T,
+#'    cTitle = 'Sample'
+#' )
+#' # Sonar broken up player, placed at their median passing location 
+#' fPlotSonar (
+#'    dtPassesToPlot = merge(
+#'       dtPasses,
+#'       merge(
+#'          dtPasses[, 
+#'             list(
+#'                xBucket = median(x), 
+#'                yBucket = median(y)
+#'             ), 
+#'             list(
+#'                playerId
+#'             )
+#'          ],
+#'          dtPlayerLabels[, 
+#'             list(
+#'                playerId,
+#'                bucketLabel = playerName
+#'             )
+#'          ],
+#'          c(
+#'             'playerId'
+#'          )
+#'       ),
+#'       c(
+#'          'playerId'
+#'       )
+#'    ),
+#'    iBlocksInFirstRing = 4,
+#'    iNbrRings = 8,
+#'    nYLimit = 80,
+#'    nXLimit = 120,
+#'    bAddPitchBackground = T,
+#'    cTitle = 'Sample'
+#' )
+#' # Sonar broken up player, placed at the location dictated by their role
+#' # in the formations
+#' fPlotSonar (
+#'    dtPassesToPlot = merge(
+#'       dtPasses,
+#'       merge(
+#'          dtFormation[,
+#'             list(
+#'                xBucket = x,
+#'                yBucket = y,
+#'                playerId
+#'             )
+#'          ],
+#'          dtPlayerLabels[, 
+#'             list(
+#'                playerId,
+#'                bucketLabel = playerName
+#'             )
+#'          ],
+#'          c(
+#'             'playerId'
+#'          )
+#'       ),
+#'       'playerId'
+#'    ),
+#'    iBlocksInFirstRing = 4,
+#'    iNbrRings = 8,
+#'    nXLimit = 120,
+#'    nYLimit = 80,
+#'    bAddPitchBackground = T,
+#'    cTitle = 'Sample'
+#' )
 #' @import data.table
 #' @import ggplot2
 #' @export
@@ -9,19 +152,19 @@ fPlotSonar = function (
    iBlocksInFirstRing = 4,
    iNbrRings = 8,
    nZoomFactor = NULL,
-   nLocation2Size = 80,
-   nLocation1Size = 120,
+   nXLimit = 120,
+   nYLimit = 80,
    bAddPitchBackground = F,
-   cTitle = NULL
+   cTitle = 'Sample'
 ) {
    
    dtPasses = copy(dtPassesToPlot)
    
-   nIncremntalRingRadius = nLocation1Size / iNbrRings
+   nIncremntalRingRadius = nXLimit / iNbrRings
    
    # A vector with the same length as the number of rings possible, with each
    # element having the radius for that ring
-   vnPassLengthBreaks = seq(0, nLocation1Size + nLocation2Size, nIncremntalRingRadius)
+   vnPassLengthBreaks = seq(0, nXLimit + nYLimit, nIncremntalRingRadius)
    
    # Each ring, depepnding on the radius, will have different number of breaks
    # to capture passes of the respective length but in a certain direction
@@ -37,13 +180,25 @@ fPlotSonar = function (
    # todo - this needs a more sophisticated calculation. In case use is
    # looking at a smaller area, this calculation may yiel the wrong number
    
+   if ( !'xBucket' %in% colnames(dtPasses)) {
+
+      dtPasses[, xBucket := 0]
+
+   }
+
+   if ( !'yBucket' %in% colnames(dtPasses)) {
+
+      dtPasses[, yBucket := 0]
+
+   }
+
    if ( is.null(nZoomFactor) ) {
       
       nZoomFactor = ceiling(
          max(
-            dtPasses[, length(unique(location1.bucket))], 
-            dtPasses[, length(unique(location2.bucket)), location1.bucket][, max(V1)],
-            ( nLocation1Size * dtPasses[, length(unique(location2.bucket)), location1.bucket][, max(V1)] ) / nLocation2Size
+            dtPasses[, length(unique(xBucket))], 
+            dtPasses[, length(unique(yBucket)), xBucket][, max(V1)],
+            ( nXLimit * dtPasses[, length(unique(yBucket)), xBucket][, max(V1)] ) / nYLimit
          )
       ) 
       
@@ -54,7 +209,7 @@ fPlotSonar = function (
    # Length bucket number. The bucket number, and not the bucket, is needed
    # to calculate the angle buckets.
    dtPasses[, 
-      pass.length.bucket := pass.length %/% nIncremntalRingRadius
+      passLengthBucket := passLength %/% nIncremntalRingRadius
    ]
    
    # Angle buckets.
@@ -62,10 +217,10 @@ fPlotSonar = function (
    # which are already calculated in viNbrAngleBreaks and labelling the
    # data accordingly.
    dtPasses[, 
-      pass.angle.bucket := pass.angle %/% ( 
-         2 * pi / viNbrAngleBreaks[ 1 + pass.length.bucket ] 
+      passAngleBucket := passAngle %/% ( 
+         2 * pi / viNbrAngleBreaks[ 1 + passLengthBucket ] 
       ),
-      pass.length.bucket
+      passLengthBucket
    ]
    
    # When angle is exactly 2pi, it falls into a bucket which has only 2*pi 
@@ -74,60 +229,60 @@ fPlotSonar = function (
    # Not just comparing angle == 2pi because of precision affecting the result
    # of that comparison
    dtPasses[, 
-      pass.angle.bucket := ifelse(
-         pass.angle.bucket == ( 2 * pi) %/% (
-            2 * pi / viNbrAngleBreaks[ 1 + pass.length.bucket ]
+      passAngleBucket := ifelse(
+         passAngleBucket == ( 2 * pi) %/% (
+            2 * pi / viNbrAngleBreaks[ 1 + passLengthBucket ]
          ),
-         pass.angle.bucket - 1,
-         pass.angle.bucket
+         passAngleBucket - 1,
+         passAngleBucket
       ),
-      pass.length.bucket
+      passLengthBucket
    ]
    
    dtPasses[, 
-      pass.angle.bucket.width := (
-         2 * pi / viNbrAngleBreaks[ 1 + pass.length.bucket ] 
+      passAngleBucket.width := (
+         2 * pi / viNbrAngleBreaks[ 1 + passLengthBucket ] 
       ), 
-      pass.length.bucket
+      passLengthBucket
    ]
    
    dtPasses[, 
-      pass.angle.bucket := ( pass.angle.bucket + 0.5 ) * pass.angle.bucket.width
+      passAngleBucket := ( passAngleBucket + 0.5 ) * passAngleBucket.width
    ]
    
    # Calculating actual pass length buckets
    dtPasses[, 
-      pass.length.bucket := ( pass.length.bucket + 0.5 ) * nIncremntalRingRadius, 
-      pass.length.bucket
+      passLengthBucket := ( passLengthBucket + 0.5 ) * nIncremntalRingRadius, 
+      passLengthBucket
    ]
    
    # Preparing the polygons needed for various elements of the chart
    dtAllShapes = dtPasses[
       # Remove throws in, etc. otherwise they might show up beyond
       # the touchlines.
-      location1 < nLocation1Size &
-      location2 < nLocation2Size
+      x < nXLimit &
+      y < nYLimit
    ][
       # Some passes don't have this data
-      !is.na(pass.length.bucket) &
-      !is.na(pass.angle.bucket)
+      !is.na(passLengthBucket) &
+      !is.na(passAngleBucket)
    ][, 
       list(
          PassCount = .N, 
-         Success_pct = sum(is.na(pass.outcome.name)) / .N
+         Success_pct = sum(Success) / .N
       ),
       list(
-         location1.bucket,
-         location2.bucket,
-         pass.angle.bucket, 
-         pass.angle.bucket.width,
-         pass.length.bucket,
+         xBucket,
+         yBucket,
+         passAngleBucket, 
+         passAngleBucket.width,
+         passLengthBucket,
          # the bucket values are defined at the centre of the respective
          # dimension so the min and max span would need to be calcualted
-         xmin = pass.angle.bucket - ( pass.angle.bucket.width / 2 ),
-         xmax = pass.angle.bucket + ( pass.angle.bucket.width / 2 ),
-         ymin = pass.length.bucket - ( nIncremntalRingRadius / 2 ),
-         ymax = pass.length.bucket + ( nIncremntalRingRadius / 2 )
+         xmin = passAngleBucket - ( passAngleBucket.width / 2 ),
+         xmax = passAngleBucket + ( passAngleBucket.width / 2 ),
+         ymin = passLengthBucket - ( nIncremntalRingRadius / 2 ),
+         ymax = passLengthBucket + ( nIncremntalRingRadius / 2 )
       )
    ]
    
@@ -135,38 +290,38 @@ fPlotSonar = function (
    # in that block such that the outer boundary extends all the way to the max
    # radius the ring permits and the inner radius is moved
    dtAllShapes[,
-      ymin2 := pass.length.bucket + 
+      ymin2 := passLengthBucket + 
         ( nIncremntalRingRadius * 1 / 2 ) - 
         ( nIncremntalRingRadius * sqrt( PassCount / ( 1.2 * max(PassCount) ) ) )
    ][,
-      ymax2 := pass.length.bucket + ( nIncremntalRingRadius * 1 / 2 )
+      ymax2 := passLengthBucket + ( nIncremntalRingRadius * 1 / 2 )
    ][,
-      xmin2 := pass.angle.bucket - ( pass.angle.bucket.width * 1 / 2 )
+      xmin2 := passAngleBucket - ( passAngleBucket.width * 1 / 2 )
    ][,
-      xmax2 := pass.angle.bucket + ( pass.angle.bucket.width * 1 / 2 )
+      xmax2 := passAngleBucket + ( passAngleBucket.width * 1 / 2 )
    ]
    
    
    # Changed both height and width of the block
    # dtAllShapes[,
-   #    xmin2 := pass.angle.bucket - ( pass.angle.bucket.width * sqrt( PassCount / max(PassCount) ) / 2 )
+   #    xmin2 := passAngleBucket - ( passAngleBucket.width * sqrt( PassCount / max(PassCount) ) / 2 )
    # ][,
-   #    xmax2 := pass.angle.bucket + ( pass.angle.bucket.width * sqrt( PassCount / max(PassCount) ) / 2 )
+   #    xmax2 := passAngleBucket + ( passAngleBucket.width * sqrt( PassCount / max(PassCount) ) / 2 )
    # ][,
-   #    ymin2 := pass.length.bucket - ( nIncremntalRingRadius * sqrt( PassCount / max(PassCount) ) / 2 )
+   #    ymin2 := passLengthBucket - ( nIncremntalRingRadius * sqrt( PassCount / max(PassCount) ) / 2 )
    # ][,
-   #    ymax2 := pass.length.bucket + ( nIncremntalRingRadius * sqrt( PassCount / max(PassCount) ) / 2 )
+   #    ymax2 := passLengthBucket + ( nIncremntalRingRadius * sqrt( PassCount / max(PassCount) ) / 2 )
    # ]
    
    # Changed width of the block and kept height constant
    # dtAllShapes[,
-   #    ymin3 := pass.length.bucket - ( nIncremntalRingRadius * 1 / 2 )
+   #    ymin3 := passLengthBucket - ( nIncremntalRingRadius * 1 / 2 )
    # ][,
-   #    ymax3 := pass.length.bucket + ( nIncremntalRingRadius * 1 / 2 )
+   #    ymax3 := passLengthBucket + ( nIncremntalRingRadius * 1 / 2 )
    # ][,
-   #    xmin3 := pass.angle.bucket - ( pass.angle.bucket.width * sqrt( PassCount / ( 1.2 * max(PassCount) ) ) / 2 )
+   #    xmin3 := passAngleBucket - ( passAngleBucket.width * sqrt( PassCount / ( 1.2 * max(PassCount) ) ) / 2 )
    # ][,
-   #    xmax3 := pass.angle.bucket + ( pass.angle.bucket.width * sqrt( PassCount / ( 1.2 * max(PassCount) ) ) / 2 )
+   #    xmax3 := passAngleBucket + ( passAngleBucket.width * sqrt( PassCount / ( 1.2 * max(PassCount) ) ) / 2 )
    # ]
    
    # Going from the four corner coordinates to a set of points that trace out
@@ -209,12 +364,12 @@ fPlotSonar = function (
       list(
          # Moving the bucket coordinates so that they fit on the 
          # stretched out pitch
-         location1.bucket = location1.bucket * nZoomFactor,
-         location2.bucket = location2.bucket * nZoomFactor,
+         xBucket = xBucket * nZoomFactor,
+         yBucket = yBucket * nZoomFactor,
          PassCount,
          Success_pct,
-         pass.angle.bucket,
-         pass.length.bucket
+         passAngleBucket,
+         passLengthBucket
       )
    ]
    
@@ -228,8 +383,8 @@ fPlotSonar = function (
       
       p1 = fAddPitchLines(
          p1, 
-         nXLimit = nZoomFactor * nLocation1Size, 
-         nYLimit = nZoomFactor * nLocation2Size,
+         nXLimit = nZoomFactor * nXLimit, 
+         nYLimit = nZoomFactor * nYLimit,
          cPitchColour = '#111111', 
          cLineColour = '#333333'
       )
@@ -251,42 +406,42 @@ fPlotSonar = function (
    p1 = p1 + 
       geom_polygon(
          data = dtPasses[
-            location1 < nLocation1Size &
-            location2 < nLocation2Size
+            x < nXLimit &
+            y < nYLimit
          ][,
             list(
-               x = max( nLocation1Size, nLocation2Size ) * cos(seq(-pi, pi, pi / 50)),
-               y = max( nLocation1Size, nLocation2Size ) * sin(seq(-pi, pi, pi / 50))
+               x = max( nXLimit, nYLimit ) * cos(seq(-pi, pi, pi / 50)),
+               y = max( nXLimit, nYLimit ) * sin(seq(-pi, pi, pi / 50))
             ),
             list(
-               location1.bucket = location1.bucket * nZoomFactor,
-               location2.bucket = location2.bucket * nZoomFactor
+               xBucket = xBucket * nZoomFactor,
+               yBucket = yBucket * nZoomFactor
              )
          ],
          aes(
-            x = x + location1.bucket,
-            y = y + location2.bucket,
+            x = x + xBucket,
+            y = y + yBucket,
             group = paste0(
-               location1.bucket,
-               location2.bucket
+               xBucket,
+               yBucket
             )
         ),
         fill = '#000000',
         alpha = ifelse(
-           dtPasses[, length(unique(location1.bucket))] == 1 &
-           dtPasses[, length(unique(location2.bucket))] == 1,
+           dtPasses[, length(unique(xBucket))] == 1 &
+           dtPasses[, length(unique(yBucket))] == 1,
            0,
            0.8
         ),
         color = ifelse(
-           dtPasses[, length(unique(location1.bucket))] == 1 &
-           dtPasses[, length(unique(location2.bucket))] == 1,
+           dtPasses[, length(unique(xBucket))] == 1 &
+           dtPasses[, length(unique(yBucket))] == 1,
            '#222222',
            NA
         ),
         size = ifelse(
-           dtPasses[, length(unique(location1.bucket))] == 1 &
-           dtPasses[, length(unique(location2.bucket))] == 1,
+           dtPasses[, length(unique(xBucket))] == 1 &
+           dtPasses[, length(unique(yBucket))] == 1,
            3,
            0
         )
@@ -296,22 +451,22 @@ fPlotSonar = function (
       # marking a centre point
       geom_point(
         aes(
-            x = location1.bucket,
-            y = location2.bucket
+            x = xBucket,
+            y = yBucket
         ),
         color = '#000000'
       ) +
       # passing block
       geom_polygon(
         aes(
-            x = x + location1.bucket,
-            y = y + location2.bucket,
+            x = x + xBucket,
+            y = y + yBucket,
             fill = Success_pct,
             group = paste0(
-               location1.bucket,
-               location2.bucket,
-               pass.angle.bucket,
-               pass.length.bucket
+               xBucket,
+               yBucket,
+               passAngleBucket,
+               passLengthBucket
             )
         ),
         color = 'black',
@@ -319,23 +474,23 @@ fPlotSonar = function (
         # alpha = 0.8
       )
    
-   if ( 'location.bucket.label' %in% colnames(dtPasses) ) {
+   if ( 'bucketLabel' %in% colnames(dtPasses) ) {
       
       p1 = p1 +
          geom_text(
             data = dtPasses[, 
                list(
-                  location.bucket.label = location.bucket.label[1]
+                  bucketLabel = bucketLabel[1]
                ), 
                list(
-                  location1.bucket = location1.bucket * nZoomFactor, 
-                  location2.bucket = location2.bucket * nZoomFactor
+                  xBucket = xBucket * nZoomFactor, 
+                  yBucket = yBucket * nZoomFactor
                )
             ],
             aes(
-               x = location1.bucket,
-               y = location2.bucket - ( nLocation1Size * 1.1 ),
-               label = location.bucket.label
+               x = xBucket,
+               y = yBucket - ( nXLimit * 1.1 ),
+               label = bucketLabel
             ),
             hjust = 0.5,
             vjust = 0.5,
@@ -379,7 +534,7 @@ fPlotSonar = function (
          title = cTitle,
          subtitle = paste0(
             nrow(dtPasses), ' passes, ',
-            round(100 * dtPasses[, sum(is.na(pass.outcome.name)) / .N]), '% success rate'
+            round(100 * dtPasses[, sum(Success) / .N]), '% success rate'
          )
       )
    

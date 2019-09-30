@@ -58,7 +58,7 @@ fCalculatePolygonCoordinate = function (
          seq(
             nAngleMax_rad,
             nAngleMin_rad,
-            pi/50
+            -pi/50
          )
       ) * nRadiusMin
 

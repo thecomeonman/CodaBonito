@@ -32,13 +32,7 @@ fPassNetworkChart = function(
    nYLimit = 80
 ) {
 
-   dtSegments = dtPasses[
-      Success == 1,
-      list(
-         CountBetween = .N
-      ),
-      list(playerId, recipientPlayerId)
-   ]
+   vnAngleSequence = seq(0, 2*pi, pi/50)   
 
    dtNodes = dtPasses[
       Success == 1,
@@ -51,6 +45,28 @@ fPassNetworkChart = function(
    ]
 
    dtSegments = merge(
+      dtNodes[, list(playerId, k = 'k')],
+      dtNodes[, list(recipientPlayerId = playerId, k = 'k')],
+      'k',
+      allow.cartesian = T
+   )
+   dtSegments[, k := NULL]
+   dtSegments = dtSegments[playerId != recipientPlayerId]
+
+   dtSegments = merge(
+      dtSegments,
+      dtPasses[
+         Success == 1,
+         list(
+            CountBetween = .N
+         ),
+         list(playerId, recipientPlayerId)
+      ],
+      c('playerId', 'recipientPlayerId'),
+      all = T
+   )
+
+   dtSegments = merge(
       dtSegments,
       dtNodes[, list(playerId, x, y)],
       'playerId'
@@ -61,6 +77,11 @@ fPassNetworkChart = function(
       dtNodes[, list(recipientPlayerId = playerId, receipientX = x, receipientY = y)],
       'recipientPlayerId'
    )
+
+   dtSegments[
+      is.na(CountBetween),
+      CountBetween := 0
+   ]
 
    if ( !is.null(dtPlayerLabels) ) {
 
@@ -77,10 +98,12 @@ fPassNetworkChart = function(
    p1 = fAddPitchLines(
       p1, 
       nXLimit = nXLimit,
-      nYLimit = nYLimit
+      nYLimit = nYLimit,
+      cLineColour = 'green',
+      cPitchColour = 'white'
    )
 
-   vnAngleSequence = seq(0, 2*pi, pi/50)
+
    p1 = p1 + 
       geom_polygon(
          data = dtNodes[,
@@ -99,29 +122,226 @@ fPassNetworkChart = function(
             y = yPath + y,
             group = playerId
          ),
-         fill = 'red'
+         color = 'red',
+         alpha = 0,
+         size = 2
       )
+
+   if ( F ) {
+         
+      p1 = p1 +
+         geom_segment(
+         # geom_curve(
+            data = dtSegments[order(CountBetween)],
+            aes(
+               x = receipientX,
+               y = receipientY,
+               xend = ( receipientX + x ) / 2,
+               yend = ( receipientY + y ) / 2,
+               color = CountBetween
+            ),
+            size = 4,
+            # curvature = 0.1,
+            # arrow = arrow(length = unit(0.03,"npc")),
+            # arrow.fill = 'black'
+         )
+
+   } else if ( F ) {
+
+      p1 = p1 +
+         geom_segment(
+         # geom_curve(
+            data = dtSegments[order(CountBetween)],
+            aes(
+               x    = ( receipientX             ) + ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+               y    = ( receipientY             ) + ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+               xend = ( ( ( 0.1 * receipientX ) + ( 0.9 * x ) ) ) + ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+               yend = ( ( ( 0.1 * receipientY ) + ( 0.9 * y ) ) ) + ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+               alpha = CountBetween
+            ),
+            size = 4,
+            color = 'black'
+            # curvature = 0.1,
+            # arrow = arrow(length = unit(0.03,"npc")),
+            # arrow.fill = 'black'
+         )
+
+   } else if ( F ) {
+
+      p1 = p1 +
+         geom_polygon(
+            data = dtSegments[
+               order(CountBetween),
+               list(
+                  x = c(
+                        ( receipientX ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( receipientX ) + ( 0 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( x           ) + ( 0 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( x           ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                  ),
+                  y = c(
+                        ( receipientY ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( receipientY ) + ( 0 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( y           ) + ( 0 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( y           ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                  )
+               ),
+               list(
+                  playerId,
+                  recipientPlayerId,
+                  CountBetween
+               )
+            ],
+            aes(
+               x = x,
+               y = y,
+               group = paste(formatC(CountBetween, flag='0', width = 3), playerId, recipientPlayerId),
+               fill = CountBetween
+            ),
+            color = 'black'
+         )
+
+   } else if ( T ) {
+
+      dtSegmentOutlines = rbind(
+         dtSegments[, list(playerId, recipientPlayerId, CountBetween)],
+         dtSegments[, list(playerId = recipientPlayerId, recipientPlayerId = playerId, CountBetween)]
+      )[
+         playerId < recipientPlayerId
+      ][, 
+         .SD[which.max(CountBetween)][1],
+         list(playerId, recipientPlayerId)
+      ]
+
+      for ( i in seq(nrow(dtSegmentOutlines))) {
+
+         dtSegmentSubset = dtSegments[
+            playerId %in% dtSegmentOutlines[i, c(playerId, recipientPlayerId)] &
+            recipientPlayerId %in% dtSegmentOutlines[i, c(playerId, recipientPlayerId)],
+         ]
+
+         p1 = p1 +
+            geom_polygon(
+               data = dtSegmentSubset[,
+                  list(
+                     x = c(
+                           ( receipientX ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( receipientX ) + ( 0 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( x           ) + ( 0 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( x           ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                     ),
+                     y = c(
+                           ( receipientY ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( receipientY ) + ( 0 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( y           ) + ( 0 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( y           ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                     )
+                  ),
+                  list(
+                     playerId,
+                     recipientPlayerId,
+                     CountBetween
+                  )
+               ],
+               aes(
+                  x = x,
+                  y = y,
+                  group = paste(formatC(CountBetween, flag='0', width = 3), playerId, recipientPlayerId),
+                  fill = CountBetween
+               )
+            )
+
+
+
+         p1 = p1 +
+            geom_polygon(
+               data = dtSegmentSubset[,
+                  list(
+                     x = c(
+                        ( ( receipientX + x ) / 2 ) + ( 0 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( ( receipientX + x ) / 2 ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( ( receipientX + x ) / 2 ) - ( 1 * cos( (pi/6) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                     ),
+                     y = c(
+                        ( ( receipientY + y ) / 2 ) + ( 0 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( ( receipientY + y ) / 2 ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( ( receipientY + y ) / 2 ) - ( 1 * sin( (pi/6) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                     )
+                  ),
+                  list(
+                     CountBetween,
+                     playerId,
+                     recipientPlayerId
+                  )
+               ],
+               aes(
+                  x = x,
+                  y = y,
+                  group = paste(formatC(CountBetween, flag='0', width = 3), playerId, recipientPlayerId),
+                  fill = ifelse(
+                     CountBetween < dtSegments[, max(CountBetween) / 2],
+                     dtSegments[, max(CountBetween)],
+                     0
+                  )
+               ),
+            )
+
+         p1 = p1 +
+            geom_polygon(
+               data = dtSegmentSubset[1][,
+                  list(
+                     x = c(
+                           ( receipientX ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( receipientX ) + ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( x           ) + ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( x           ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                     ),
+                     y = c(
+                           ( receipientY ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( receipientY ) + ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( y           ) + ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( y           ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                     )
+                  ),
+                  list(
+                     playerId,
+                     recipientPlayerId,
+                     CountBetween
+                  )
+               ],
+               aes(
+                  x = x,
+                  y = y,
+                  group = paste(formatC(CountBetween, flag='0', width = 3), playerId, recipientPlayerId),
+               ),
+               alpha = 0,
+               color = 'black'
+            )
+
+      }         
+
+   }
+
+   # p1 = p1 + 
+   #    geom_segment(
+   #       data = dtSegments[playerId < recipientPlayerId],
+   #       aes(
+   #          x = x,
+   #          y = y,
+   #          xend = receipientX,
+   #          yend = receipientY
+   #       ),
+   #       color = 'black'
+   #    )
    
    p1 = p1 +
-      geom_curve(
-         data = dtSegments[order(CountBetween)],
-         aes(
-            x = receipientX,
-            y = receipientY,
-            xend = x,
-            yend = y,
-            color = CountBetween
-         ),
-         size = 4,
-         curvature = 0.1,
-         arrow = arrow(length = unit(0.03,"npc")),
-         arrow.fill = 'black'
-      )
-      
-   p1 = p1 +
-      scale_color_continuous(
+      scale_fill_continuous(
          low = 'white',
-         high = 'black'
+         high = 'black',
+         limits = c(
+            0,
+            dtSegments[, max(CountBetween)]
+         )
       ) +
       theme_pitch()
 
@@ -135,7 +355,7 @@ fPassNetworkChart = function(
                y = y,
                label = playerName
             ),
-            vjust = 1,
+            # vjust = 1,
             color = 'red'
          )
    }

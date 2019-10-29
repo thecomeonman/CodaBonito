@@ -80,6 +80,17 @@ pPercentileBarChart = fPercentileBarChart(
 
 print(pPercentileBarChart)
 
+## ----fRadarPercentileChart, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+pRadarPercentileChart = fRadarPercentileChart (
+   dtPlayerMetrics = dtPlayerMetrics,
+   vcColumnsToIndex = c('PlayerName','TeamName'),
+   dtMetricCategorisation = dtMetricCategorisation,
+   cPlayerName = "gjn xfv",
+   cTitle = 'Sample'
+)
+print(pRadarPercentileChart)
+
+
 ## ----fPlotSonar, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
 pPlotSonar = fPlotSonar(
    dtPassesToPlot = dtPasses,
@@ -200,16 +211,14 @@ pPlotSonarVariation3 = fPlotSonar(
 print(pPlotSonarVariation3)
 
 
-## ----fRadarPercentileChart, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
-pRadarPercentileChart = fRadarPercentileChart (
-   dtPlayerMetrics = dtPlayerMetrics,
-   vcColumnsToIndex = c('PlayerName','TeamName'),
-   dtMetricCategorisation = dtMetricCategorisation,
-   cPlayerName = "gjn xfv",
-   cTitle = 'Sample'
-)
-print(pRadarPercentileChart)
 
+## ----fPassNetworkChart, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+pPassNetworkChart = fPassNetworkChart(
+   dtPasses,
+   dtPlayerLabels
+)
+
+print(pPassNetworkChart)
 
 ## ----fEMDDetailed, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
 

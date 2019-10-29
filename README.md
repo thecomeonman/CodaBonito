@@ -1,5 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- The code in README.Rmdis borrowed from vignettes/CodaBonito.Rmd -->
+<!-- The code in README.Rmd is borrowed from vignettes/CodaBonito.Rmd from the 
+setup chunk onwards-->
 This document offers a brief introduction to the functions in this
 library. Some function might be fairly straightforward to create but
 some functions may need you to look up the help entry before trying it
@@ -556,6 +557,17 @@ visualisation.
 
 ![](README_files/figure-markdown_strict/fPlotSonar-4.png)
 
+### fPassNetworkChart
+
+    pPassNetworkChart = fPassNetworkChart(
+       dtPasses,
+       dtPlayerLabels
+    )
+
+    print(pPassNetworkChart)
+
+![](README_files/figure-markdown_strict/fPassNetworkChart-1.png)
+
 Logic and Algorithms
 --------------------
 
@@ -598,7 +610,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.4355859
+    #> [1] 0.3880357
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our 

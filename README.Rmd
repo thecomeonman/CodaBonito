@@ -3,7 +3,8 @@ output: md_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- The code in README.Rmdis borrowed from vignettes/CodaBonito.Rmd -->
+<!-- The code in README.Rmd is borrowed from vignettes/CodaBonito.Rmd from the 
+setup chunk onwards-->
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
@@ -122,6 +123,10 @@ fPercentileBarChart instead as that is a better structured visualisation.
 
 ### fPlotSonar
 ```{r fPlotSonar}
+```
+
+### fPassNetworkChart
+```{r fPassNetworkChart}
 ```
 
 ## Logic and Algorithms

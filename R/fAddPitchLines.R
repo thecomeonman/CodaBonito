@@ -260,7 +260,8 @@ fAddPitchLines = function (
       geom_rect(
          data = data.table(
             x = ( nXLimit / 2 ) - ( nXLimit * 2 / 105 ),
-            xend = ( nXLimit / 2 ) + ( nXLimit * 2 / 105 ),
+            xend = ( nXLimit / 2 ),
+            # xend = ( nXLimit / 2 ) + ( nXLimit * 2 / 105 ),
             y = ( nYLimit * -2.5 / 68 ) + ( nXLimit * 0.9 / 105 ),
             yend = ( nYLimit * -2.5 / 68 ) + ( nXLimit * 1.1 / 105 )
          ),

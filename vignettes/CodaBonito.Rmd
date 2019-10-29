@@ -120,6 +120,10 @@ fPercentileBarChart instead as that is a better structured visualisation.
 ```{r fPlotSonar}
 ```
 
+### fPassNetworkChart
+```{r fPassNetworkChart}
+```
+
 ## Logic and Algorithms
 
 ### fEMDDetailed

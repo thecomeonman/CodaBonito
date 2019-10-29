@@ -27,7 +27,10 @@ contributing the most to the distances, etc.
 }
 \details{
 The output is an lpExtPtr type of object. The lpSolveAPI library has many 
-operations that you can perform on such an object.
+operations that you can perform on such an object, for instance 
+get.variables will get the value of the mapping performed by the EMD which
+is a useful detail to underestand what observations are contributing more
+to the distance.
 }
 \examples{
 # Two random datasets of three dimension

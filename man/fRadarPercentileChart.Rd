@@ -5,18 +5,20 @@
 \title{A worse but more popular alternative to percentile bar charts}
 \usage{
 fRadarPercentileChart(dtPlayerMetrics, vcColumnsToIndex,
-  dtMetricCategorisation, cPlayerName, cTitle)
+  dtMetricCategorisation, cPlayerName, cTitle, cFontFamily = "arial",
+  cForegroundColour = "green", cBackgroundColour = "black",
+  cFontColour = "white", vnExpand = c(0.1, 0.1))
 }
 \arguments{
 \item{dtPlayerMetrics}{A dataset with one row for each PlayerName, and various
-metrics about the PlayerName declared in separate columns. Refer to the 
+metrics about the PlayerName declared in separate columns. Refer to the
 dtPlayerMetrics dataset packaged with the library for an example}
 
 \item{vcColumnsToIndex}{The non-metric columns in your dataset, these are
 typically columns like name, age, team, position, etc.}
 
-\item{dtMetricCategorisation}{A table with metadata about the variables in 
-dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the 
+\item{dtMetricCategorisation}{A table with metadata about the variables in
+dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the
 library for an example.}
 
 \item{cPlayerName}{The name of the PlayerName you want visualised}
@@ -26,7 +28,7 @@ library for an example.}
 \description{
 The radar stretch out across each metric. The farther the radar stretches
 on a particular metric, the higher percentile the player is on that metric.
-You can create percentile bar charts with the same arguments using the 
+You can create percentile bar charts with the same arguments using the
 fPercentileBarChart function.
 }
 \examples{

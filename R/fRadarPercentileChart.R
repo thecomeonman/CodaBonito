@@ -2,24 +2,24 @@
 #'
 #' The radar stretch out across each metric. The farther the radar stretches
 #' on a particular metric, the higher percentile the player is on that metric.
-#' You can create percentile bar charts with the same arguments using the 
+#' You can create percentile bar charts with the same arguments using the
 #' fPercentileBarChart function.
 #'
 #' @param dtPlayerMetrics A dataset with one row for each PlayerName, and various
-#' metrics about the PlayerName declared in separate columns. Refer to the 
+#' metrics about the PlayerName declared in separate columns. Refer to the
 #' dtPlayerMetrics dataset packaged with the library for an example
 #' @param vcColumnsToIndex The non-metric columns in your dataset, these are
 #' typically columns like name, age, team, position, etc.
-#' @param dtMetricCategorisation A table with metadata about the variables in 
-#' dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the 
-#' library for an example. 
+#' @param dtMetricCategorisation A table with metadata about the variables in
+#' dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the
+#' library for an example.
 #' @param cPlayerName The name of the PlayerName you want visualised
 #' @param cTitle The title on the chart
 #' @examples
 #' fRadarPercentileChart (
-#'    dtPlayerMetrics,
+#'    dtPlayerMetrics = dtPlayerMetrics,
 #'    vcColumnsToIndex = c('PlayerName','TeamName'),
-#'    dtMetricCategorisation,
+#'    dtMetricCategorisation = dtMetricCategorisation,
 #'    cPlayerName = "gjn xfv",
 #'    cTitle = 'Sample'
 #' )
@@ -32,7 +32,12 @@ fRadarPercentileChart = function (
    vcColumnsToIndex,
    dtMetricCategorisation,
    cPlayerName,
-   cTitle
+   cTitle,
+   cFontFamily = 'arial',
+   cForegroundColour = 'green',
+   cBackgroundColour = 'black',
+   cFontColour = 'white',
+   vnExpand = c(0.1, 0.1)
 ) {
 
    warning(
@@ -123,8 +128,8 @@ fRadarPercentileChart = function (
          data = dtPlayer,
          aes(x = RadarX, y = RadarY),
          alpha = 0,
-         fill = 'green',
-         color = 'green',
+         fill = cForegroundColour,
+         color = cForegroundColour,
          size = 3
       ) +
       geom_text(
@@ -150,9 +155,10 @@ fRadarPercentileChart = function (
             )
          ],
          aes(x = RadarX, y = RadarY, label = round(value, 2)),
-         color = 'white',
+         color = cFontColour,
          size = 4,
-         fontface = 'bold'
+         fontface = 'bold',
+         family = cFontFamily
       ) +
       geom_segment(
          data = rbind(
@@ -165,8 +171,10 @@ fRadarPercentileChart = function (
             variable
          ][,
             list(
-               RadarX = RadarX * 1.03,
-               RadarY = RadarY * 1.03
+               RadarX = 1.04 * cos(Angle),
+               RadarY = 1.04 * sin(Angle)
+               # RadarX = RadarX * 1.03,
+               # RadarY = RadarY * 1.03
             ),
             variable
          ],
@@ -177,39 +185,99 @@ fRadarPercentileChart = function (
             yend = RadarY
          ),
          alpha = 0.2,
-         color = 'white'
+         color = cFontColour
       ) +
       geom_text(
          data = rbind(
             dtPlayerMetrics,
             dtPlayer
-         )[,
+         )[
+            Angle <= pi
+         ][,
             .SD[
                which.max(MappedValue)
             ],
-            variable
+            list(
+               variableLabel,
+               variable
+            )
          ][,
             list(
-               RadarX = RadarX * 1.1,
-               RadarY = RadarY * 1.1
+               # RadarX = RadarX * 1.1,
+               # RadarY = RadarY * 1.1
+               RadarX = 1.04 * cos(Angle),
+               RadarY = 1.04 * sin(Angle)
             ),
             list(
-               Angle = ifelse(
+               # Calling this column angle messes with the radarx and radary
+               # calculation. I think this gets evaluated before that, so you
+               # end up getting all the labels on one side of the circle with
+               # overlap
+               AngleOrientation = ifelse(
                   Angle <= pi,
                   Angle + pi,
                   Angle
                ),
-               variable
+               variable,
+               variableLabel
             )
          ],
          aes(
             x = RadarX,
             y = RadarY,
-            label = variable,
-            angle = ( 90 ) + ( 180 * Angle /  pi )
+            label = variableLabel,
+            angle = ( 90 ) + ( 180 * AngleOrientation /  pi )
          ),
          fontface = 'bold',
-         color = 'white'
+         color = cFontColour,
+         family = cFontFamily,
+         vjust = 0
+      ) +
+      geom_text(
+         data = rbind(
+            dtPlayerMetrics,
+            dtPlayer
+         )[
+            Angle > pi
+         ][,
+            .SD[
+               which.max(MappedValue)
+            ],
+            list(
+               variableLabel,
+               variable
+            )
+         ][,
+            list(
+               # RadarX = RadarX * 1.1,
+               # RadarY = RadarY * 1.1
+               RadarX = 1.1 * cos(Angle),
+               RadarY = 1.1 * sin(Angle)
+            ),
+            list(
+               # Calling this column angle messes with the radarx and radary
+               # calculation. I think this gets evaluated before that, so you
+               # end up getting all the labels on one side of the circle with
+               # overlap
+               AngleOrientation = ifelse(
+                  Angle <= pi,
+                  Angle + pi,
+                  Angle
+               ),
+               variable,
+               variableLabel
+            )
+         ],
+         aes(
+            x = RadarX,
+            y = RadarY,
+            label = variableLabel,
+            angle = ( 90 ) + ( 180 * AngleOrientation /  pi )
+         ),
+         fontface = 'bold',
+         color = cFontColour,
+         family = cFontFamily,
+         vjust = 1
       ) +
       geom_point(
          aes(
@@ -218,10 +286,12 @@ fRadarPercentileChart = function (
          )
       ) +
       coord_fixed() +
+      scale_x_continuous(expand = expand_scale(mult = 0, add = vnExpand[1])) +
+      scale_y_continuous(expand = expand_scale(mult = 0, add = vnExpand[2])) +
       theme(
-         panel.background = element_rect(fill = 'black'),
+         panel.background = element_rect(fill = cBackgroundColour),
          panel.border = element_blank(),
-         plot.background = element_rect(fill = 'black'),
+         plot.background = element_rect(fill = cBackgroundColour),
          panel.grid.major.x = element_blank(),
          panel.grid.minor.x = element_blank(),
          panel.grid.major.y = element_blank(),
@@ -231,14 +301,22 @@ fRadarPercentileChart = function (
          axis.title = element_blank(),
          panel.spacing = unit(3, "lines"),
          strip.placement = 'outside',
-         strip.background = element_rect(fill = 'green'),
-         strip.text = element_text(size = 15, face = 'bold', color = 'white'),
+         strip.background = element_rect(
+            fill = cForegroundColour
+         ),
+         strip.text = element_text(
+            size = 15,
+            face = 'bold',
+            color = cFontColour,
+            family = cFontFamily
+         ),
          plot.title = element_text(
-            color = 'white',
+            color = cFontColour,
             size = 15,
             hjust = 0.5,
             margin = margin(15, 15, 15, 15),
-            face = 'bold'
+            face = 'bold',
+            family = cFontFamily
          )
       ) +
       labs(

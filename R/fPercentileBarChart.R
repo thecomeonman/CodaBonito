@@ -154,6 +154,6 @@ fPercentileBarChart = function(
          )
       )
 
-   print(plotVanillaDesign)
+   plotVanillaDesign
 
 }

@@ -1,0 +1,141 @@
+---
+title: "CodaBonito"
+author: "Aditya Kothari"
+date: "`r Sys.Date()`"
+output: prettydoc::html_pretty
+vignette: >
+  %\VignetteIndexEntry{Introduction to CodaBonito}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r Setup, cache=FALSE, echo=FALSE, warning=FALSE, message=FALSE, fig.width = 15, fig.height = 8, results = 'hide'}
+
+library(knitr)
+read_chunk('./CodaBonito.R')
+
+```
+
+```{r SetupChunk, echo = F}
+```
+
+This document offers a brief introduction to the functions in this library. 
+Some function might be fairly straightforward to create but some functions may 
+need you to look up the help entry before trying it out.
+
+## Disclaimer / Call for Inputs
+
+This library is very much in development. It is a compilation of code I've 
+written across different project which is why there may be syntactical 
+inconsistencies, such as some functions using player names and some others 
+using player IDs as a reference for players. Some of this is also code that 
+I have never published the output of so it may need additional arguments. I
+have, however, tried to give enough documentation for each function so anyone
+trying to use the library should be well equipped with instructions and a basic
+understanding of how the functions work.
+
+Any inputs and feedback is welcome. If you're on github, then head to
+github.com/thecomeonman/CodaBonit, or else get in touch <a href = 
+"twitter.com/thecomeonman">on Twitter</a>
+
+## Data
+
+I have added some fake data along with the package to be able to better 
+explain the usage of these functions.
+
+`dtPlayerMetrics` - aggregated data for players is typically in a format 
+similar to this, with some extra details about the team they play for, their 
+age, etc.
+```{r DataDescriptionPlayerMetrics, echo = F}
+```
+
+`dtMetricCategorisation` - some metadata about the metrics. 
+- variableLabel is the name that will be displayed in charts for that metric, 
+- variableCategory is the grouping of variables used in some visualisations,
+like `fNormalisedValueChart`
+- HighValueIsBad is marked true for variables where a high value is bad. 
+Variables such as fouls and goals conceded would be true.
+```{r DataDescriptionMetricCategorisation, echo = F}
+```
+
+`dtPasses` - passing data. 
+- x,y denote the start coordinates of the pass
+- endX, endY denote the end coordinates of the pass
+- passLength is the length of the pass
+- passAngle is the angle of the pass in radians  ( 180 degress = pi radians )
+where 0 is along the pitch from defense to offense.
+- Success 1 for successful pass, 0 for failed pass
+
+```{r DataDescriptionPasses, echo = F}
+```
+
+`dtFormation` - formation coordinates
+```{r DataDescriptionFormation, echo = F}
+```
+
+`dtPlayerLabels` - player labels
+```{r DataDescriptionPlayerLabels, echo = F}
+```
+
+## Visualisations
+
+### fAddPitchLines
+
+fAddPitchLines draws pitch markings with further customisations available
+
+```{r fAddPitchLines}
+```
+
+You can add whatever stats you want on top of it like regular ggplot2
+
+```{r fAddPitchLinesData}
+```
+
+### theme_pitch
+
+If you aren't interested in having the axis markings, etc., use theme_pitch
+
+```{r theme_pitch}
+```
+
+### fNormalisedValueChart
+```{r fNormalisedValueChart}
+```
+
+### fPercentileBarChart
+```{r fPercentileBarChart}
+```
+
+### fRadarPercentileChart
+
+I disapprove of radar charts. It's a bad visualisation, prone to 
+misinterpretation. They seem to be the accepted norm of comparing players 
+though which is why I had to sell out and have an implementation of that in the 
+package, but I've added a warning which states how you should use 
+fPercentileBarChart instead as that is a better structured visualisation.
+```{r fRadarPercentileChart}
+```
+
+### fPlotSonar
+```{r fPlotSonar}
+```
+
+## Logic and Algorithms
+
+### fEMDDetailed
+A function to calculate earth mover's distance. It offers more flexibility and
+transparency than emdist:emd.
+
+Any distance matrix can be used to calculated EMD, but emdist:emd insists on 
+getting the raw distributions with only up to four dimensions. fEMDDetailed
+only requires a distance matrix between each combination of observations in the 
+two datasets, irrespective of the nature of the data.
+
+```{r fEMDDetailed}
+```
+
+On the topic of transparency, one of the things I find very useful is that you 
+can now see how much distance is being contributed by each observation.
+
+```{r fEMDDetailedExtra}
+```

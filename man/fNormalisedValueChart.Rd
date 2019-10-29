@@ -6,18 +6,20 @@
 where the PlayerName of interest lies}
 \usage{
 fNormalisedValueChart(dtPlayerMetrics, vcColumnsToIndex,
-  dtMetricCategorisation, cPlayerName, cTitle)
+  dtMetricCategorisation, cPlayerName, cTitle, cFontFamily = "arial",
+  cForegroundColour = "green", cBackgroundColour = "black",
+  cFontColour = "white", vnExpand = c(0.1, 0.1))
 }
 \arguments{
 \item{dtPlayerMetrics}{A dataset with one row for each PlayerName, and various
-metrics about the PlayerName declared in separate columns. Refer to the 
+metrics about the PlayerName declared in separate columns. Refer to the
 dtPlayerMetrics dataset packaged with the library for an example}
 
 \item{vcColumnsToIndex}{The non-metric columns in your dataset, these are
 typically columns like name, age, team, position, etc.}
 
-\item{dtMetricCategorisation}{A table with metadata about the variables in 
-dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the 
+\item{dtMetricCategorisation}{A table with metadata about the variables in
+dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the
 library for an example.}
 
 \item{cPlayerName}{The name of the PlayerName you want visualised}

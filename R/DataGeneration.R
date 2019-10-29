@@ -85,6 +85,7 @@ if ( F ) {
 
    dtMetricCategorisation = data.table(
       variable = c('Metric1','Metric2','Metric3','Metric4','Metric5','Metric7'),
+      variableLabel = c('Metric 1','Metric 2','Metric 3','Metric 4','Metric 5','Metric 7'),
       variableCategory = c('Offense','Offense','Defense','Offense','Defense','Defense'),
       HighValueIsBad = c(F,F,F,T,F,F)
    )

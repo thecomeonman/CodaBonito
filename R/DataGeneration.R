@@ -235,4 +235,34 @@ if ( F ) {
    )
 
 
+   nEvents = 40
+   nGoals = 6
+   set.seed(34)
+   dtXg = data.table(
+      minute = runif(nEvents) * 95,
+      second = runif(nEvents) * 60,
+      teamId = round(runif(nEvents), 0) + 1,
+      xG = rbeta(nEvents, 0.4, 2),
+      Goal = 1:nEvents %in% sample(1:nEvents, nGoals)
+   )
+
+   save(
+      list = 'dtXg',
+      file = './data/dtXg.rda'
+   )
+
+   dtTeamLabels = data.table(
+      teamId = c(1,2),
+      teamName = c(
+         'FC ABC',
+         'QWE FC'
+      )
+   )
+
+   save(
+      list = 'dtTeamLabels',
+      file = './data/dtTeamLabels.rda'
+   )
+
+
 }

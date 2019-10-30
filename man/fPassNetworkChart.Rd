@@ -5,7 +5,7 @@
 \title{Pass network ( WIP )}
 \usage{
 fPassNetworkChart(dtPasses, dtPlayerLabels, nXLimit = 120,
-  nYLimit = 80)
+  nYLimit = 80, nSegmentWidth = 1)
 }
 \arguments{
 \item{dtPasses}{a data.table with the columns playerId ( the player who

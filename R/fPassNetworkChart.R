@@ -29,7 +29,8 @@ fPassNetworkChart = function(
    dtPasses,
    dtPlayerLabels, 
    nXLimit = 120,
-   nYLimit = 80
+   nYLimit = 80,
+   nSegmentWidth = 1
 ) {
 
    vnAngleSequence = seq(0, 2*pi, pi/50)   
@@ -203,6 +204,9 @@ fPassNetworkChart = function(
 
    } else if ( T ) {
 
+      # ascending order of max of back and fro between each two players is the 
+      # order in which the segments get placed. Highest passing between two 
+      # players should be visible on top
       dtSegmentOutlines = rbind(
          dtSegments[, list(playerId, recipientPlayerId, CountBetween)],
          dtSegments[, list(playerId = recipientPlayerId, recipientPlayerId = playerId, CountBetween)]
@@ -213,6 +217,7 @@ fPassNetworkChart = function(
          list(playerId, recipientPlayerId)
       ]
 
+      # for each pair of back and fro, adding the segments
       for ( i in seq(nrow(dtSegmentOutlines))) {
 
          dtSegmentSubset = dtSegments[
@@ -220,21 +225,22 @@ fPassNetworkChart = function(
             recipientPlayerId %in% dtSegmentOutlines[i, c(playerId, recipientPlayerId)],
          ]
 
+         # adding the pass segment
          p1 = p1 +
             geom_polygon(
                data = dtSegmentSubset[,
                   list(
                      x = c(
-                           ( receipientX ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( receipientX ) - ( nSegmentWidth * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
                            ( receipientX ) + ( 0 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
                            ( x           ) + ( 0 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                           ( x           ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                           ( x           ) - ( nSegmentWidth * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
                      ),
                      y = c(
-                           ( receipientY ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( receipientY ) - ( nSegmentWidth * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
                            ( receipientY ) + ( 0 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
                            ( y           ) + ( 0 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                           ( y           ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                           ( y           ) - ( nSegmentWidth * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
                      )
                   ),
                   list(
@@ -247,25 +253,27 @@ fPassNetworkChart = function(
                   x = x,
                   y = y,
                   group = paste(formatC(CountBetween, flag='0', width = 3), playerId, recipientPlayerId),
+                  # alpha = CountBetween
                   fill = CountBetween
-               )
+               ),
+               # fill = 'black'
             )
 
 
-
+         # adding the direction
          p1 = p1 +
-            geom_polygon(
+            geom_path(
                data = dtSegmentSubset[,
                   list(
                      x = c(
-                        ( ( receipientX + x ) / 2 ) + ( 0 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                        ( ( receipientX + x ) / 2 ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                        ( ( receipientX + x ) / 2 ) - ( 1 * cos( (pi/6) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                        ( ( ( receipientX * 0.45 ) + ( x * 0.55 ) ) ) - ( nSegmentWidth * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( ( ( receipientX * 0.45 ) + ( x * 0.55 ) ) ) - ( nSegmentWidth * cos( (pi/6) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( ( ( receipientX * 0.45 ) + ( x * 0.55 ) ) ) + ( 0 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
                      ),
                      y = c(
-                        ( ( receipientY + y ) / 2 ) + ( 0 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                        ( ( receipientY + y ) / 2 ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                        ( ( receipientY + y ) / 2 ) - ( 1 * sin( (pi/6) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                        ( ( ( receipientY * 0.45 ) + ( y * 0.55 ) ) ) - ( nSegmentWidth * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( ( ( receipientY * 0.45 ) + ( y * 0.55 ) ) ) - ( nSegmentWidth * sin( (pi/6) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                        ( ( ( receipientY * 0.45 ) + ( y * 0.55 ) ) ) + ( 0 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
                      )
                   ),
                   list(
@@ -278,7 +286,8 @@ fPassNetworkChart = function(
                   x = x,
                   y = y,
                   group = paste(formatC(CountBetween, flag='0', width = 3), playerId, recipientPlayerId),
-                  fill = ifelse(
+                  color = ifelse(
+                  # fill = ifelse(
                      CountBetween < dtSegments[, max(CountBetween) / 2],
                      dtSegments[, max(CountBetween)],
                      0
@@ -291,16 +300,16 @@ fPassNetworkChart = function(
                data = dtSegmentSubset[1][,
                   list(
                      x = c(
-                           ( receipientX ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                           ( receipientX ) + ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                           ( x           ) + ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                           ( x           ) - ( 1 * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                           ( receipientX ) - ( nSegmentWidth * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( receipientX ) + ( nSegmentWidth * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( x           ) + ( nSegmentWidth * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( x           ) - ( nSegmentWidth * cos( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
                      ),
                      y = c(
-                           ( receipientY ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                           ( receipientY ) + ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                           ( y           ) + ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
-                           ( y           ) - ( 1 * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
+                           ( receipientY ) - ( nSegmentWidth * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( receipientY ) + ( nSegmentWidth * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( y           ) + ( nSegmentWidth * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) ),
+                           ( y           ) - ( nSegmentWidth * sin( (pi/2) + atan2( y = ( receipientY - y ), x = ( receipientX - x ) )) )
                      )
                   ),
                   list(
@@ -341,7 +350,13 @@ fPassNetworkChart = function(
          limits = c(
             0,
             dtSegments[, max(CountBetween)]
-         )
+         ),
+         guide = 'none'
+      ) +
+      scale_color_continuous(
+         low = 'white',
+         high = 'black',
+         guide = 'none'
       ) +
       theme_pitch()
 

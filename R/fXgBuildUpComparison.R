@@ -5,7 +5,7 @@
 fXgBuildUpComparison = function(
    dtXg,
    dtTeamLabels = NULL,
-   iSimulationIterations = 1000
+   iSimulationIterations = 100
 ) {
 
    vcTeamIds = dtXg[, unique(teamId)]
@@ -28,7 +28,7 @@ fXgBuildUpComparison = function(
    dtXg[, ActualEvent := T ]
    dtXg = rbind(
       dtXg,
-      dtXg[, .SD[which.max(time)], teamId][, ActualEvent := time == max(time)][time != max(time)][, time := dtXg[,max(time)]]
+      dtXg[, .SD[which.max(time)], teamId][, ActualEvent := F][, time := max(time) + 1][, xG := 0]
    )
 
    dtXg = rbind(
@@ -43,7 +43,7 @@ fXgBuildUpComparison = function(
       all = T
    )
 
-   dtXg[, xG := na.locf(xG), teamId]
+   dtXg[is.na(xG), xG := 0, teamId]
    dtXg[, CumXg := na.locf(CumXg), teamId]
    dtXg[, CumGoals := na.locf(CumGoals), teamId]
    dtXg[is.na(Goal), Goal := F]
@@ -74,8 +74,8 @@ fXgBuildUpComparison = function(
    # dtGoalsComparison = dtGoalsComparison[time > 0]
 
    dtComparisons = rbind(
-      dtCumXgComparison[order(time), list(Winner, time, variable = 'ComparisonCumXg')],
-      dtGoalsComparison[order(time), list(Winner, time, variable = 'ComparisonGoals')]
+      dtCumXgComparison[order(time), list(Winner, time, variable = 'CumXgDifference')],
+      dtGoalsComparison[order(time), list(Winner, time, variable = 'GoalDifference')]
    )
 
    dtComparisons[,
@@ -103,7 +103,7 @@ fXgBuildUpComparison = function(
          1:iSimulationIterations,
          function ( i ) {
 
-            dtXg[, SimGoals := runif(.N) < xG]
+            dtXg[, SimGoals := ActualEvent == T & runif(.N) < xG]
             dtXg[, CumSimGoals := cumsum(SimGoals), teamId]
 
             dtSimGoalsComparison = dcast(dtXg, time~teamId, value.var = 'CumSimGoals')
@@ -131,7 +131,7 @@ fXgBuildUpComparison = function(
    ]
 
    dtSimGoalsComparison = merge(
-      c,
+      dtSimGoalsComparison,
       dtSimGoalsComparison[,
          list(
             Winner = c(-1, 0, 1)
@@ -185,14 +185,22 @@ fXgBuildUpComparison = function(
       WinningTeam := vcTeamIds[1]
    ]
 
-   dtSimGoalsComparison[, variable := 'ComparisonSimWinProbability']
+   dtSimGoalsComparison[, variable := 'WinProbability']
 
    dtXg[, teamId := factor(teamId, ordered = T, levels = c(NA, vcTeamIds))]
+   dtXgLong[, teamId := factor(teamId, ordered = T, levels = c(NA, vcTeamIds))]
    dtComparisons[, WinningTeam := factor(WinningTeam, ordered = T, levels = c(NA, vcTeamIds))]
    dtSimGoalsComparison[, WinningTeam := factor(WinningTeam, ordered = T, levels = c(NA, vcTeamIds))]
-   # dtSimGoalsComparison[time == sort(unique(time))[2]]
+
+   dtXgLong[, variable := factor(variable, ordered = T, levels = c(  "CumGoals", "GoalDifference", "xG", "CumXg", "CumXgDifference", "WinProbability"))]
+   dtComparisons[, variable := factor(variable, ordered = T, levels = c(  "CumGoals", "GoalDifference", "xG", "CumXg", "CumXgDifference", "WinProbability"))]
+   dtSimGoalsComparison[, variable := factor(variable, ordered = T, levels = c(  "CumGoals", "GoalDifference", "xG", "CumXg", "CumXgDifference", "WinProbability"))]
+
 
    p1 = ggplot() +
+      geom_hline(
+         yintercept = 0
+      ) +
       geom_step(
          data = dtXgLong[variable == 'CumXg'],
          aes(
@@ -203,6 +211,15 @@ fXgBuildUpComparison = function(
          )
       ) +
       geom_point(
+         data = dtXgLong[ActualEvent == T][variable == 'CumXg'][Goal == T],
+         aes(
+            x = time,
+            y = value,
+            group = teamId
+         ),
+         size = 2,
+      ) +
+      geom_point(
          data = dtXgLong[ActualEvent == T][variable == 'CumXg'],
          aes(
             x = time,
@@ -211,15 +228,6 @@ fXgBuildUpComparison = function(
             color = factor(teamId)
          ),
          size = 1,
-      ) +
-      geom_point(
-         data = dtXgLong[ActualEvent == T][variable == 'CumXg'][Goal == T],
-         aes(
-            x = time,
-            y = value,
-            group = teamId
-         ),
-         size = 2,
       ) +
       geom_segment(
          data = dtXgLong[ActualEvent == T][variable == 'xG'],
@@ -258,19 +266,19 @@ fXgBuildUpComparison = function(
             xmin = time,
             xmax = Nexttime,
             ymin = 0,
-            ymax = Winner,
+            ymax = abs(Winner),
             fill = factor(WinningTeam)
          )
-      )  +
+      ) +
       geom_step(
          data = dtComparisons,
          aes(
             x = time,
-            y = Winner
+            y = abs(Winner)
          )
       ) +
       geom_rect(
-         data = dtSimGoalsComparison,
+         data = dtSimGoalsComparison[!is.na(WinningTeam)],
          aes(
             xmin = time,
             xmax = Nexttime,
@@ -279,6 +287,22 @@ fXgBuildUpComparison = function(
             fill = factor(WinningTeam)
          )
       ) +
+      geom_step(
+         data = dtSimGoalsComparison,
+         aes(
+            x = time,
+            y = CumN / iSimulationIterations,
+            group = WinningTeam
+         )
+      ) +
+      # geom_line(
+      #    data = dtSimGoalsComparison,
+      #    aes(
+      #       x = time,
+      #       y = 0.5
+      #    ),
+      #    linetype = 2
+      # ) +
       facet_grid(
          variable~.,
          scale = 'free_y',

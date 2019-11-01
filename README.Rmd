@@ -129,6 +129,10 @@ fPercentileBarChart instead as that is a better structured visualisation.
 ```{r fPassNetworkChart}
 ```
 
+### fXgBuildUpComparison
+```{r fXgBuildUpComparison}
+```
+
 ## Logic and Algorithms
 
 ### fEMDDetailed

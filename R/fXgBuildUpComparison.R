@@ -185,16 +185,16 @@ fXgBuildUpComparison = function(
       WinningTeam := vcTeamIds[1]
    ]
 
-   dtSimGoalsComparison[, variable := 'WinProbability']
+   dtSimGoalsComparison[, variable := 'LeadProbability']
 
    dtXg[, teamId := factor(teamId, ordered = T, levels = c(NA, vcTeamIds))]
    dtXgLong[, teamId := factor(teamId, ordered = T, levels = c(NA, vcTeamIds))]
    dtComparisons[, WinningTeam := factor(WinningTeam, ordered = T, levels = c(NA, vcTeamIds))]
    dtSimGoalsComparison[, WinningTeam := factor(WinningTeam, ordered = T, levels = c(NA, vcTeamIds))]
 
-   dtXgLong[, variable := factor(variable, ordered = T, levels = c(  "CumGoals", "GoalDifference", "xG", "CumXg", "CumXgDifference", "WinProbability"))]
-   dtComparisons[, variable := factor(variable, ordered = T, levels = c(  "CumGoals", "GoalDifference", "xG", "CumXg", "CumXgDifference", "WinProbability"))]
-   dtSimGoalsComparison[, variable := factor(variable, ordered = T, levels = c(  "CumGoals", "GoalDifference", "xG", "CumXg", "CumXgDifference", "WinProbability"))]
+   dtXgLong[, variable := factor(variable, ordered = T, levels = c(  "CumGoals", "GoalDifference", "xG", "CumXg", "CumXgDifference", "LeadProbability"))]
+   dtComparisons[, variable := factor(variable, ordered = T, levels = c(  "CumGoals", "GoalDifference", "xG", "CumXg", "CumXgDifference", "LeadProbability"))]
+   dtSimGoalsComparison[, variable := factor(variable, ordered = T, levels = c(  "CumGoals", "GoalDifference", "xG", "CumXg", "CumXgDifference", "LeadProbability"))]
 
 
    p1 = ggplot() +
@@ -275,6 +275,13 @@ fXgBuildUpComparison = function(
          aes(
             x = time,
             y = abs(Winner)
+         )
+      ) +
+      geom_step(
+         data = dtComparisons,
+         aes(
+            x = time,
+            y = pmax(0, Winner)
          )
       ) +
       geom_rect(

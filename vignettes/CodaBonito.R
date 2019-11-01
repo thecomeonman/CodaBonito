@@ -217,8 +217,16 @@ pPassNetworkChart = fPassNetworkChart(
    dtPasses,
    dtPlayerLabels
 )
-
 print(pPassNetworkChart)
+
+## ----fXgBuildUpComparison, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+pXgBuildUpComparison = fXgBuildUpComparison(
+   dtXg,
+   dtTeamLabels
+)
+print(pXgBuildUpComparison)
+
+
 
 ## ----fEMDDetailed, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
 

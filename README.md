@@ -563,10 +563,19 @@ visualisation.
        dtPasses,
        dtPlayerLabels
     )
-
     print(pPassNetworkChart)
 
 ![](README_files/figure-markdown_strict/fPassNetworkChart-1.png)
+
+### fXgBuildUpComparison
+
+    pXgBuildUpComparison = fXgBuildUpComparison(
+       dtXg,
+       dtTeamLabels
+    )
+    print(pXgBuildUpComparison)
+
+![](README_files/figure-markdown_strict/fXgBuildUpComparison-1.png)
 
 Logic and Algorithms
 --------------------
@@ -610,7 +619,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.3525632
+    #> [1] 0.4347787
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our 

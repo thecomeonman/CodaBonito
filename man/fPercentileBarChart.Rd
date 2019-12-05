@@ -4,26 +4,25 @@
 \alias{fPercentileBarChart}
 \title{Ashwin Raman's percentile bar charts}
 \usage{
-fPercentileBarChart(dtDataset, vcColumnsToIndex = c("PlayerName",
-  "TeamName"), dtMetricCategorisation, cPlayerName = "gjn xfv",
-  cTitle = NULL, nColumnWidthByTwo = 0.25,
+fPercentileBarChart(dtDataset, vcColumnsToIndex, dtMetricCategorisation,
+  iPlayerId, cTitle = NULL, nColumnWidthByTwo = 0.25,
   nBufferForTextHorizontal = 0.005, nBufferForTextVertical = 0.05,
-  vnQuantileMarkers = c(0.01, 0.25, 0.5, 0.75, 0.99))
+  vnQuantileMarkers = NULL, bAddAbsoluteIndicator = F)
 }
 \arguments{
 \item{vcColumnsToIndex}{The non-metric columns in your dataset, these are
 typically columns like name, age, team, position, etc.}
 
-\item{dtMetricCategorisation}{A table with metadata about the variables in 
-dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the 
+\item{dtMetricCategorisation}{A table with metadata about the variables in
+dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the
 library for an example.}
 
-\item{cPlayerName}{The name of the PlayerName you want visualised}
+\item{iPlayerId}{The ID of the player you want visualised}
 
 \item{cTitle}{The title on the chart}
 
 \item{dtPlayerMetrics}{A dataset with one row for each PlayerName, and various
-metrics about the PlayerName declared in separate columns. Refer to the 
+metrics about the PlayerName declared in separate columns. Refer to the
 dtPlayerMetrics dataset packaged with the library for an example}
 }
 \description{
@@ -33,9 +32,9 @@ This is a much better alternative to radar plots.
 \examples{
 fPercentileBarChart(
    dtDataset = dtPlayerMetrics,
-   vcColumnsToIndex = c('PlayerName','TeamName'),
+   vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
    dtMetricCategorisation,
-   cPlayerName = "gjn xfv",
+   iPlayerId = 2,
    cTitle = 'Sample'
 )
 }

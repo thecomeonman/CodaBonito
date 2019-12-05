@@ -40,7 +40,7 @@ print(pPitch)
 ## ----fAddPitchLinesData, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
 
 # adding passing data on top now
-pPitch = pPitch + 
+pPitch = pPitch +
    geom_point(
       data = dtPasses,
       aes(x = x , y = y)
@@ -50,7 +50,7 @@ print(pPitch)
 
 ## ----theme_pitch, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
 
-pPitch = pPitch + 
+pPitch = pPitch +
    theme_pitch()
 
 print(pPitch)
@@ -61,9 +61,9 @@ print(pPitch)
 
 pNormalisedValueChart = fNormalisedValueChart (
    dtPlayerMetrics,
-   vcColumnsToIndex = c('PlayerName','TeamName'),
+   vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
    dtMetricCategorisation,
-   cPlayerName = "gjn xfv",
+   iPlayerId = 2,
    cTitle = 'Sample'
 )
 
@@ -72,10 +72,22 @@ print(pNormalisedValueChart)
 ## ----fPercentileBarChart, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
 pPercentileBarChart = fPercentileBarChart(
    dtDataset = dtPlayerMetrics,
-   vcColumnsToIndex = c('PlayerName','TeamName'),
+   vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
    dtMetricCategorisation,
-   cPlayerName = "gjn xfv",
+   iPlayerId = 2,
    cTitle = 'Sample'
+)
+print(pPercentileBarChart)
+
+## ----fPercentileBarChartAbsoluteIndicator, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+pPercentileBarChart = fPercentileBarChart(
+   dtDataset = dtPlayerMetrics,
+   vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
+   dtMetricCategorisation,
+   iPlayerId = 2,
+   cTitle = 'Sample',
+   # vnQuantileMarkers = c(0.01, 0.25, 0.5, 0.75, 0.99),
+   bAddAbsoluteIndicator = T
 )
 
 print(pPercentileBarChart)
@@ -83,9 +95,9 @@ print(pPercentileBarChart)
 ## ----fRadarPercentileChart, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
 pRadarPercentileChart = fRadarPercentileChart (
    dtPlayerMetrics = dtPlayerMetrics,
-   vcColumnsToIndex = c('PlayerName','TeamName'),
+   vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
    dtMetricCategorisation = dtMetricCategorisation,
-   cPlayerName = "gjn xfv",
+   iPlayerId = 2,
    cTitle = 'Sample'
 )
 print(pRadarPercentileChart)
@@ -104,13 +116,13 @@ pPlotSonar = fPlotSonar(
 )
 print(pPlotSonar)
 
-# Sonar broken up by pitch area 
+# Sonar broken up by pitch area
 pPlotSonarVariation1 = fPlotSonar(
    dtPassesToPlot = dtPasses[,
       list(
          playerId,
          passLength,
-         passAngle,      
+         passAngle,
          x,
          y,
          Success,
@@ -121,7 +133,7 @@ pPlotSonarVariation1 = fPlotSonar(
                x %/% 20
             ) * 20
          ) + 10,
-         yBucket = ( 
+         yBucket = (
             ifelse(
                y %/% 20 == 80 %/% 20,
                ( y %/% 20 ) - 1,
@@ -140,21 +152,21 @@ pPlotSonarVariation1 = fPlotSonar(
 )
 print(pPlotSonarVariation1)
 
-# Sonar broken up player, placed at their median passing location 
+# Sonar broken up player, placed at their median passing location
 pPlotSonarVariation2 = fPlotSonar (
    dtPassesToPlot = merge(
       dtPasses,
       merge(
-         dtPasses[, 
+         dtPasses[,
             list(
-               xBucket = median(x), 
+               xBucket = median(x),
                yBucket = median(y)
-            ), 
+            ),
             list(
                playerId
             )
          ],
-         dtPlayerLabels[, 
+         dtPlayerLabels[,
             list(
                playerId,
                bucketLabel = playerName
@@ -189,7 +201,7 @@ pPlotSonarVariation3 = fPlotSonar(
                playerId
             )
          ],
-         dtPlayerLabels[, 
+         dtPlayerLabels[,
             list(
                playerId,
                bucketLabel = playerName
@@ -260,7 +272,7 @@ lprec = fEMDDetailed(
 print(fGetEMDFromDetailedEMD(lprec))
 
 # This value should be the same as that computed by emdist package's emd function.
-# EMD needs the weightage of each point, which is assigned as equal in our 
+# EMD needs the weightage of each point, which is assigned as equal in our
 # function, so giving 1/N weightage to each data point
 # emdist::emd(
 #    as.matrix(

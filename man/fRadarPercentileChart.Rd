@@ -5,7 +5,7 @@
 \title{A worse but more popular alternative to percentile bar charts}
 \usage{
 fRadarPercentileChart(dtPlayerMetrics, vcColumnsToIndex,
-  dtMetricCategorisation, cPlayerName, cTitle, cFontFamily = "arial",
+  dtMetricCategorisation, iPlayerId, cTitle, cFontFamily = "arial",
   cForegroundColour = "green", cBackgroundColour = "black",
   cFontColour = "white", vnExpand = c(0.1, 0.1))
 }
@@ -21,7 +21,7 @@ typically columns like name, age, team, position, etc.}
 dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the
 library for an example.}
 
-\item{cPlayerName}{The name of the PlayerName you want visualised}
+\item{iPlayerId}{The ID of the player you want visualised}
 
 \item{cTitle}{The title on the chart}
 }
@@ -36,7 +36,7 @@ fRadarPercentileChart (
    dtPlayerMetrics = dtPlayerMetrics,
    vcColumnsToIndex = c('PlayerName','TeamName'),
    dtMetricCategorisation = dtMetricCategorisation,
-   cPlayerName = "gjn xfv",
+   iPlayerId = 2,
    cTitle = 'Sample'
 )
 }

@@ -4,21 +4,21 @@
 #' This is a much better alternative to radar plots.
 #'
 #' @param dtPlayerMetrics A dataset with one row for each PlayerName, and various
-#' metrics about the PlayerName declared in separate columns. Refer to the 
+#' metrics about the PlayerName declared in separate columns. Refer to the
 #' dtPlayerMetrics dataset packaged with the library for an example
 #' @param vcColumnsToIndex The non-metric columns in your dataset, these are
 #' typically columns like name, age, team, position, etc.
-#' @param dtMetricCategorisation A table with metadata about the variables in 
-#' dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the 
-#' library for an example. 
-#' @param cPlayerName The name of the PlayerName you want visualised
+#' @param dtMetricCategorisation A table with metadata about the variables in
+#' dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the
+#' library for an example.
+#' @param iPlayerId The ID of the player you want visualised
 #' @param cTitle The title on the chart
 #' @examples
 #' fPercentileBarChart(
 #'    dtDataset = dtPlayerMetrics,
-#'    vcColumnsToIndex = c('PlayerName','TeamName'),
+#'    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
 #'    dtMetricCategorisation,
-#'    cPlayerName = "gjn xfv",
+#'    iPlayerId = 2,
 #'    cTitle = 'Sample'
 #' )
 #' @import data.table
@@ -27,14 +27,15 @@
 #' @export
 fPercentileBarChart = function(
    dtDataset,
-   vcColumnsToIndex = c('PlayerName','TeamName'),
+   vcColumnsToIndex,
    dtMetricCategorisation,
-   cPlayerName = "gjn xfv",
+   iPlayerId,
    cTitle = NULL,
    nColumnWidthByTwo = 0.25,
    nBufferForTextHorizontal = 0.005,
    nBufferForTextVertical = 0.05,
-   vnQuantileMarkers = c(0.01, 0.25, 0.5, 0.75, 0.99)
+   vnQuantileMarkers = NULL,
+   bAddAbsoluteIndicator = F
 ) {
 
    dtDataset = melt(
@@ -79,10 +80,10 @@ fPercentileBarChart = function(
       )
    ]
 
-   plotVanillaDesign = ggplot() +
+   p1 = ggplot() +
       geom_rect(
          data = dtDataset[
-            PlayerName == cPlayerName
+            playerId == iPlayerId
          ],
          aes(
             xmin = 0,
@@ -93,18 +94,18 @@ fPercentileBarChart = function(
          ),
          fill = 'green'
       ) +
-      geom_text(
-         data = dtDataset[
-            PlayerName == cPlayerName
-         ],
-         aes(
-            x = MappedValue + nBufferForTextHorizontal,
-            y = variableIndex,
-            group = paste(PlayerName, variable),
-            label = round(value, 2)
-         ),
-         hjust = 0
-      ) +
+      # geom_text(
+      #    data = dtDataset[
+      #       playerId == iPlayerId
+      #    ],
+      #    aes(
+      #       x = MappedValue + nBufferForTextHorizontal,
+      #       y = variableIndex,
+      #       group = paste(PlayerName, variable),
+      #       label = round(value, 2)
+      #    ),
+      #    hjust = 0
+      # ) +
       scale_y_continuous(
          breaks = dtDataset[, sort(unique(variableIndex))],
          labels = dtDataset[, list(variable = variable[1]), variableIndex][order(variableIndex), variable]
@@ -154,6 +155,172 @@ fPercentileBarChart = function(
          )
       )
 
-   plotVanillaDesign
+   if ( F & !is.null(vnQuantileMarkers) ) {
+
+      p1 = p1 +
+         geom_point(
+            data = dtDataset[,
+               list(Value_pile = vnQuantileMarkers),
+               list(
+                  variableIndex,
+                  variableCategory
+               )
+            ],
+            aes(
+               x = Value_pile,
+               y = variableIndex - nColumnWidthByTwo
+            ),
+            color = 'white'
+         ) +
+         geom_segment(
+            data = dtDataset[,
+               list(
+                  Value_pileMin = 0,
+                  Value_pileMax = 1
+               ),
+               list(
+                  variableIndex,
+                  variableCategory
+               )
+            ],
+            aes(
+               x = Value_pileMin,
+               xend = Value_pileMax,
+               y = variableIndex - nColumnWidthByTwo,
+               yend = variableIndex - nColumnWidthByTwo
+            ),
+            color = 'white'
+         ) +
+         geom_text(
+            data = dtDataset[,
+               list(
+                  value = quantile(value, vnQuantileMarkers),
+                  Value_pile = vnQuantileMarkers
+               ),
+               list(
+                  variable,
+                  variableIndex,
+                  variableCategory
+               )
+            ],
+            aes(
+               x = Value_pile,
+               y = variableIndex - nColumnWidthByTwo - nBufferForTextVertical,
+               label = round(value, 2)
+            ),
+            color = 'white',
+            vjust = 1
+         )
+
+   }
+
+   if ( bAddAbsoluteIndicator ) {
+
+      dtDataset[,
+         Value_pile := rank(value)/ .N,
+         variable
+      ]
+
+      dtAnnotations = dtDataset[,
+         list(
+            playerId,
+            Value_pile,
+            value,
+            valueScaled = (
+               (value - min(value)) / ( 2 * (max(value) - min(value)))
+            ) - nColumnWidthByTwo
+         ),
+         list(
+            variableIndex,
+            variableCategory
+         )
+      ][
+         playerId == iPlayerId |
+         Value_pile %in% c(min(Value_pile), max(Value_pile))
+      ]
+
+      p1 = p1 +
+         geom_segment(
+            data = dtDataset[
+               playerId == iPlayerId
+            ],
+            aes(
+               x = Value_pile,
+               xend = Value_pile,
+               y = variableIndex + nColumnWidthByTwo,
+               yend = variableIndex - nColumnWidthByTwo,
+               group = paste(PlayerName, variable)
+            ),
+            color = 'white'
+         ) +
+         geom_segment(
+            data = dtAnnotations[
+               playerId == iPlayerId
+            ],
+            aes(
+               x = Value_pile - nBufferForTextHorizontal,
+               xend = Value_pile + nBufferForTextHorizontal,
+               y = variableIndex + valueScaled,
+               yend = variableIndex + valueScaled
+            ),
+            color = 'white'
+         ) +
+         geom_text(
+            data = dtAnnotations[
+               playerId == iPlayerId
+            ],
+            aes(
+               x = Value_pile + nBufferForTextHorizontal,
+               y = variableIndex + valueScaled,
+               label = round(value, 2)
+            ),
+            color = 'white',
+            hjust = 0
+         ) +
+         geom_text(
+            data = merge(
+               dtAnnotations[
+                  Value_pile %in% c(min(Value_pile)),
+                  list(valueScaled, value, variableIndex, variableCategory)
+               ],
+               dtAnnotations[
+                  playerId == iPlayerId,
+                  list(variableIndex, Value_pile)
+               ],
+               'variableIndex'
+            ),
+            aes(
+               x = Value_pile - nBufferForTextHorizontal,
+               y = variableIndex + valueScaled - nBufferForTextVertical,
+               label = round(value, 2)
+            ),
+            color = 'white',
+            hjust = 1,
+            vjust = 1
+         ) +
+         geom_text(
+            data = merge(
+               dtAnnotations[
+                  Value_pile %in% c(max(Value_pile)),
+                  list(valueScaled, value, variableIndex, variableCategory)
+               ],
+               dtAnnotations[
+                  playerId == iPlayerId, list(variableIndex, Value_pile)
+               ],
+               'variableIndex'
+            ),
+            aes(
+               x = Value_pile - nBufferForTextHorizontal,
+               y = variableIndex + valueScaled + nBufferForTextVertical,
+               label = round(value, 2)
+            ),
+            color = 'white',
+            hjust = 1,
+            vjust = 0
+         )
+
+   }
+
+   p1
 
 }

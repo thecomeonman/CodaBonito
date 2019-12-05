@@ -42,6 +42,8 @@ if ( F ) {
       )
    ]
 
+   dtPlayerMetrics[, playerId := .I]
+
    dtPlayerMetrics[,
       Metric1 := abs(rnorm(200, mean = 3, sd = 0.5))
    ]
@@ -218,16 +220,29 @@ if ( F ) {
       file = './data/Formation.rda'
    )
 
-   dtPlayerLabels = data.table(
-      playerId = c(1, 2, 3, 8, 9),
-      playerName = c(
-         'asd qwe',
-         'qwe rty',
-         'ghj zxc',
-         'fgh rty',
-         'cvb dfg'
+   dtPlayerMetrics = data.table(
+      playerId = 1:iPlayers,
+      PlayerName = unique(
+         sapply(
+            1:iPlayers,
+            function ( x ) {
+
+               paste(
+                  paste0(
+                     sample(letters, 3),
+                     collapse = ''
+                  ),
+                  paste0(
+                     sample(letters, 3),
+                     collapse = ''
+                  )
+               )
+
+            }
+         )
       )
    )
+
 
    save(
       list = 'dtPlayerLabels',

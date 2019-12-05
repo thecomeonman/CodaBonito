@@ -9,14 +9,14 @@
 #' @param dtMetricCategorisation A table with metadata about the variables in
 #' dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the
 #' library for an example.
-#' @param cPlayerName The name of the PlayerName you want visualised
+#' @param iPlayerId The ID of the player you want visualised
 #' @param cTitle The title on the chart
 #' @examples
 #' fNormalisedValueChart (
 #'    dtPlayerMetrics,
-#'    vcColumnsToIndex = c('PlayerName','TeamName'),
+#'    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
 #'    dtMetricCategorisation,
-#'    cPlayerName = "gjn xfv",
+#'    iPlayerId = 2,
 #'    cTitle = 'Sample'
 #' )
 #' @import data.table
@@ -26,7 +26,7 @@ fNormalisedValueChart = function (
    dtPlayerMetrics,
    vcColumnsToIndex,
    dtMetricCategorisation,
-   cPlayerName,
+   iPlayerId,
    cTitle,
    cFontFamily = 'arial',
    cForegroundColour = 'green',
@@ -85,8 +85,8 @@ fNormalisedValueChart = function (
       MappedValue := 1 - MappedValue
    ]
 
-   dtPlayer = dtPlayerMetrics[PlayerName == cPlayerName]
-   dtPlayerMetrics = dtPlayerMetrics[!PlayerName == cPlayerName]
+   dtPlayer = dtPlayerMetrics[playerId == iPlayerId]
+   dtPlayerMetrics = dtPlayerMetrics[!playerId == iPlayerId]
 
    p1 = ggplot(
       dtPlayerMetrics

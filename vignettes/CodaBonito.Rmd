@@ -106,6 +106,13 @@ If you aren't interested in having the axis markings, etc., use theme_pitch
 ```{r fPercentileBarChart}
 ```
 
+### fPercentileBarChart with AbsoluteIndicator
+
+Percentiles can be a little misleading if the underlying numbers aren't uniformly distributed. You can add annotations for an indicator of the absolute spread of the values.
+
+```{r fPercentileBarChartAbsoluteIndicator}
+```
+
 ### fRadarPercentileChart
 
 I disapprove of radar charts. It's a bad visualisation, prone to 

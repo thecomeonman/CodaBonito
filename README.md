@@ -38,6 +38,7 @@ their age, etc.
 <tr class="header">
 <th style="text-align: left;">PlayerName</th>
 <th style="text-align: left;">TeamName</th>
+<th style="text-align: right;">playerId</th>
 <th style="text-align: right;">Metric1</th>
 <th style="text-align: right;">Metric2</th>
 <th style="text-align: right;">Metric3</th>
@@ -51,6 +52,7 @@ their age, etc.
 <tr class="odd">
 <td style="text-align: left;">gjn xfv</td>
 <td style="text-align: left;">jsw</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">2.229299</td>
 <td style="text-align: right;">0.5955696</td>
 <td style="text-align: right;">1.0000000</td>
@@ -62,6 +64,7 @@ their age, etc.
 <tr class="even">
 <td style="text-align: left;">yqp bfe</td>
 <td style="text-align: left;">rzu</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">3.097161</td>
 <td style="text-align: right;">0.9443782</td>
 <td style="text-align: right;">0.0029271</td>
@@ -73,6 +76,7 @@ their age, etc.
 <tr class="odd">
 <td style="text-align: left;">rjs mrx</td>
 <td style="text-align: left;">svk</td>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;">3.132211</td>
 <td style="text-align: right;">0.1286577</td>
 <td style="text-align: right;">0.0021049</td>
@@ -84,6 +88,7 @@ their age, etc.
 <tr class="even">
 <td style="text-align: left;">jtw fqd</td>
 <td style="text-align: left;">rdz</td>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;">2.440632</td>
 <td style="text-align: right;">0.5247019</td>
 <td style="text-align: right;">0.9977317</td>
@@ -95,6 +100,7 @@ their age, etc.
 <tr class="odd">
 <td style="text-align: left;">gja jvi</td>
 <td style="text-align: left;">bhj</td>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;">3.325477</td>
 <td style="text-align: right;">0.9318757</td>
 <td style="text-align: right;">0.0000363</td>
@@ -106,6 +112,7 @@ their age, etc.
 <tr class="even">
 <td style="text-align: left;">mol euq</td>
 <td style="text-align: left;">yza</td>
+<td style="text-align: right;">6</td>
 <td style="text-align: right;">2.483550</td>
 <td style="text-align: right;">0.4419821</td>
 <td style="text-align: right;">1.0000000</td>
@@ -353,7 +360,7 @@ available
 You can add whatever stats you want on top of it like regular ggplot2
 
     # adding passing data on top now
-    pPitch = pPitch + 
+    pPitch = pPitch +
        geom_point(
           data = dtPasses,
           aes(x = x , y = y)
@@ -368,7 +375,7 @@ You can add whatever stats you want on top of it like regular ggplot2
 If you aren’t interested in having the axis markings, etc., use
 theme\_pitch
 
-    pPitch = pPitch + 
+    pPitch = pPitch +
        theme_pitch()
 
     print(pPitch)
@@ -379,9 +386,9 @@ theme\_pitch
 
     pNormalisedValueChart = fNormalisedValueChart (
        dtPlayerMetrics,
-       vcColumnsToIndex = c('PlayerName','TeamName'),
+       vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
        dtMetricCategorisation,
-       cPlayerName = "gjn xfv",
+       iPlayerId = 2,
        cTitle = 'Sample'
     )
 
@@ -393,15 +400,34 @@ theme\_pitch
 
     pPercentileBarChart = fPercentileBarChart(
        dtDataset = dtPlayerMetrics,
-       vcColumnsToIndex = c('PlayerName','TeamName'),
+       vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
        dtMetricCategorisation,
-       cPlayerName = "gjn xfv",
+       iPlayerId = 2,
        cTitle = 'Sample'
+    )
+    print(pPercentileBarChart)
+
+![](README_files/figure-markdown_strict/fPercentileBarChart-1.png)
+
+### fPercentileBarChart with AbsoluteIndicator
+
+Percentiles can be a little misleading if the underlying numbers aren’t
+uniformly distributed. You can add annotations for an indicator of the
+absolute spread of the values.
+
+    pPercentileBarChart = fPercentileBarChart(
+       dtDataset = dtPlayerMetrics,
+       vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
+       dtMetricCategorisation,
+       iPlayerId = 2,
+       cTitle = 'Sample',
+       # vnQuantileMarkers = c(0.01, 0.25, 0.5, 0.75, 0.99),
+       bAddAbsoluteIndicator = T
     )
 
     print(pPercentileBarChart)
 
-![](README_files/figure-markdown_strict/fPercentileBarChart-1.png)
+![](README_files/figure-markdown_strict/fPercentileBarChartAbsoluteIndicator-1.png)
 
 ### fRadarPercentileChart
 
@@ -414,13 +440,13 @@ visualisation.
 
     pRadarPercentileChart = fRadarPercentileChart (
        dtPlayerMetrics = dtPlayerMetrics,
-       vcColumnsToIndex = c('PlayerName','TeamName'),
+       vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
        dtMetricCategorisation = dtMetricCategorisation,
-       cPlayerName = "gjn xfv",
+       iPlayerId = 2,
        cTitle = 'Sample'
     )
     #> Warning in fRadarPercentileChart(dtPlayerMetrics = dtPlayerMetrics,
-    #> vcColumnsToIndex = c("PlayerName", : Radar charts are bad. Use
+    #> vcColumnsToIndex = c("playerId", : Radar charts are bad. Use
     #> fPercentileBarChart instead.
     print(pRadarPercentileChart)
 
@@ -443,13 +469,13 @@ visualisation.
 ![](README_files/figure-markdown_strict/fPlotSonar-1.png)
 
 
-    # Sonar broken up by pitch area 
+    # Sonar broken up by pitch area
     pPlotSonarVariation1 = fPlotSonar(
        dtPassesToPlot = dtPasses[,
           list(
              playerId,
              passLength,
-             passAngle,      
+             passAngle,
              x,
              y,
              Success,
@@ -460,7 +486,7 @@ visualisation.
                    x %/% 20
                 ) * 20
              ) + 10,
-             yBucket = ( 
+             yBucket = (
                 ifelse(
                    y %/% 20 == 80 %/% 20,
                    ( y %/% 20 ) - 1,
@@ -482,21 +508,21 @@ visualisation.
 ![](README_files/figure-markdown_strict/fPlotSonar-2.png)
 
 
-    # Sonar broken up player, placed at their median passing location 
+    # Sonar broken up player, placed at their median passing location
     pPlotSonarVariation2 = fPlotSonar (
        dtPassesToPlot = merge(
           dtPasses,
           merge(
-             dtPasses[, 
+             dtPasses[,
                 list(
-                   xBucket = median(x), 
+                   xBucket = median(x),
                    yBucket = median(y)
-                ), 
+                ),
                 list(
                    playerId
                 )
              ],
-             dtPlayerLabels[, 
+             dtPlayerLabels[,
                 list(
                    playerId,
                    bucketLabel = playerName
@@ -534,7 +560,7 @@ visualisation.
                    playerId
                 )
              ],
-             dtPlayerLabels[, 
+             dtPlayerLabels[,
                 list(
                    playerId,
                    bucketLabel = playerName
@@ -619,10 +645,10 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.4347787
+    #> [1] 0.3838075
 
     # This value should be the same as that computed by emdist package's emd function.
-    # EMD needs the weightage of each point, which is assigned as equal in our 
+    # EMD needs the weightage of each point, which is assigned as equal in our
     # function, so giving 1/N weightage to each data point
     # emdist::emd(
     #    as.matrix(

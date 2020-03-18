@@ -13,6 +13,10 @@
 #' library for an example.
 #' @param iPlayerId The ID of the player you want visualised
 #' @param cTitle The title on the chart
+#' @param bAddAbsoluteIndicator Percentiles can be a little misleading if the
+#' underlying numbers aren't uniformly distributed. You can use the vertical
+#' dimension to add annotations for an indicator of the absolute spread of the
+#' values and where this particular player's values fall within that spread.
 #' @examples
 #' fPercentileBarChart(
 #'    dtDataset = dtPlayerMetrics,

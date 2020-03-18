@@ -38,6 +38,17 @@ Any inputs and feedback is welcome. If you're on github, then head to
 github.com/thecomeonman/CodaBonit, or else get in touch <a href = 
 "twitter.com/thecomeonman">on Twitter</a>
 
+## How to get started
+
+Install R from https://cran.r-project.org
+
+Open R and run this command in the console - 
+`install.packages("devtools")`
+`library(devtools)`
+`install_github("thecomeonman/CodaBonito")`
+
+And you're ready to run the examples below!
+
 ## Data
 
 I have added some fake data along with the package to be able to better 
@@ -108,7 +119,7 @@ If you aren't interested in having the axis markings, etc., use theme_pitch
 
 ### fPercentileBarChart with AbsoluteIndicator
 
-Percentiles can be a little misleading if the underlying numbers aren't uniformly distributed. You can add annotations for an indicator of the absolute spread of the values.
+Percentiles can be a little misleading if the underlying numbers aren't uniformly distributed. You can add annotations for an indicator of the absolute spread of the values and where this particular player's values fall within that spread.
 
 ```{r fPercentileBarChartAbsoluteIndicator}
 ```

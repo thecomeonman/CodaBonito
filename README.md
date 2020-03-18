@@ -23,6 +23,18 @@ Any inputs and feedback is welcome. If you’re on github, then head to
 github.com/thecomeonman/CodaBonit, or else get in touch <a href = 
 "twitter.com/thecomeonman">on Twitter</a>
 
+How to get started
+------------------
+
+Install R from
+<a href="https://cran.r-project.org" class="uri">https://cran.r-project.org</a>
+
+Open R and run this command in the console -
+`install.packages("devtools")` `library(devtools)`
+`install_github("thecomeonman/CodaBonito")`
+
+And you’re ready to run the examples below!
+
 Data
 ----
 
@@ -391,6 +403,7 @@ theme\_pitch
        iPlayerId = 2,
        cTitle = 'Sample'
     )
+    #> Warning: `expand_scale()` is deprecated; use `expansion()` instead.
 
     print(pNormalisedValueChart)
 
@@ -413,7 +426,8 @@ theme\_pitch
 
 Percentiles can be a little misleading if the underlying numbers aren’t
 uniformly distributed. You can add annotations for an indicator of the
-absolute spread of the values.
+absolute spread of the values and where this particular player’s values
+fall within that spread.
 
     pPercentileBarChart = fPercentileBarChart(
        dtDataset = dtPlayerMetrics,
@@ -446,8 +460,11 @@ visualisation.
        cTitle = 'Sample'
     )
     #> Warning in fRadarPercentileChart(dtPlayerMetrics = dtPlayerMetrics,
-    #> vcColumnsToIndex = c("playerId", : Radar charts are bad. Use
-    #> fPercentileBarChart instead.
+    #> vcColumnsToIndex = c("playerId", : Radar charts are bad. Use fPercentileBarChart
+    #> instead.
+    #> Warning: `expand_scale()` is deprecated; use `expansion()` instead.
+
+    #> Warning: `expand_scale()` is deprecated; use `expansion()` instead.
     print(pRadarPercentileChart)
 
 ![](README_files/figure-markdown_strict/fRadarPercentileChart-1.png)
@@ -645,7 +662,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.3838075
+    #> [1] 0.4032891
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our

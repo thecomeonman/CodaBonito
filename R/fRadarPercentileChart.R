@@ -18,7 +18,7 @@
 #' @examples
 #' fRadarPercentileChart (
 #'    dtPlayerMetrics = dtPlayerMetrics,
-#'    vcColumnsToIndex = c('PlayerName','TeamName'),
+#'    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
 #'    dtMetricCategorisation = dtMetricCategorisation,
 #'    iPlayerId = 2,
 #'    cTitle = 'Sample'
@@ -127,8 +127,14 @@ fRadarPercentileChart = function (
       geom_polygon(
          data = dtPlayer,
          aes(x = RadarX, y = RadarY),
-         alpha = 0,
+         alpha = 0.1,
          fill = cForegroundColour,
+         color = cForegroundColour,
+         size = 0.2
+      ) +
+      geom_segment(
+         data = dtPlayer,
+         aes(xend = RadarX, yend = RadarY, x = 0, y = 0),
          color = cForegroundColour,
          size = 3
       ) +

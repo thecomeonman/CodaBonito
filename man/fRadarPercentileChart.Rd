@@ -34,7 +34,7 @@ fPercentileBarChart function.
 \examples{
 fRadarPercentileChart (
    dtPlayerMetrics = dtPlayerMetrics,
-   vcColumnsToIndex = c('PlayerName','TeamName'),
+   vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
    dtMetricCategorisation = dtMetricCategorisation,
    iPlayerId = 2,
    cTitle = 'Sample'

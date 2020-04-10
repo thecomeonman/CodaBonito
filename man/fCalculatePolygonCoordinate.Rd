@@ -5,8 +5,13 @@
 \title{Draws a block based on the angle bucket and length bucket, respectively 
 indicated by x and y, used by fPlotSonar}
 \usage{
-fCalculatePolygonCoordinate(nAngleMin_rad, nAngleMax_rad, nRadiusMin,
-  nRadiusMax, fTrigFunction)
+fCalculatePolygonCoordinate(
+  nAngleMin_rad,
+  nAngleMax_rad,
+  nRadiusMin,
+  nRadiusMax,
+  fTrigFunction
+)
 }
 \description{
 Hard to describe it. Play with the example

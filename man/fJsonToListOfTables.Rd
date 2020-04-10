@@ -4,8 +4,7 @@
 \alias{fJsonToListOfTables}
 \title{Primarily to convert statsbomb files to a list of data.tables}
 \usage{
-fJsonToListOfTables(lMatchJson, vcTagsToExtract, nXLimit = 120,
-  nYLimit = 80)
+fJsonToListOfTables(lMatchJson, vcTagsToExtract, nXLimit = 120, nYLimit = 80)
 }
 \arguments{
 \item{lMatchJson}{refer example}
@@ -15,8 +14,6 @@ fJsonToListOfTables(lMatchJson, vcTagsToExtract, nXLimit = 120,
 \item{nXLimit}{Length of the pitch}
 
 \item{nYLimit}{Breadth of the pitch}
-
-\item{vcTagsToExtract}{refer example}
 }
 \description{
 The function has been named generically so that tomorrow it can be used 

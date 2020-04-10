@@ -4,10 +4,18 @@
 \alias{fRadarPercentileChart}
 \title{A worse but more popular alternative to percentile bar charts}
 \usage{
-fRadarPercentileChart(dtPlayerMetrics, vcColumnsToIndex,
-  dtMetricCategorisation, iPlayerId, cTitle, cFontFamily = "arial",
-  cForegroundColour = "green", cBackgroundColour = "black",
-  cFontColour = "white", vnExpand = c(0.1, 0.1))
+fRadarPercentileChart(
+  dtPlayerMetrics,
+  vcColumnsToIndex,
+  dtMetricCategorisation,
+  iPlayerId,
+  cTitle,
+  cFontFamily = "arial",
+  cForegroundColour = "green",
+  cBackgroundColour = "black",
+  cFontColour = "white",
+  vnExpand = c(0.1, 0.1)
+)
 }
 \arguments{
 \item{dtPlayerMetrics}{A dataset with one row for each PlayerName, and various

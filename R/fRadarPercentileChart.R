@@ -283,7 +283,8 @@ fRadarPercentileChart = function (
          fontface = 'bold',
          color = cFontColour,
          family = cFontFamily,
-         vjust = 1
+         vjust = 0
+         # hjust = 0.5
       ) +
       geom_point(
          aes(

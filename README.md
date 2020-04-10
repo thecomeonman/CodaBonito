@@ -620,6 +620,59 @@ visualisation.
 
 ![](README_files/figure-markdown_strict/fXgBuildUpComparison-1.png)
 
+### fDrawVoronoi
+
+WIP using the data structure from
+<a href="https://github.com/metrica-sports/sample-data" class="uri">https://github.com/metrica-sports/sample-data</a>
+
+    dtTrackingSlice = data.table(
+       # Period = 1,
+       Frame = 4431,
+       # Time_s = 177.24,
+       # Team = 'Home',
+       # Type = 'Pass',
+       # Subtype = '',
+       # EndFrame = 1,
+       # EndTime_s = 1,
+       # From = 'HomePlayer1X',
+       # From = 'AwayPlayer1X',
+       HomePlayer1X = runif(1),
+       HomePlayer2X = runif(1),
+       HomePlayer3X = runif(1),
+       HomePlayer1Y = runif(1),
+       HomePlayer2Y = runif(1),
+       HomePlayer3Y = runif(1),
+       AwayPlayer1X = runif(1),
+       AwayPlayer2X = runif(1),
+       AwayPlayer3X = runif(1),
+       AwayPlayer1Y = runif(1),
+       AwayPlayer2Y = runif(1),
+       AwayPlayer3Y = runif(1),
+       BallX = runif(1),
+       BallY = runif(1)
+    )
+
+    pVoronoi = fDrawVoronoi(
+       dtTrackingSlice,
+       xMinBB = 0,
+       yMinBB = 0,
+       xMaxBB = 1,
+       yMaxBB = 1
+    )
+    #> 
+    #>      PLEASE NOTE:  The components "delsgs" and "summary" of the
+    #>  object returned by deldir() are now DATA FRAMES rather than
+    #>  matrices (as they were prior to release 0.0-18).
+    #>  See help("deldir").
+    #>  
+    #>      PLEASE NOTE: The process that deldir() uses for determining
+    #>  duplicated points has changed from that used in version
+    #>  0.0-9 of this package (and previously). See help("deldir").
+
+    print(pVoronoi)
+
+![](README_files/figure-markdown_strict/fDrawVoronoi-1.png)
+
 Logic and Algorithms
 --------------------
 
@@ -662,7 +715,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.4032891
+    #> [1] 0.4947602
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our
@@ -700,3 +753,10 @@ observation.
        ylab('SNO.y')
 
 ![](README_files/figure-markdown_strict/fEMDDetailedExtra-1.png)
+
+Data Parsing
+------------
+
+You will find `fJsonToListOfTables`, `fJsonToTabular`,
+`fParseTrackingData` useful. They aren’t glamarous enough to be demoed
+here but the documentation should help you use those functions.

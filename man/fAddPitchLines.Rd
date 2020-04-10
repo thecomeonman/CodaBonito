@@ -4,8 +4,13 @@
 \alias{fAddPitchLines}
 \title{Pitch background}
 \usage{
-fAddPitchLines(plotObject, nXLimit = 120, nYLimit = 80,
-  cLineColour = "white", cPitchColour = "#038253")
+fAddPitchLines(
+  plotObject,
+  nXLimit = 120,
+  nYLimit = 80,
+  cLineColour = "white",
+  cPitchColour = "#038253"
+)
 }
 \arguments{
 \item{plotObject}{a ggplot object. Can just be a blank ggplot object too}

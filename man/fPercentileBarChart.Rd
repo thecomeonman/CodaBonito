@@ -4,10 +4,18 @@
 \alias{fPercentileBarChart}
 \title{Ashwin Raman's percentile bar charts}
 \usage{
-fPercentileBarChart(dtDataset, vcColumnsToIndex, dtMetricCategorisation,
-  iPlayerId, cTitle = NULL, nColumnWidthByTwo = 0.25,
-  nBufferForTextHorizontal = 0.005, nBufferForTextVertical = 0.05,
-  vnQuantileMarkers = NULL, bAddAbsoluteIndicator = F)
+fPercentileBarChart(
+  dtDataset,
+  vcColumnsToIndex,
+  dtMetricCategorisation,
+  iPlayerId,
+  cTitle = NULL,
+  nColumnWidthByTwo = 0.25,
+  nBufferForTextHorizontal = 0.005,
+  nBufferForTextVertical = 0.05,
+  vnQuantileMarkers = NULL,
+  bAddAbsoluteIndicator = F
+)
 }
 \arguments{
 \item{vcColumnsToIndex}{The non-metric columns in your dataset, these are

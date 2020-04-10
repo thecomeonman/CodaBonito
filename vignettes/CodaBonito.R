@@ -239,6 +239,46 @@ pXgBuildUpComparison = fXgBuildUpComparison(
 print(pXgBuildUpComparison)
 
 
+## ----fDrawVoronoi, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+
+dtTrackingSlice = data.table(
+   # Period = 1,
+   Frame = 4431,
+   # Time_s = 177.24,
+   # Team = 'Home',
+   # Type = 'Pass',
+   # Subtype = '',
+   # EndFrame = 1,
+   # EndTime_s = 1,
+   # From = 'HomePlayer1X',
+   # From = 'AwayPlayer1X',
+   HomePlayer1X = runif(1),
+   HomePlayer2X = runif(1),
+   HomePlayer3X = runif(1),
+   HomePlayer1Y = runif(1),
+   HomePlayer2Y = runif(1),
+   HomePlayer3Y = runif(1),
+   AwayPlayer1X = runif(1),
+   AwayPlayer2X = runif(1),
+   AwayPlayer3X = runif(1),
+   AwayPlayer1Y = runif(1),
+   AwayPlayer2Y = runif(1),
+   AwayPlayer3Y = runif(1),
+   BallX = runif(1),
+   BallY = runif(1)
+)
+
+pVoronoi = fDrawVoronoi(
+   dtTrackingSlice,
+   xMinBB = 0,
+   yMinBB = 0,
+   xMaxBB = 1,
+   yMaxBB = 1
+)
+
+print(pVoronoi)
+
+
 
 ## ----fEMDDetailed, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
 

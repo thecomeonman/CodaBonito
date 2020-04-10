@@ -151,6 +151,17 @@ fPercentileBarChart instead as that is a better structured visualisation.
 ```{r fXgBuildUpComparison}
 ```
 
+
+### fDrawVoronoi
+
+WIP using the data structure from https://github.com/metrica-sports/sample-data
+
+```{r fDrawVoronoi}
+
+
+
+```
+
 ## Logic and Algorithms
 
 ### fEMDDetailed
@@ -170,3 +181,7 @@ can now see how much distance is being contributed by each observation.
 
 ```{r fEMDDetailedExtra}
 ```
+
+## Data Parsing
+
+You will find `fJsonToListOfTables`, `fJsonToTabular`, `fParseTrackingData` useful. They aren't glamarous enough to be demoed here but the documentation should help you use those functions.

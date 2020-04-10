@@ -4,9 +4,16 @@
 \alias{fPlotSonar}
 \title{A passing sonar alternative to popularly used versions}
 \usage{
-fPlotSonar(dtPassesToPlot, iBlocksInFirstRing = 4, iNbrRings = 8,
-  nZoomFactor = NULL, nXLimit = 120, nYLimit = 80,
-  bAddPitchBackground = F, cTitle = "Sample")
+fPlotSonar(
+  dtPassesToPlot,
+  iBlocksInFirstRing = 4,
+  iNbrRings = 8,
+  nZoomFactor = NULL,
+  nXLimit = 120,
+  nYLimit = 80,
+  bAddPitchBackground = F,
+  cTitle = "Sample"
+)
 }
 \description{
 Think of the chart as a bunch of concentric rings. Each ring captures passes 

@@ -5,10 +5,18 @@
 \title{Those charts with normailsed metric values and a bright mark indicating
 where the PlayerName of interest lies}
 \usage{
-fNormalisedValueChart(dtPlayerMetrics, vcColumnsToIndex,
-  dtMetricCategorisation, iPlayerId, cTitle, cFontFamily = "arial",
-  cForegroundColour = "green", cBackgroundColour = "black",
-  cFontColour = "white", vnExpand = c(0.1, 0.1))
+fNormalisedValueChart(
+  dtPlayerMetrics,
+  vcColumnsToIndex,
+  dtMetricCategorisation,
+  iPlayerId,
+  cTitle,
+  cFontFamily = "arial",
+  cForegroundColour = "green",
+  cBackgroundColour = "black",
+  cFontColour = "white",
+  vnExpand = c(0.1, 0.1)
+)
 }
 \arguments{
 \item{dtPlayerMetrics}{A dataset with one row for each PlayerName, and various

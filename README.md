@@ -30,8 +30,8 @@ Install R from
 <a href="https://cran.r-project.org" class="uri">https://cran.r-project.org</a>
 
 Open R and run this command in the console -
-`install.packages("devtools")` `library(devtools)`
-`install_github("thecomeonman/CodaBonito")`
+`install.packages("devtools");` `library(devtools);`
+`install_github("thecomeonman/CodaBonito");`
 
 And you’re ready to run the examples below!
 
@@ -625,6 +625,7 @@ visualisation.
 WIP using the data structure from
 <a href="https://github.com/metrica-sports/sample-data" class="uri">https://github.com/metrica-sports/sample-data</a>
 
+    # minimal tracking slice example
     dtTrackingSlice = data.table(
        # Period = 1,
        Frame = 4431,
@@ -636,28 +637,26 @@ WIP using the data structure from
        # EndTime_s = 1,
        # From = 'HomePlayer1X',
        # From = 'AwayPlayer1X',
-       HomePlayer1X = runif(1),
-       HomePlayer2X = runif(1),
-       HomePlayer3X = runif(1),
-       HomePlayer1Y = runif(1),
-       HomePlayer2Y = runif(1),
-       HomePlayer3Y = runif(1),
-       AwayPlayer1X = runif(1),
-       AwayPlayer2X = runif(1),
-       AwayPlayer3X = runif(1),
-       AwayPlayer1Y = runif(1),
-       AwayPlayer2Y = runif(1),
-       AwayPlayer3Y = runif(1),
-       BallX = runif(1),
-       BallY = runif(1)
+       HomePlayer1X = nXLimit * runif(1),
+       HomePlayer2X = nXLimit * runif(1),
+       HomePlayer3X = nXLimit * runif(1),
+       HomePlayer1Y = nYLimit * runif(1),
+       HomePlayer2Y = nYLimit * runif(1),
+       HomePlayer3Y = nYLimit * runif(1),
+       AwayPlayer1X = nXLimit * runif(1),
+       AwayPlayer2X = nXLimit * runif(1),
+       AwayPlayer3X = nXLimit * runif(1),
+       AwayPlayer1Y = nYLimit * runif(1),
+       AwayPlayer2Y = nYLimit * runif(1),
+       AwayPlayer3Y = nYLimit * runif(1),
+       BallX = nXLimit * runif(1),
+       BallY = nYLimit * runif(1)
     )
 
-    pVoronoi = fDrawVoronoi(
+    pVoronoi = fDrawVoronoiFromTable(
        dtTrackingSlice,
-       xMinBB = 0,
-       yMinBB = 0,
-       xMaxBB = 1,
-       yMaxBB = 1
+       nXLimit = nXLimit,
+       nYlimit = nYlimit
     )
     #> 
     #>      PLEASE NOTE:  The components "delsgs" and "summary" of the
@@ -668,6 +667,7 @@ WIP using the data structure from
     #>      PLEASE NOTE: The process that deldir() uses for determining
     #>  duplicated points has changed from that used in version
     #>  0.0-9 of this package (and previously). See help("deldir").
+    #> Coordinate system already present. Adding new coordinate system, which will replace the existing one.
 
     print(pVoronoi)
 
@@ -715,7 +715,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.4947602
+    #> [1] 0.4972559
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our

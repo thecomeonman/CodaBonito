@@ -4,7 +4,15 @@
 \alias{fParseTrackingDataBothTeams}
 \title{Gives cleanly parsed data}
 \usage{
-fParseTrackingDataBothTeams(cRootPath, cGameName, bOutputLong)
+fParseTrackingDataBothTeams(
+  cRootPath,
+  cGameName,
+  bOutputLong,
+  nXLimit = 120,
+  nYLimit = 80,
+  xMaxBB = 1,
+  yMaxBB = 1
+)
 }
 \description{
 Very tightly tied to how https://github.com/metrica-sports/sample-data is

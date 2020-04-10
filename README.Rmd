@@ -24,6 +24,7 @@ read_chunk('./vignettes/CodaBonito.R')
 ```{r SetupChunk, echo = F}
 ```
 
+
 This document offers a brief introduction to the functions in this library. 
 Some function might be fairly straightforward to create but some functions may 
 need you to look up the help entry before trying it out.
@@ -48,9 +49,9 @@ github.com/thecomeonman/CodaBonit, or else get in touch <a href =
 Install R from https://cran.r-project.org
 
 Open R and run this command in the console - 
-`install.packages("devtools")`
-`library(devtools)`
-`install_github("thecomeonman/CodaBonito")`
+`install.packages("devtools");`
+`library(devtools);`
+`install_github("thecomeonman/CodaBonito");`
 
 And you're ready to run the examples below!
 
@@ -185,3 +186,4 @@ can now see how much distance is being contributed by each observation.
 ## Data Parsing
 
 You will find `fJsonToListOfTables`, `fJsonToTabular`, `fParseTrackingData` useful. They aren't glamarous enough to be demoed here but the documentation should help you use those functions.
+

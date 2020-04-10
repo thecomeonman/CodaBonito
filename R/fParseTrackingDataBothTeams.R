@@ -11,27 +11,39 @@
 fParseTrackingDataBothTeams = function (
    cRootPath,
    cGameName,
-   bOutputLong
+   bOutputLong,
+   nXLimit = 120,
+   nYLimit = 80,
+   xMaxBB = 1,
+   yMaxBB = 1
 ) {
 
    dtTrackingData = merge(
-      fParseTrackingData(
+      fParseTrackingDataOneTeam(
          paste0(
             cRootPath, '/',
             cGameName, '/',
             cGameName,
             '_RawTrackingData_Away_Team.csv'
          ),
-         cTag = 'Away'
+         cTag = 'Away',
+         nXLimit = 120,
+         nYLimit = 80,
+         xMaxBB = 1,
+         yMaxBB = 1
       ),
-      fParseTrackingData(
+      fParseTrackingDataOneTeam(
          paste0(
             cRootPath, '/',
             cGameName, '/',
             cGameName,
             '_RawTrackingData_Home_Team.csv'
          ),
-         cTag = 'Home'
+         cTag = 'Home',
+         nXLimit = 120,
+         nYLimit = 80,
+         xMaxBB = 1,
+         yMaxBB = 1
       ),
       c('Period','Frame','Time_s'),
       all = T
@@ -59,6 +71,11 @@ fParseTrackingDataBothTeams = function (
       c('Start X','Start Y','End X','End Y'),
       c('EventStartX','EventStartY','EventEndX','EventEndY'),
    )
+
+   dtEventsData[, EventStartX := EventStartX * nXLimit / xMaxBB]
+   dtEventsData[, EventEndX := EventEndX * nXLimit / xMaxBB]
+   dtEventsData[, EventStartY := EventStartY * nYLimit / xMaxBB]
+   dtEventsData[, EventEndY := EventEndY * nYLimit / yMaxBB]
 
    # if ( bOutputLong ) {
    if ( F ) {

@@ -11,6 +11,8 @@ library(CodaBonito)
 library(ggplot2)
 library(lpSolveAPI)
 
+nXLimit = 120
+nYLimit = 80
 
 
 ## ----DataDescriptionPlayerMetrics, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
@@ -241,6 +243,7 @@ print(pXgBuildUpComparison)
 
 ## ----fDrawVoronoi, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
 
+# minimal tracking slice example
 dtTrackingSlice = data.table(
    # Period = 1,
    Frame = 4431,
@@ -252,28 +255,26 @@ dtTrackingSlice = data.table(
    # EndTime_s = 1,
    # From = 'HomePlayer1X',
    # From = 'AwayPlayer1X',
-   HomePlayer1X = runif(1),
-   HomePlayer2X = runif(1),
-   HomePlayer3X = runif(1),
-   HomePlayer1Y = runif(1),
-   HomePlayer2Y = runif(1),
-   HomePlayer3Y = runif(1),
-   AwayPlayer1X = runif(1),
-   AwayPlayer2X = runif(1),
-   AwayPlayer3X = runif(1),
-   AwayPlayer1Y = runif(1),
-   AwayPlayer2Y = runif(1),
-   AwayPlayer3Y = runif(1),
-   BallX = runif(1),
-   BallY = runif(1)
+   HomePlayer1X = nXLimit * runif(1),
+   HomePlayer2X = nXLimit * runif(1),
+   HomePlayer3X = nXLimit * runif(1),
+   HomePlayer1Y = nYLimit * runif(1),
+   HomePlayer2Y = nYLimit * runif(1),
+   HomePlayer3Y = nYLimit * runif(1),
+   AwayPlayer1X = nXLimit * runif(1),
+   AwayPlayer2X = nXLimit * runif(1),
+   AwayPlayer3X = nXLimit * runif(1),
+   AwayPlayer1Y = nYLimit * runif(1),
+   AwayPlayer2Y = nYLimit * runif(1),
+   AwayPlayer3Y = nYLimit * runif(1),
+   BallX = nXLimit * runif(1),
+   BallY = nYLimit * runif(1)
 )
 
-pVoronoi = fDrawVoronoi(
+pVoronoi = fDrawVoronoiFromTable(
    dtTrackingSlice,
-   xMinBB = 0,
-   yMinBB = 0,
-   xMaxBB = 1,
-   yMaxBB = 1
+   nXLimit = nXLimit,
+   nYlimit = nYlimit
 )
 
 print(pVoronoi)

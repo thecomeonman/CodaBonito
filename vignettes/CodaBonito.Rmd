@@ -43,9 +43,9 @@ github.com/thecomeonman/CodaBonit, or else get in touch <a href =
 Install R from https://cran.r-project.org
 
 Open R and run this command in the console - 
-`install.packages("devtools")`
-`library(devtools)`
-`install_github("thecomeonman/CodaBonito")`
+`install.packages("devtools");`
+`library(devtools);`
+`install_github("thecomeonman/CodaBonito");`
 
 And you're ready to run the examples below!
 

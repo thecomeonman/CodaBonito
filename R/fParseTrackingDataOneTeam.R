@@ -10,9 +10,13 @@
 #' @import data.table
 #' @import zoo
 #' @export
-fParseTrackingData = function (
+fParseTrackingDataOneTeam = function (
    cFilePath,
-   cTag = ''
+   cTag = '',
+   nXLimit = 120,
+   nYLimit = 80,
+   xMaxBB = 1,
+   yMaxBB = 1
 ) {
 
    dtRawData = fread(
@@ -57,6 +61,27 @@ fParseTrackingData = function (
       dtRawData,
       vcColnames
    )
+
+
+   for ( cColname in colnames(dtRawData) ) {
+
+      if ( grepl(cColname, pattern = 'X$') ) {
+
+         dtRawData[,
+            (cColname) := dtRawData[, cColname, with = F] * nXLimit / xMaxBB
+         ]
+
+      }
+
+      if ( grepl(cColname, pattern = 'Y$') ) {
+
+         dtRawData[,
+            (cColname) := dtRawData[, cColname, with = F] * nYLimit / yMaxBB
+         ]
+
+      }
+
+   }
 
    dtRawData
 

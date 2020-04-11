@@ -1,4 +1,10 @@
-## ----SetupChunk, include = FALSE----------------------------------------------
+## ----Setup, cache=FALSE, echo=FALSE, warning=FALSE, message=FALSE, fig.width = 15, fig.height = 8, results = 'hide'----
+
+library(knitr)
+read_chunk('./CodaBonito.R')
+
+
+## ----SetupChunk, echo = F-----------------------------------------------------
 # knitr::opts_chunk$set(
 #   collapse = TRUE,
 #   comment = "#>",
@@ -14,33 +20,28 @@ library(lpSolveAPI)
 nXLimit = 120
 nYLimit = 80
 
-
-## ----DataDescriptionPlayerMetrics, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
-
+## ----DataDescriptionPlayerMetrics, echo = F-----------------------------------
 kable(head(dtPlayerMetrics))
 
-## ----DataDescriptionMetricCategorisation, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----DataDescriptionMetricCategorisation, echo = F----------------------------
 kable(head(dtMetricCategorisation))
 
-## ----DataDescriptionPasses, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----DataDescriptionPasses, echo = F------------------------------------------
 kable(head(dtPasses))
 
-## ----DataDescriptionFormation, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----DataDescriptionFormation, echo = F---------------------------------------
 kable(head(dtFormation))
 
-## ----DataDescriptionPlayerLabels, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----DataDescriptionPlayerLabels, echo = F------------------------------------
 kable(head(dtPlayerLabels))
 
-
-## ----fAddPitchLines, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
-
+## ----fAddPitchLines-----------------------------------------------------------
 pPitch = ggplot()
 pPitch = fAddPitchLines(pPitch)
 
 print(pPitch)
 
-## ----fAddPitchLinesData, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
-
+## ----fAddPitchLinesData-------------------------------------------------------
 # adding passing data on top now
 pPitch = pPitch +
    geom_point(
@@ -50,17 +51,13 @@ pPitch = pPitch +
 
 print(pPitch)
 
-## ----theme_pitch, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
-
+## ----theme_pitch--------------------------------------------------------------
 pPitch = pPitch +
    theme_pitch()
 
 print(pPitch)
 
-
-
-## ----fNormalisedValueChart, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
-
+## ----fNormalisedValueChart----------------------------------------------------
 pNormalisedValueChart = fNormalisedValueChart (
    dtPlayerMetrics,
    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
@@ -71,7 +68,7 @@ pNormalisedValueChart = fNormalisedValueChart (
 
 print(pNormalisedValueChart)
 
-## ----fPercentileBarChart, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----fPercentileBarChart------------------------------------------------------
 pPercentileBarChart = fPercentileBarChart(
    dtDataset = dtPlayerMetrics,
    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
@@ -81,7 +78,7 @@ pPercentileBarChart = fPercentileBarChart(
 )
 print(pPercentileBarChart)
 
-## ----fPercentileBarChartAbsoluteIndicator, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----fPercentileBarChartAbsoluteIndicator-------------------------------------
 pPercentileBarChart = fPercentileBarChart(
    dtDataset = dtPlayerMetrics,
    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
@@ -94,7 +91,7 @@ pPercentileBarChart = fPercentileBarChart(
 
 print(pPercentileBarChart)
 
-## ----fRadarPercentileChart, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----fRadarPercentileChart----------------------------------------------------
 pRadarPercentileChart = fRadarPercentileChart (
    dtPlayerMetrics = dtPlayerMetrics,
    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
@@ -104,8 +101,7 @@ pRadarPercentileChart = fRadarPercentileChart (
 )
 print(pRadarPercentileChart)
 
-
-## ----fPlotSonar, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----fPlotSonar---------------------------------------------------------------
 pPlotSonar = fPlotSonar(
    dtPassesToPlot = dtPasses,
    iBlocksInFirstRing = 4,
@@ -224,25 +220,21 @@ pPlotSonarVariation3 = fPlotSonar(
 )
 print(pPlotSonarVariation3)
 
-
-
-## ----fPassNetworkChart, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----fPassNetworkChart--------------------------------------------------------
 pPassNetworkChart = fPassNetworkChart(
    dtPasses,
    dtPlayerLabels
 )
 print(pPassNetworkChart)
 
-## ----fXgBuildUpComparison, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----fXgBuildUpComparison-----------------------------------------------------
 pXgBuildUpComparison = fXgBuildUpComparison(
    dtXg,
    dtTeamLabels
 )
 print(pXgBuildUpComparison)
 
-
-## ----fDrawVoronoi, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
-
+## ----fDrawVoronoi-------------------------------------------------------------
 # minimal tracking slice example
 dtTrackingSlice = data.table(
    # Period = 1,
@@ -279,10 +271,7 @@ pVoronoi = fDrawVoronoiFromTable(
 
 print(pVoronoi)
 
-
-
-## ----fEMDDetailed, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
-
+## ----fEMDDetailed-------------------------------------------------------------
 # Two random datasets of three dimension
 a = data.table(matrix(runif(21), ncol = 3))
 b = data.table(matrix(runif(30), ncol = 3))
@@ -324,7 +313,7 @@ print(fGetEMDFromDetailedEMD(lprec))
 #    )
 # ))
 
-## ----fEMDDetailedExtra, ext = 'png', fig.align = 'center', echo = FALSE, message = F, warning = F----
+## ----fEMDDetailedExtra--------------------------------------------------------
 dtDistances[, EMDWeightage := get.variables(lprec)]
 ggplot(dtDistances) +
    geom_point(
@@ -343,3 +332,4 @@ ggplot(dtDistances) +
    coord_fixed() +
    xlab('SNO.x') +
    ylab('SNO.y')
+

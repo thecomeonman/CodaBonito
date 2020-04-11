@@ -6,6 +6,7 @@
 #' @param xMaxBB
 #' @param yMaxBB
 #' @examples
+#' @import magick
 #' @import ggplot2
 #' @import data.table
 #' @export

@@ -1,12 +1,21 @@
 Package: CodaBonito
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Football / soccer related visualisations and analysis
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Aditya Kothari
+Description: Football / soccer related visualisations and analysis
+URL: https://github.com/thecomeonman/CodaBonito
+BugReports: https://github.com/thecomeonman/CodaBonito/issues
+License: Use for non-commercial purpose with credit, author permission required for commercial use
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2
+Imports: data.table,
+    ggplot2,
+    zoo,
+    deldir,
+    lpSolveAPI,
+    ggrepel,
+    magick
+VignetteBuilder: knitr,
+    rmarkdown

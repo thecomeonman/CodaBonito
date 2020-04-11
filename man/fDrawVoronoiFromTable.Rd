@@ -4,7 +4,12 @@
 \alias{fDrawVoronoiFromTable}
 \title{Draws a Voronoi diagram for a time slice}
 \usage{
-fDrawVoronoiFromTable(dtTrackingSlice, nXLimit = 120, nYlimit = 80)
+fDrawVoronoiFromTable(
+  dtTrackingSlice,
+  nXLimit = 120,
+  nYlimit = 80,
+  UseOneFrameEvery = 1
+)
 }
 \description{
 Draws a Voronoi diagram for a time slice

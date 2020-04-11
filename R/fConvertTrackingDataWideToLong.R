@@ -4,24 +4,24 @@
 #' organised right now since I don't know how tracking data is otherwise
 #' organised
 #'
-#' @param dtData
+#' @param dtTrackingSlice
 #' @examples
 #' @import data.table
 #' @export
 fConvertTrackingDataWideToLong = function(
-   dtData
+   dtTrackingSlice
 ) {
 
    if ( F ) {
 
-      dtAllData = copy(dtData)
+      dtAllData = copy(dtTrackingSlice)
 
-      dtData = melt(
-         dtData[,
+      dtTrackingSlice = melt(
+         dtTrackingSlice[,
             c(
                c('Period','Frame','Time_s'),
                grep(
-                   colnames(dtData),
+                   colnames(dtTrackingSlice),
                    pattern = 'Player',
                    value = T
                )
@@ -30,33 +30,40 @@ fConvertTrackingDataWideToLong = function(
          ],
          intersect(
             c('Period','Frame','Time_s'),
-            colnames(dtData)
+            colnames(dtTrackingSlice)
          )
       )
 
    } else {
 
-      dtData = melt(
-         dtData,
+    #    dtTrackingSlice = copy(dtTrackingSlice)
+
+      dtTrackingSlice = melt(
+         dtTrackingSlice,
          intersect(
-            colnames(dtData),
+            colnames(dtTrackingSlice),
             c('Period','Frame','Time_s','Team','Type','Subtype','From','To')
          )
       )
 
    }
 
-   dtData = dtData[!is.na(value)]
+   dtTrackingSlice = dtTrackingSlice[!is.na(value)]
 
-   dtData[,
-      Coordinate := gsub(
-         x = variable,
-         pattern = '.*Player[[:digit:]]*|.*Ball[[:digit:]]*',
-         replacement = ''
-      )
+   dtTrackingSlice[,
+       Coordinate := gsub(
+          x = variable,
+          pattern = '.*Player[[:digit:]]*|.*Ball[[:digit:]]*',
+          replacement = ''
+       )
    ]
 
-   dtData[,
+   dtTrackingSlice[
+       !Coordinate %in% c('X','Y'),
+       Coordinate := NA
+   ]
+
+   dtTrackingSlice[,
       Tag := gsub(
          x = variable,
          pattern = 'Ball.*|Player.*',
@@ -64,8 +71,12 @@ fConvertTrackingDataWideToLong = function(
       )
    ]
 
+   dtTrackingSlice[
+       !Tag %in% c('Home','Away'),
+       Tag := NA
+   ]
 
-   dtData[,
+   dtTrackingSlice[,
        Player := gsub(
          x = variable,
          pattern = paste0(paste0(unique(Coordinate), '$*'), collapse = '|'),
@@ -73,7 +84,12 @@ fConvertTrackingDataWideToLong = function(
       )
    ]
 
-   dtData[
+   dtTrackingSlice[
+        Player %in% c("EndFrame", "EndTime_s"),
+        Player := NA
+   ]
+
+   dtTrackingSlice[
       grepl(
          Player,
          pattern = 'Ball'
@@ -81,13 +97,13 @@ fConvertTrackingDataWideToLong = function(
       c('Player','Tag') := list('Ball', 'Ball')
    ]
 
-   dtData[, variable := NULL]
+   dtTrackingSlice[, variable := NULL]
 
-   dtData = merge(
-      dtData[
+   dtTrackingSlice = merge(
+      dtTrackingSlice[
          1,
          intersect(
-            colnames(dtData),
+            colnames(dtTrackingSlice),
             c(
                'Period',
                'Frame',
@@ -102,9 +118,10 @@ fConvertTrackingDataWideToLong = function(
          with = F
       ],
       dcast(
-         dtData[,
+         dtTrackingSlice[
+             !is.na(Coordinate),
             intersect(
-               colnames(dtData),
+               colnames(dtTrackingSlice),
                c(
                   'Period',
                   'Frame',
@@ -121,7 +138,7 @@ fConvertTrackingDataWideToLong = function(
             paste0(
                paste0(
                   intersect(
-                     colnames(dtData),
+                     colnames(dtTrackingSlice),
                      c('Period','Frame','Time_s','Tag','Player')
                   ),
                   collapse = '+'
@@ -133,11 +150,12 @@ fConvertTrackingDataWideToLong = function(
          fun.aggregate = mean
       ),
       c(intersect(
-         colnames(dtData),
+         colnames(dtTrackingSlice),
          c('Period', 'Frame', 'Time_s')
-      ))
+      )),
+      all = T
    )
 
-   dtData
+   dtTrackingSlice
 
 }

@@ -4,7 +4,7 @@
 \alias{fConvertTrackingDataWideToLong}
 \title{Converts tracking data from wide to long}
 \usage{
-fConvertTrackingDataWideToLong(dtData)
+fConvertTrackingDataWideToLong(dtTrackingSlice)
 }
 \description{
 Very tightly tied to how https://github.com/metrica-sports/sample-data is

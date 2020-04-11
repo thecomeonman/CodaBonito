@@ -9,7 +9,7 @@
 #' @param Zero
 #' @param Zero
 #' @param nXLimit
-#' @param nYlimit
+#' @param nYLimit
 #' @examples
 #' @import deldir
 #' @import data.table
@@ -18,7 +18,7 @@ fGetVoronoiFromVectors = function (
    x = NULL,
    y = NULL,
    nXLimit = NULL,
-   nYlimit = NULL
+   nYLimit = NULL
 ) {
 
     Zero = 0
@@ -29,7 +29,7 @@ fGetVoronoiFromVectors = function (
    # Zero = 0
    # Zero = 0
    # nXLimit = 1
-   # nYlimit = 1
+   # nYLimit = 1
 
    iNbrPoints = length(x)
 
@@ -46,35 +46,39 @@ fGetVoronoiFromVectors = function (
 
       y = c(
          y,
-         ( Zero + nYlimit ) / 2,
-         ( nYlimit + nYlimit ),
-         ( Zero + nYlimit ) / 2,
-         Zero - nYlimit
+         ( Zero + nYLimit ) / 2,
+         ( nYLimit + nYLimit ),
+         ( Zero + nYLimit ) / 2,
+         Zero - nYLimit
       )
 
    }
+
+   bPointsOnPitch = 
+      x >= Zero & x <= nXLimit &
+      y >= Zero & y <= nYLimit
 
    BufferedX = x
    BufferedY = y
 
    BufferedX = c(
       BufferedX,
-      Zero - x
+      Zero - x[bPointsOnPitch]
    )
 
    BufferedY = c(
       BufferedY,
-      y
+      y[bPointsOnPitch]
    )
 
    BufferedX = c(
       BufferedX,
-      nXLimit + (nXLimit - x )
+      nXLimit + (nXLimit - x[bPointsOnPitch] )
    )
 
    BufferedY = c(
       BufferedY,
-      y
+      y[bPointsOnPitch]
    )
 
 
@@ -83,22 +87,22 @@ fGetVoronoiFromVectors = function (
 
    BufferedX = c(
       BufferedX,
-      x
+      x[bPointsOnPitch]
    )
 
    BufferedY = c(
       BufferedY,
-      nYlimit + (nYlimit - y)
+      nYLimit + (nYLimit - y[bPointsOnPitch])
    )
 
    BufferedX = c(
       BufferedX,
-      x
+      x[bPointsOnPitch]
    )
 
    BufferedY = c(
       BufferedY,
-      -y
+      -y[bPointsOnPitch]
    )
 
 
@@ -110,11 +114,12 @@ fGetVoronoiFromVectors = function (
       x = BufferedX, y = BufferedY,
     #   list(ndx=2,ndy=2),
       rw = c(
-         Zero - nXLimit,
-         nXLimit + nXLimit,
-         Zero - nYlimit,
-         nYlimit + nYlimit
-      )
+         Zero - nXLimit - nXLimit,
+         nXLimit + nXLimit + nXLimit,
+         Zero - nYLimit - nYLimit,
+         nYLimit + nYLimit + nYLimit
+      ),
+      suppressMsge = T
    )
 
    dtVoronoiCoordinates = tv$dirsgs
@@ -140,13 +145,13 @@ fGetVoronoiFromVectors = function (
       dtVoronoiCoordinates[
          ind1 == iNbrPoints + 3 |
          ind2 == iNbrPoints + 3,
-         c('x1','y1','x2','y2') := list(Zero, nYlimit, Zero, nYlimit)
+         c('x1','y1','x2','y2') := list(Zero, nYLimit, Zero, nYLimit)
       ]
 
       dtVoronoiCoordinates[
          ind1 == iNbrPoints + 4 |
          ind2 == iNbrPoints + 4,
-         c('x1','y1','x2','y2') := list(nXLimit, nYlimit, nXLimit, nYlimit)
+         c('x1','y1','x2','y2') := list(nXLimit, nYLimit, nXLimit, nYLimit)
       ]
 
    }
@@ -199,8 +204,8 @@ fGetVoronoiFromVectors = function (
       ]
 
       dtVoronoiCoordinates[
-         y > nYlimit,
-         y := nYlimit
+         y > nYLimit,
+         y := nYLimit
       ]
 
    }

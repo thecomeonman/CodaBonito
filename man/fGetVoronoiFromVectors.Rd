@@ -4,7 +4,7 @@
 \alias{fGetVoronoiFromVectors}
 \title{Pass network ( WIP )}
 \usage{
-fGetVoronoiFromVectors(x = NULL, y = NULL, nXLimit = NULL, nYlimit = NULL)
+fGetVoronoiFromVectors(x = NULL, y = NULL, nXLimit = NULL, nYLimit = NULL)
 }
 \description{
 Plots a marker for each player at their median passing position, and draws

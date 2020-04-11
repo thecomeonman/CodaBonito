@@ -4,7 +4,7 @@
 #' connections between players to represent the number of passes exchanged
 #' between them
 #'
-#' @param dtTrackingSlice
+#' @param dtFrame
 #' @param xMinBB
 #' @param yMinBB
 #' @param xMaxBB
@@ -14,24 +14,24 @@
 #' @import data.table
 #' @export
 fGetVoronoiFromTable = function(
-    dtTrackingSlice,
+    dtFrame,
     nXLimit = 120,
     nYlimit = 80
 ) {
 
-    # vnXCoordinates = unlist(dtTrackingSlice[, grep(x = colnames(dtTrackingSlice), pattern = 'Player.*X$', value = T), with = F])
+    # vnXCoordinates = unlist(dtFrame[, grep(x = colnames(dtFrame), pattern = 'Player.*X$', value = T), with = F])
     # vnXCoordinates = vnXCoordinates[!is.na(vnXCoordinates)]
-    # vnYCoordinates = unlist(dtTrackingSlice[, grep(x = colnames(dtTrackingSlice), pattern = 'Player.*Y$', value = T), with = F])
+    # vnYCoordinates = unlist(dtFrame[, grep(x = colnames(dtFrame), pattern = 'Player.*Y$', value = T), with = F])
     # vnYCoordinates = vnYCoordinates[!is.na(vnYCoordinates)]
-    # dtTrackingSlice = dtRandomSlice
-
-    setDT(dtTrackingSlice)
+    # dtFrame = dtRandomSlice
+    
+    setDT(dtFrame)
 
     dtPlayerTag = data.table(
-        Tag = dtTrackingSlice[, Tag],
-        Player = dtTrackingSlice[, Player],
-        X = dtTrackingSlice[, X],
-        Y = dtTrackingSlice[, Y]
+        Tag = dtFrame[, Tag],
+        Player = dtFrame[, Player],
+        X = dtFrame[, X],
+        Y = dtFrame[, Y]
     )
 
     dtPlayerTag[, ind := .I]
@@ -43,7 +43,7 @@ fGetVoronoiFromTable = function(
         x = dtPlayerTag[, X],
         y = dtPlayerTag[, Y],
         nXLimit = nXLimit,
-        nYlimit = nYlimit
+        nYLimit = nYLimit
     )
 
     dtVoronoiCoordinates = merge(

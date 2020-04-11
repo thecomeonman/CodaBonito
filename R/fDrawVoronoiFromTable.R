@@ -170,7 +170,7 @@ fDrawVoronoiFromTable = function(
             paste0(
                 'Multiple frames given. Saving a GIF at - ',
                 cGIFFile,
-                ' and returning a NULL from this function'
+                ' and returning the file path instead of the plot itself'
             )
         )
 
@@ -190,7 +190,7 @@ fDrawVoronoiFromTable = function(
             )
         )
 
-        plotVoronoi = NULL
+        plotVoronoi = cGIFFile
 
         # list.files(
         #     path = cTempdir, 

@@ -17,7 +17,9 @@ fDrawVoronoiFromVoronoiCoordinates = function(
     plotVoronoi = fAddPitchLines(
         plotVoronoi,
         nXLimit,
-        nYLimit
+        nYLimit,
+        cLineColour = 'white',
+        cPitchColour = '#cccccc'
     )
 
     plotVoronoi = plotVoronoi +
@@ -63,14 +65,16 @@ fDrawVoronoiFromVoronoiCoordinates = function(
 
     plotVoronoi = plotVoronoi +
         scale_color_manual(
-            values = c('Home' = 'blue','Ball' = 'black','Away' = 'red'),
+            values = c('Home' = '#1f78b4','Ball' = 'black','Away' = '#33a02c'),
             guide = FALSE
         ) +
         scale_fill_manual(
-            values = c('Home' = 'blue','Ball' = 'black','Away' = 'red'),
+            values = c('Home' = '#1f78b4','Ball' = 'black','Away' = '#33a02c'),
             guide = FALSE
         ) + 
-        theme_pitch() +
+        theme_pitch()
+    
+    plotVoronoi = plotVoronoi +
         coord_fixed(
             xlim = c(0,nXLimit),
             ylim = c(0,nYLimit)

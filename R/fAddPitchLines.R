@@ -76,6 +76,10 @@ fAddPitchLines = function (
       )
    ]
 
+   # https://github.com/tidyverse/ggplot2/issues/2799
+   cf <- coord_fixed()
+   cf$default <- TRUE
+
    
    plotObject = plotObject +
       # background
@@ -295,7 +299,7 @@ fAddPitchLines = function (
       ) +
       xlab(NULL) + 
       ylab(NULL) + 
-      coord_fixed()
+      cf
 
    return ( plotObject )
 

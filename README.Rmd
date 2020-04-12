@@ -24,7 +24,6 @@ read_chunk('./vignettes/CodaBonito.R')
 ```{r SetupChunk, echo = F}
 ```
 
-
 This document offers a brief introduction to the functions in this library. 
 Some function might be fairly straightforward to create but some functions may 
 need you to look up the help entry before trying it out.
@@ -86,14 +85,17 @@ where 0 is along the pitch from defense to offense.
 ```{r DataDescriptionPasses, echo = F}
 ```
 
-`dtFormation` - formation coordinates
+`dtFormation` - Coordinates as per the formation
 ```{r DataDescriptionFormation, echo = F}
 ```
 
-`dtPlayerLabels` - player labels
+`dtPlayerLabels` - Player labels
 ```{r DataDescriptionPlayerLabels, echo = F}
 ```
 
+`dtTrackingSlice` - Tracking data
+```{r DataDescriptionTrackingSlice, echo = F}
+```
 ## Visualisations
 
 ### fAddPitchLines
@@ -155,13 +157,17 @@ fPercentileBarChart instead as that is a better structured visualisation.
 
 ### fDrawVoronoi
 
-WIP using the data structure from https://github.com/metrica-sports/sample-data
+WIP using the same data structure as https://github.com/metrica-sports/sample-data
 
-```{r fDrawVoronoi}
-
-
-
+```{r fDrawVoronoiFromTable}
 ```
+
+And if you have multiple frames -
+
+```{r fDrawVoronoiFromTableAnimated}
+```
+
+![](./README_files/figure-markdown_strict/Voronoi.gif)
 
 ## Logic and Algorithms
 

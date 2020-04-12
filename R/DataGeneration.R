@@ -4,6 +4,9 @@ if ( F ) {
 
    set.seed(1)
 
+   nXLimit = 120
+   nYLimit = 80
+
    iPlayers = 200
 
    dtPlayerMetrics = data.table(
@@ -277,6 +280,118 @@ if ( F ) {
    save(
       list = 'dtTeamLabels',
       file = './data/dtTeamLabels.rda'
+   )
+
+
+
+
+
+
+
+
+
+    iNbrFrames = 40
+    iNbrPlayers = 10
+    pitchBuffer = 0.25
+
+    # minimal tracking slice example
+    dtTrackingSlice = data.table(
+        X = abs(rnorm(iNbrPlayers * iNbrFrames, 0, 0.01)),
+        Y = abs(rnorm(iNbrPlayers * iNbrFrames, 0, 0.01))
+    )
+
+    dtTrackingSlice[
+        1:(.N/2),
+        Player := paste0(
+            'HomePlayer',
+            (.I - 1) %/% iNbrFrames
+        )
+    ]
+
+    dtTrackingSlice[
+        (1 + (.N/2)):.N,
+        Player := paste0(
+            'AwayPlayer',
+            (.I - 1) %/% iNbrFrames
+        )
+    ]
+
+    dtTrackingSlice[,
+        Frame := (.I - 1) %% iNbrFrames
+    ]
+
+    dtTrackingSlice[,
+        X := cumsum(X), 
+        Player
+    ]
+
+    dtTrackingSlice[,
+        X :=  ( 
+            ( X - min(X) ) * 
+            ( 1 - pitchBuffer - pitchBuffer ) * nXLimit / 
+            diff(range(X)) 
+        ) + (
+            pitchBuffer * nXLimit
+        )
+    ]
+    
+    dtTrackingSlice[,
+        Y := cumsum(Y),
+        Player
+    ]
+
+    dtTrackingSlice[,
+        Y := Y + ( 2 * runif(1)),
+        Player
+    ]
+
+    dtTrackingSlice[,
+        X := X + ( 2 * runif(1)),
+        Player
+    ]
+
+    dtTrackingSlice[,
+        Y := ( 
+            ( Y - min(Y) ) * 
+            ( 1 - pitchBuffer - pitchBuffer ) * nYLimit / 
+            diff(range(Y)) 
+        ) + (
+            pitchBuffer * nYLimit
+        )
+    ]
+
+    dtTrackingSlice = dcast(
+        melt(
+            dtTrackingSlice,
+            id.var = c('Frame','Player')
+        )[,
+            variable := paste0(Player, variable)
+        ],
+        Frame ~ variable,
+        value.var = 'value'
+    )
+
+
+    dtTrackingSlice[,
+        BallPlayerX := (
+            nXLimit * ( 1 - pitchBuffer - pitchBuffer) * .I / .N
+        ) + (
+            nXLimit * pitchBuffer
+        )
+
+    ]
+    
+    dtTrackingSlice[,
+        BallPlayerY := (
+            nYLimit * ( 1 - pitchBuffer - pitchBuffer) * .I / .N
+        ) + (
+            nYLimit * pitchBuffer
+        )
+    ]
+    
+   save(
+      list = 'dtTrackingSlice',
+      file = './data/dtTrackingSlice.rda'
    )
 
 

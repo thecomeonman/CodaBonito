@@ -15,7 +15,9 @@ fDrawVoronoiFromTable = function(
     dtTrackingSlice,
     nXLimit = 120,
     nYlimit = 80,
-    UseOneFrameEvery = 1
+    UseOneFrameEvery = 1,
+    DelayBetweenFrames = 5,
+    suppressWarnings = F
 ) {
 
     setDT(dtTrackingSlice)
@@ -57,74 +59,6 @@ fDrawVoronoiFromTable = function(
         )
     )
 
-    if ( F ) {
-
-        plotVoronoi = ggplot()
-        plotVoronoi = fAddPitchLines(plotVoronoi)
-        plotVoronoi = plotVoronoi +
-            geom_polygon(
-                data = dtVoronoiCoordinates,
-                aes(
-                    x = x,
-                    y = y,
-                    group = Player,
-                    # group = factor(ind),
-                    fill = Tag
-                    # fill = factor(Player)
-                    # fill = factor(ind)
-                ),
-                alpha = 0.2,
-                color = 'black'
-            ) +
-            geom_point(
-                data = dtTrackingSlice,
-                aes(
-                    x = X,
-                    y = Y,
-                color = Tag
-                ),
-                size = 3
-            )
-
-        if ( dtTrackingSlice[, any(Player == 'Ball')] ) {
-
-            plotVoronoi = plotVoronoi +
-                geom_point(
-                    data = dtTrackingSlice[Player == 'Ball'],
-                    aes(
-                    x = X,
-                    y = Y,
-                    color = 'Ball',
-                    fill = 'Ball'
-                    ),
-                    size = 3
-                )
-
-        }
-
-        plotVoronoi = plotVoronoi +
-            scale_color_manual(
-                values = c('Home' = 'blue','Ball' = 'black','Away' = 'red')
-            ) +
-            scale_fill_manual(
-                values = c('Home' = 'blue','Ball' = 'black','Away' = 'red'),
-                guide = FALSE
-            ) +
-            coord_fixed() + 
-            theme_pitch()
-
-        if ( dtTrackingSlice[, length(unique(Frame)) > 1] ) {
-            
-            plotVoronoi = plotVoronoi +
-                transition_time(Frame) +
-                ease_aes('linear')
-
-        }
-
-        plotVoronoi
-
-    }
-
     if ( dtTrackingSlice[, length(unique(Frame)) > 1] ) {
 
         cTempdir = paste0(
@@ -148,13 +82,15 @@ fDrawVoronoiFromTable = function(
                 nYLimit
             )
 
-            ggsave(
-                plotVoronoi,
-                filename = paste0(
-                    cTempdir,
-                    '/',
-                    iFrame,
-                    '.png'
+            suppressMessages(
+                ggsave(
+                    plotVoronoi,
+                    filename = paste0(
+                        cTempdir,
+                        '/',
+                        iFrame,
+                        '.png'
+                    )
                 )
             )
 
@@ -167,17 +103,22 @@ fDrawVoronoiFromTable = function(
             '.gif'
         )
 
-        print(
-            paste0(
-                'Multiple frames given. Saving a GIF at - ',
-                cGIFFile,
-                ' and returning the file path instead of the plot itself'
+        if ( !suppressWarnings ) { 
+
+            warning(
+                paste0(
+                    'Multiple frames given. Saving a GIF at - ',
+                    cGIFFile,
+                    ' and returning the file path instead of the plot itself'
+                )
             )
-        )
+
+        }
 
         system(
             paste0(
-                'convert -delay 5 ',
+                'convert -delay ',
+                DelayBetweenFrames, ' ',
                 paste0(
                     paste0(
                         cTempdir,'/',

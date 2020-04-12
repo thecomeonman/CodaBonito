@@ -282,7 +282,7 @@ offense. - Success 1 for successful pass, 0 for failed pass
 </tbody>
 </table>
 
-`dtFormation` - formation coordinates
+`dtFormation` - Coordinates as per the formation
 
 <table>
 <thead>
@@ -321,7 +321,7 @@ offense. - Success 1 for successful pass, 0 for failed pass
 </tbody>
 </table>
 
-`dtPlayerLabels` - player labels
+`dtPlayerLabels` - Player labels
 
 <table>
 <thead>
@@ -354,8 +354,214 @@ offense. - Success 1 for successful pass, 0 for failed pass
 </tbody>
 </table>
 
-Visualisations
---------------
+`dtTrackingSlice` - Tracking data
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Frame</th>
+<th style="text-align: right;">AwayPlayer0X</th>
+<th style="text-align: right;">AwayPlayer0Y</th>
+<th style="text-align: right;">AwayPlayer1X</th>
+<th style="text-align: right;">AwayPlayer1Y</th>
+<th style="text-align: right;">AwayPlayer2X</th>
+<th style="text-align: right;">AwayPlayer2Y</th>
+<th style="text-align: right;">AwayPlayer3X</th>
+<th style="text-align: right;">AwayPlayer3Y</th>
+<th style="text-align: right;">AwayPlayer4X</th>
+<th style="text-align: right;">AwayPlayer4Y</th>
+<th style="text-align: right;">HomePlayer0X</th>
+<th style="text-align: right;">HomePlayer0Y</th>
+<th style="text-align: right;">HomePlayer1X</th>
+<th style="text-align: right;">HomePlayer1Y</th>
+<th style="text-align: right;">HomePlayer2X</th>
+<th style="text-align: right;">HomePlayer2Y</th>
+<th style="text-align: right;">HomePlayer3X</th>
+<th style="text-align: right;">HomePlayer3Y</th>
+<th style="text-align: right;">HomePlayer4X</th>
+<th style="text-align: right;">HomePlayer4Y</th>
+<th style="text-align: right;">BallPlayerX</th>
+<th style="text-align: right;">BallPlayerY</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">32.55586</td>
+<td style="text-align: right;">50.29455</td>
+<td style="text-align: right;">34.20547</td>
+<td style="text-align: right;">51.66439</td>
+<td style="text-align: right;">33.96926</td>
+<td style="text-align: right;">49.83023</td>
+<td style="text-align: right;">32.48622</td>
+<td style="text-align: right;">46.60298</td>
+<td style="text-align: right;">31.51575</td>
+<td style="text-align: right;">29.26053</td>
+<td style="text-align: right;">31.79807</td>
+<td style="text-align: right;">28.79188</td>
+<td style="text-align: right;">33.07794</td>
+<td style="text-align: right;">32.22896</td>
+<td style="text-align: right;">31.25457</td>
+<td style="text-align: right;">20.00000</td>
+<td style="text-align: right;">31.55217</td>
+<td style="text-align: right;">38.22233</td>
+<td style="text-align: right;">31.69750</td>
+<td style="text-align: right;">54.10373</td>
+<td style="text-align: right;">31.5</td>
+<td style="text-align: right;">21</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">32.90562</td>
+<td style="text-align: right;">50.35286</td>
+<td style="text-align: right;">37.97009</td>
+<td style="text-align: right;">51.83395</td>
+<td style="text-align: right;">34.36936</td>
+<td style="text-align: right;">50.18844</td>
+<td style="text-align: right;">34.04449</td>
+<td style="text-align: right;">46.61486</td>
+<td style="text-align: right;">31.57939</td>
+<td style="text-align: right;">29.47331</td>
+<td style="text-align: right;">33.16570</td>
+<td style="text-align: right;">28.84700</td>
+<td style="text-align: right;">35.02446</td>
+<td style="text-align: right;">32.40506</td>
+<td style="text-align: right;">34.18699</td>
+<td style="text-align: right;">20.37152</td>
+<td style="text-align: right;">31.89392</td>
+<td style="text-align: right;">38.40522</td>
+<td style="text-align: right;">33.64902</td>
+<td style="text-align: right;">54.34768</td>
+<td style="text-align: right;">33.0</td>
+<td style="text-align: right;">22</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">34.64757</td>
+<td style="text-align: right;">50.49276</td>
+<td style="text-align: right;">39.39422</td>
+<td style="text-align: right;">51.88643</td>
+<td style="text-align: right;">37.61476</td>
+<td style="text-align: right;">50.22465</td>
+<td style="text-align: right;">37.48907</td>
+<td style="text-align: right;">46.64428</td>
+<td style="text-align: right;">31.72541</td>
+<td style="text-align: right;">29.51734</td>
+<td style="text-align: right;">34.51955</td>
+<td style="text-align: right;">29.14071</td>
+<td style="text-align: right;">35.43241</td>
+<td style="text-align: right;">32.43194</td>
+<td style="text-align: right;">34.52284</td>
+<td style="text-align: right;">20.41324</td>
+<td style="text-align: right;">31.96222</td>
+<td style="text-align: right;">38.49100</td>
+<td style="text-align: right;">33.66490</td>
+<td style="text-align: right;">54.40687</td>
+<td style="text-align: right;">34.5</td>
+<td style="text-align: right;">23</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">36.98394</td>
+<td style="text-align: right;">50.51058</td>
+<td style="text-align: right;">39.57247</td>
+<td style="text-align: right;">52.12462</td>
+<td style="text-align: right;">37.93450</td>
+<td style="text-align: right;">50.23367</td>
+<td style="text-align: right;">38.94468</td>
+<td style="text-align: right;">46.88701</td>
+<td style="text-align: right;">36.38850</td>
+<td style="text-align: right;">29.75361</td>
+<td style="text-align: right;">34.78269</td>
+<td style="text-align: right;">29.16300</td>
+<td style="text-align: right;">35.93637</td>
+<td style="text-align: right;">32.89249</td>
+<td style="text-align: right;">36.49239</td>
+<td style="text-align: right;">20.66244</td>
+<td style="text-align: right;">32.10005</td>
+<td style="text-align: right;">38.50102</td>
+<td style="text-align: right;">34.57877</td>
+<td style="text-align: right;">54.63409</td>
+<td style="text-align: right;">36.0</td>
+<td style="text-align: right;">24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">38.99220</td>
+<td style="text-align: right;">50.55312</td>
+<td style="text-align: right;">40.07305</td>
+<td style="text-align: right;">52.27400</td>
+<td style="text-align: right;">38.34619</td>
+<td style="text-align: right;">50.31231</td>
+<td style="text-align: right;">42.49844</td>
+<td style="text-align: right;">47.02056</td>
+<td style="text-align: right;">36.83313</td>
+<td style="text-align: right;">29.90822</td>
+<td style="text-align: right;">36.14444</td>
+<td style="text-align: right;">29.16342</td>
+<td style="text-align: right;">39.23561</td>
+<td style="text-align: right;">33.22427</td>
+<td style="text-align: right;">38.33900</td>
+<td style="text-align: right;">20.83137</td>
+<td style="text-align: right;">33.08677</td>
+<td style="text-align: right;">38.53923</td>
+<td style="text-align: right;">35.73584</td>
+<td style="text-align: right;">54.78274</td>
+<td style="text-align: right;">37.5</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">40.09334</td>
+<td style="text-align: right;">50.74373</td>
+<td style="text-align: right;">41.89556</td>
+<td style="text-align: right;">52.43318</td>
+<td style="text-align: right;">39.75834</td>
+<td style="text-align: right;">50.42094</td>
+<td style="text-align: right;">44.38057</td>
+<td style="text-align: right;">47.29533</td>
+<td style="text-align: right;">39.25388</td>
+<td style="text-align: right;">29.92609</td>
+<td style="text-align: right;">36.58014</td>
+<td style="text-align: right;">29.29511</td>
+<td style="text-align: right;">40.47152</td>
+<td style="text-align: right;">33.36805</td>
+<td style="text-align: right;">39.15145</td>
+<td style="text-align: right;">21.05101</td>
+<td style="text-align: right;">35.87850</td>
+<td style="text-align: right;">38.62949</td>
+<td style="text-align: right;">36.36883</td>
+<td style="text-align: right;">55.00029</td>
+<td style="text-align: right;">39.0</td>
+<td style="text-align: right;">26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">## Visua</td>
+<td style="text-align: right;">lisations</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
 
 ### fAddPitchLines
 
@@ -487,31 +693,33 @@ visualisation.
 
 
     # Sonar broken up by pitch area
+    dtPassesByPitchArea = dtPasses[,
+       list(
+          playerId,
+          passLength,
+          passAngle,
+          x,
+          y,
+          Success,
+          xBucket = (
+             ifelse(
+                x %/% 20 == 120 %/% 20,
+                ( x %/% 20 ) - 1,
+                x %/% 20
+             ) * 20
+          ) + 10,
+          yBucket = (
+             ifelse(
+                y %/% 20 == 80 %/% 20,
+                ( y %/% 20 ) - 1,
+                y %/% 20
+             ) * 20
+          ) + 10
+       )
+    ]
+
     pPlotSonarVariation1 = fPlotSonar(
-       dtPassesToPlot = dtPasses[,
-          list(
-             playerId,
-             passLength,
-             passAngle,
-             x,
-             y,
-             Success,
-             xBucket = (
-                ifelse(
-                   x %/% 20 == 120 %/% 20,
-                   ( x %/% 20 ) - 1,
-                   x %/% 20
-                ) * 20
-             ) + 10,
-             yBucket = (
-                ifelse(
-                   y %/% 20 == 80 %/% 20,
-                   ( y %/% 20 ) - 1,
-                   y %/% 20
-                ) * 20
-             ) + 10
-          )
-       ],
+       dtPassesToPlot = dtPassesByPitchArea,
        iBlocksInFirstRing = 4,
        iNbrRings = 8,
        nZoomFactor = NULL,
@@ -526,33 +734,35 @@ visualisation.
 
 
     # Sonar broken up player, placed at their median passing location
-    pPlotSonarVariation2 = fPlotSonar (
-       dtPassesToPlot = merge(
-          dtPasses,
-          merge(
-             dtPasses[,
-                list(
-                   xBucket = median(x),
-                   yBucket = median(y)
-                ),
-                list(
-                   playerId
-                )
-             ],
-             dtPlayerLabels[,
-                list(
-                   playerId,
-                   bucketLabel = playerName
-                )
-             ],
-             c(
-                'playerId'
+    dtPassesByPlayer = merge(
+       dtPasses,
+       merge(
+          dtPasses[,
+             list(
+                xBucket = median(x),
+                yBucket = median(y)
+             ),
+             list(
+                playerId
              )
-          ),
+          ],
+          dtPlayerLabels[,
+             list(
+                playerId,
+                bucketLabel = playerName
+             )
+          ],
           c(
              'playerId'
           )
        ),
+       c(
+          'playerId'
+       )
+    )
+
+    pPlotSonarVariation2 = fPlotSonar (
+       dtPassesToPlot = dtPassesByPlayer,
        iBlocksInFirstRing = 4,
        iNbrRings = 8,
        nYLimit = 80,
@@ -564,31 +774,34 @@ visualisation.
 
 ![](README_files/figure-markdown_strict/fPlotSonar-3.png)
 
+
     # Sonar broken up player, placed at the location dictated by their role
     # in the formations
-    pPlotSonarVariation3 = fPlotSonar(
-       dtPassesToPlot = merge(
-          dtPasses,
-          merge(
-             dtFormation[,
-                list(
-                   xBucket = x,
-                   yBucket = y,
-                   playerId
-                )
-             ],
-             dtPlayerLabels[,
-                list(
-                   playerId,
-                   bucketLabel = playerName
-                )
-             ],
-             c(
-                'playerId'
+
+    dtPassesByPlayerFormation = merge(
+       dtPasses,
+       merge(
+          dtFormation[,
+             list(
+                xBucket = x,
+                yBucket = y,
+                playerId
              )
-          ),
-          'playerId'
+          ],
+          dtPlayerLabels[,
+             list(
+                playerId,
+                bucketLabel = playerName
+             )
+          ],
+          c(
+             'playerId'
+          )
        ),
+       'playerId'
+    )
+    pPlotSonarVariation3 = fPlotSonar(
+       dtPassesToPlot = dtPassesByPlayerFormation,
        iBlocksInFirstRing = 4,
        iNbrRings = 8,
        nXLimit = 120,
@@ -622,56 +835,49 @@ visualisation.
 
 ### fDrawVoronoi
 
-WIP using the data structure from
+WIP using the same data structure as
 <a href="https://github.com/metrica-sports/sample-data" class="uri">https://github.com/metrica-sports/sample-data</a>
 
-    # minimal tracking slice example
-    dtTrackingSlice = data.table(
-       # Period = 1,
-       Frame = 4431,
-       # Time_s = 177.24,
-       # Team = 'Home',
-       # Type = 'Pass',
-       # Subtype = '',
-       # EndFrame = 1,
-       # EndTime_s = 1,
-       # From = 'HomePlayer1X',
-       # From = 'AwayPlayer1X',
-       HomePlayer1X = nXLimit * runif(1),
-       HomePlayer2X = nXLimit * runif(1),
-       HomePlayer3X = nXLimit * runif(1),
-       HomePlayer1Y = nYLimit * runif(1),
-       HomePlayer2Y = nYLimit * runif(1),
-       HomePlayer3Y = nYLimit * runif(1),
-       AwayPlayer1X = nXLimit * runif(1),
-       AwayPlayer2X = nXLimit * runif(1),
-       AwayPlayer3X = nXLimit * runif(1),
-       AwayPlayer1Y = nYLimit * runif(1),
-       AwayPlayer2Y = nYLimit * runif(1),
-       AwayPlayer3Y = nYLimit * runif(1),
-       BallX = nXLimit * runif(1),
-       BallY = nYLimit * runif(1)
-    )
-
     pVoronoi = fDrawVoronoiFromTable(
-       dtTrackingSlice,
+       dtTrackingSlice[1],
        nXLimit = nXLimit,
        nYlimit = nYlimit
     )
-    #> 
-    #>      PLEASE NOTE:  The components "delsgs" and "summary" of the
-    #>  object returned by deldir() are now DATA FRAMES rather than
-    #>  matrices (as they were prior to release 0.0-18).
-    #>  See help("deldir").
-    #>  
-    #>      PLEASE NOTE: The process that deldir() uses for determining
-    #>  duplicated points has changed from that used in version
-    #>  0.0-9 of this package (and previously). See help("deldir").
-    #> Coordinate system already present. Adding new coordinate system, which will replace the existing one.
 
     print(pVoronoi)
 
-![](README_files/figure-markdown_strict/fDrawVoronoi-1.png)
+![](README_files/figure-markdown_strict/fDrawVoronoiFromTable-1.png)
+
+And if you have multiple frames -
+
+    voronoiOutput = suppressWarnings(
+       fDrawVoronoiFromTable(
+          dtTrackingSlice,
+          nXLimit = nXLimit,
+          nYlimit = nYlimit,
+          UseOneFrameEvery = 1,
+          DelayBetweenFrames = 5,
+          suppressWarnings = T
+       )
+    )
+
+    if ( !interactive() ) {
+
+       qwe = suppressWarnings(
+          file.remove('./README_files/figure-markdown_strict/Voronoi.gif')
+       )
+       rm(qwe)
+
+       qwe = file.copy(
+          voronoiOutput,
+          './README_files/figure-markdown_strict/Voronoi.gif'
+       )
+
+       rm(qwe)
+
+    }
+
+![](./README_files/figure-markdown_strict/Voronoi.gif)
 
 Logic and Algorithms
 --------------------
@@ -715,7 +921,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.4972559
+    #> [1] 0.5599163
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our

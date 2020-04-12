@@ -8,7 +8,9 @@ fDrawVoronoiFromTable(
   dtTrackingSlice,
   nXLimit = 120,
   nYlimit = 80,
-  UseOneFrameEvery = 1
+  UseOneFrameEvery = 1,
+  DelayBetweenFrames = 5,
+  suppressWarnings = F
 )
 }
 \description{

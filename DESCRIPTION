@@ -17,5 +17,3 @@ Imports: data.table,
     lpSolveAPI,
     ggrepel,
     magick
-VignetteBuilder: knitr,
-    rmarkdown

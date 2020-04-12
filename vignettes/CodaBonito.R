@@ -35,6 +35,9 @@ kable(head(dtFormation))
 ## ----DataDescriptionPlayerLabels, echo = F------------------------------------
 kable(head(dtPlayerLabels))
 
+## ----DataDescriptionTrackingSlice, echo = F------------------------------------
+kable(head(dtTrackingSlice))
+
 ## ----fAddPitchLines-----------------------------------------------------------
 pPitch = ggplot()
 pPitch = fAddPitchLines(pPitch)
@@ -115,31 +118,33 @@ pPlotSonar = fPlotSonar(
 print(pPlotSonar)
 
 # Sonar broken up by pitch area
+dtPassesByPitchArea = dtPasses[,
+   list(
+      playerId,
+      passLength,
+      passAngle,
+      x,
+      y,
+      Success,
+      xBucket = (
+         ifelse(
+            x %/% 20 == 120 %/% 20,
+            ( x %/% 20 ) - 1,
+            x %/% 20
+         ) * 20
+      ) + 10,
+      yBucket = (
+         ifelse(
+            y %/% 20 == 80 %/% 20,
+            ( y %/% 20 ) - 1,
+            y %/% 20
+         ) * 20
+      ) + 10
+   )
+]
+
 pPlotSonarVariation1 = fPlotSonar(
-   dtPassesToPlot = dtPasses[,
-      list(
-         playerId,
-         passLength,
-         passAngle,
-         x,
-         y,
-         Success,
-         xBucket = (
-            ifelse(
-               x %/% 20 == 120 %/% 20,
-               ( x %/% 20 ) - 1,
-               x %/% 20
-            ) * 20
-         ) + 10,
-         yBucket = (
-            ifelse(
-               y %/% 20 == 80 %/% 20,
-               ( y %/% 20 ) - 1,
-               y %/% 20
-            ) * 20
-         ) + 10
-      )
-   ],
+   dtPassesToPlot = dtPassesByPitchArea,
    iBlocksInFirstRing = 4,
    iNbrRings = 8,
    nZoomFactor = NULL,
@@ -151,33 +156,35 @@ pPlotSonarVariation1 = fPlotSonar(
 print(pPlotSonarVariation1)
 
 # Sonar broken up player, placed at their median passing location
-pPlotSonarVariation2 = fPlotSonar (
-   dtPassesToPlot = merge(
-      dtPasses,
-      merge(
-         dtPasses[,
-            list(
-               xBucket = median(x),
-               yBucket = median(y)
-            ),
-            list(
-               playerId
-            )
-         ],
-         dtPlayerLabels[,
-            list(
-               playerId,
-               bucketLabel = playerName
-            )
-         ],
-         c(
-            'playerId'
+dtPassesByPlayer = merge(
+   dtPasses,
+   merge(
+      dtPasses[,
+         list(
+            xBucket = median(x),
+            yBucket = median(y)
+         ),
+         list(
+            playerId
          )
-      ),
+      ],
+      dtPlayerLabels[,
+         list(
+            playerId,
+            bucketLabel = playerName
+         )
+      ],
       c(
          'playerId'
       )
    ),
+   c(
+      'playerId'
+   )
+)
+
+pPlotSonarVariation2 = fPlotSonar (
+   dtPassesToPlot = dtPassesByPlayer,
    iBlocksInFirstRing = 4,
    iNbrRings = 8,
    nYLimit = 80,
@@ -186,31 +193,34 @@ pPlotSonarVariation2 = fPlotSonar (
    cTitle = 'Sample By Median Position On Pitch'
 )
 print(pPlotSonarVariation2)
+
 # Sonar broken up player, placed at the location dictated by their role
 # in the formations
-pPlotSonarVariation3 = fPlotSonar(
-   dtPassesToPlot = merge(
-      dtPasses,
-      merge(
-         dtFormation[,
-            list(
-               xBucket = x,
-               yBucket = y,
-               playerId
-            )
-         ],
-         dtPlayerLabels[,
-            list(
-               playerId,
-               bucketLabel = playerName
-            )
-         ],
-         c(
-            'playerId'
+
+dtPassesByPlayerFormation = merge(
+   dtPasses,
+   merge(
+      dtFormation[,
+         list(
+            xBucket = x,
+            yBucket = y,
+            playerId
          )
-      ),
-      'playerId'
+      ],
+      dtPlayerLabels[,
+         list(
+            playerId,
+            bucketLabel = playerName
+         )
+      ],
+      c(
+         'playerId'
+      )
    ),
+   'playerId'
+)
+pPlotSonarVariation3 = fPlotSonar(
+   dtPassesToPlot = dtPassesByPlayerFormation,
    iBlocksInFirstRing = 4,
    iNbrRings = 8,
    nXLimit = 120,
@@ -234,42 +244,47 @@ pXgBuildUpComparison = fXgBuildUpComparison(
 )
 print(pXgBuildUpComparison)
 
-## ----fDrawVoronoi-------------------------------------------------------------
-# minimal tracking slice example
-dtTrackingSlice = data.table(
-   # Period = 1,
-   Frame = 4431,
-   # Time_s = 177.24,
-   # Team = 'Home',
-   # Type = 'Pass',
-   # Subtype = '',
-   # EndFrame = 1,
-   # EndTime_s = 1,
-   # From = 'HomePlayer1X',
-   # From = 'AwayPlayer1X',
-   HomePlayer1X = nXLimit * runif(1),
-   HomePlayer2X = nXLimit * runif(1),
-   HomePlayer3X = nXLimit * runif(1),
-   HomePlayer1Y = nYLimit * runif(1),
-   HomePlayer2Y = nYLimit * runif(1),
-   HomePlayer3Y = nYLimit * runif(1),
-   AwayPlayer1X = nXLimit * runif(1),
-   AwayPlayer2X = nXLimit * runif(1),
-   AwayPlayer3X = nXLimit * runif(1),
-   AwayPlayer1Y = nYLimit * runif(1),
-   AwayPlayer2Y = nYLimit * runif(1),
-   AwayPlayer3Y = nYLimit * runif(1),
-   BallX = nXLimit * runif(1),
-   BallY = nYLimit * runif(1)
-)
+## ----fDrawVoronoiFromTable-----------------------------------------------------
+
 
 pVoronoi = fDrawVoronoiFromTable(
-   dtTrackingSlice,
+   dtTrackingSlice[1],
    nXLimit = nXLimit,
    nYlimit = nYlimit
 )
 
 print(pVoronoi)
+
+
+## ----fDrawVoronoiFromTableAnimated--------------------------------------------
+
+voronoiOutput = suppressWarnings(
+   fDrawVoronoiFromTable(
+      dtTrackingSlice,
+      nXLimit = nXLimit,
+      nYlimit = nYlimit,
+      UseOneFrameEvery = 1,
+      DelayBetweenFrames = 5,
+      suppressWarnings = T
+   )
+)
+
+if ( !interactive() ) {
+
+   qwe = suppressWarnings(
+      file.remove('./README_files/figure-markdown_strict/Voronoi.gif')
+   )
+   rm(qwe)
+
+   qwe = file.copy(
+      voronoiOutput,
+      './README_files/figure-markdown_strict/Voronoi.gif'
+   )
+
+   rm(qwe)
+
+}
+
 
 ## ----fEMDDetailed-------------------------------------------------------------
 # Two random datasets of three dimension

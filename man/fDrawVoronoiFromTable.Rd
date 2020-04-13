@@ -10,7 +10,8 @@ fDrawVoronoiFromTable(
   nYlimit = 80,
   UseOneFrameEvery = 1,
   DelayBetweenFrames = 5,
-  suppressWarnings = F
+  suppressWarnings = F,
+  markFutureTrajectoryFor = NULL
 )
 }
 \description{

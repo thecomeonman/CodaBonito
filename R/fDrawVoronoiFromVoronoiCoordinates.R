@@ -10,17 +10,12 @@ fDrawVoronoiFromVoronoiCoordinates = function(
     dtVoronoiCoordinates,
     dtTrackingSlice,
     nXLimit,
-    nYLimit
+    nYLimit,
+    markFutureTrajectoryFor,
+    dtTrackingSliceFuture
 ) {
 
     plotVoronoi = ggplot()
-    plotVoronoi = fAddPitchLines(
-        plotVoronoi,
-        nXLimit,
-        nYLimit,
-        cLineColour = 'white',
-        cPitchColour = '#cccccc'
-    )
 
     plotVoronoi = plotVoronoi +
         geom_polygon(
@@ -34,7 +29,7 @@ fDrawVoronoiFromVoronoiCoordinates = function(
                 # fill = factor(Player)
                 # fill = factor(ind)
             ),
-            alpha = 0.2,
+            alpha = 0.6,
             color = 'black'
         ) +
         geom_point(
@@ -46,6 +41,26 @@ fDrawVoronoiFromVoronoiCoordinates = function(
             ),
             size = 3
         )
+
+    if ( !is.null(markFutureTrajectoryFor) ) {
+
+        plotVoronoi = plotVoronoi +
+            geom_path(
+                data = dtTrackingSliceFuture[
+                    Player %in% markFutureTrajectoryFor
+                ][
+                    order(Frame)
+                ],
+                aes(
+                    x = X,
+                    y = Y,
+                    group = Player,
+                    color = Tag
+                )
+            )
+
+    }
+
 
     if ( dtTrackingSlice[, any(Player == 'Ball')] ) {
 
@@ -62,6 +77,14 @@ fDrawVoronoiFromVoronoiCoordinates = function(
             )
 
     }
+
+    plotVoronoi = fAddPitchLines(
+        plotVoronoi,
+        nXLimit,
+        nYLimit,
+        cLineColour = 'white',
+        cPitchColour = NA
+    )
 
     plotVoronoi = plotVoronoi +
         scale_color_manual(

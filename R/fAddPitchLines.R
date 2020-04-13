@@ -1,8 +1,8 @@
 #' Pitch background
 #'
 #' Adds pitch markings, green background, etc. for plot background to look like
-#' a football pitch. ggplot adds things in order so initiate a ggplot object, 
-#' add the pitch marking with this function, and then add the data you want to 
+#' a football pitch. ggplot adds things in order so initiate a ggplot object,
+#' add the pitch marking with this function, and then add the data you want to
 #' add
 #'
 #' @param plotObject a ggplot object. Can just be a blank ggplot object too
@@ -17,7 +17,7 @@
 #' p1 = p1 + theme_pitch()
 #' p1
 #' # adding passing data on top now
-#' p1 + 
+#' p1 +
 #'    geom_point(
 #'       data = dtPasses,
 #'       aes(x = x , y = y)
@@ -49,13 +49,13 @@ fAddPitchLines = function (
          0.01
       )
    )[,
-      x := ( 
+      x := (
          nCentreCircleRadius_m * sin(Angle_rad)
       ) + ( nXLimit / 2 )
    ][,
-      y := ( 
+      y := (
          nCentreCircleRadius_m * cos(Angle_rad)
-      ) + ( 
+      ) + (
          nYLimit / 2
       )
    ]
@@ -67,11 +67,11 @@ fAddPitchLines = function (
          0.01
       )
    )[,
-      x := ( 
+      x := (
          nCornerArcRadius_m * sin(Angle_rad)
       )
    ][,
-      y := ( 
+      y := (
          nCornerArcRadius_m * cos(Angle_rad)
       )
    ]
@@ -80,12 +80,12 @@ fAddPitchLines = function (
    cf <- coord_fixed()
    cf$default <- TRUE
 
-   
+
    plotObject = plotObject +
       # background
       geom_rect(
          aes(
-            xmin = 0 - 5, 
+            xmin = 0 - 5,
             ymin = 0 - 5,
             xmax = nXLimit + 5,
             ymax = nYLimit + 5
@@ -95,7 +95,7 @@ fAddPitchLines = function (
       # pitch
       geom_rect(
          aes(
-            xmin = 0, 
+            xmin = 0,
             ymin = 0,
             xmax = nXLimit,
             ymax = nYLimit
@@ -103,9 +103,15 @@ fAddPitchLines = function (
          fill = cPitchColour,
          color = cLineColour
       ) +
-      # D defense 
+      # D defense
       geom_polygon(
-         data = dtCentreCircle,
+         data = dtCentreCircle[
+            (
+               x - ( nXLimit / 2) + nPenaltySpotOffset_m
+            ) >= (
+               nPenaltyAreaLength_m
+            )
+         ],
          aes(
             x = x - ( nXLimit / 2) + nPenaltySpotOffset_m,
             y = y
@@ -113,9 +119,15 @@ fAddPitchLines = function (
          color = cLineColour,
          fill = cPitchColour
       ) +
-      # D offense 
+      # D offense
       geom_polygon(
-         data = dtCentreCircle,
+         data = dtCentreCircle[
+            (
+               x + ( nXLimit / 2) - nPenaltySpotOffset_m
+            ) <= (
+               nXLimit - nPenaltyAreaLength_m
+            )
+         ],
          aes(
             x = x + ( nXLimit / 2) - nPenaltySpotOffset_m,
             y = y
@@ -126,7 +138,7 @@ fAddPitchLines = function (
       # penalty box defense
       geom_rect(
          aes(
-            ymin = ( nYLimit / 2 ) - ( nPenaltyAreaWidth_m / 2 ), 
+            ymin = ( nYLimit / 2 ) - ( nPenaltyAreaWidth_m / 2 ),
             ymax = ( nYLimit / 2 ) + ( nPenaltyAreaWidth_m / 2 ),
             xmin = 0,
             xmax = nPenaltyAreaLength_m
@@ -138,7 +150,7 @@ fAddPitchLines = function (
       # penalty box attack
       geom_rect(
          aes(
-            ymin = ( nYLimit / 2 ) - ( nPenaltyAreaWidth_m / 2 ), 
+            ymin = ( nYLimit / 2 ) - ( nPenaltyAreaWidth_m / 2 ),
             ymax = ( nYLimit / 2 ) + ( nPenaltyAreaWidth_m / 2 ),
             xmin = nXLimit,
             xmax = nXLimit - nPenaltyAreaLength_m
@@ -150,7 +162,7 @@ fAddPitchLines = function (
       # six yard box defense
       geom_rect(
          aes(
-            ymin = ( nYLimit / 2 ) - ( nSixYardBoxWidth_m / 2 ), 
+            ymin = ( nYLimit / 2 ) - ( nSixYardBoxWidth_m / 2 ),
             ymax = ( nYLimit / 2 ) + ( nSixYardBoxWidth_m / 2 ),
             xmin = 0,
             xmax = nSixYardBoxLength_m
@@ -162,7 +174,7 @@ fAddPitchLines = function (
       # six yard attack
       geom_rect(
          aes(
-            ymin = ( nYLimit / 2 ) - ( nSixYardBoxWidth_m / 2 ), 
+            ymin = ( nYLimit / 2 ) - ( nSixYardBoxWidth_m / 2 ),
             ymax = ( nYLimit / 2 ) + ( nSixYardBoxWidth_m / 2 ),
             xmin = nXLimit,
             xmax = nXLimit - nSixYardBoxLength_m
@@ -175,8 +187,8 @@ fAddPitchLines = function (
       # this doesn't work, size changes with plot size
       # geom_point(
       #    aes(x = nXLimit / 2, y = nYLimit / 2),
-      #    size = 30, 
-      #    shape = 1, 
+      #    size = 30,
+      #    shape = 1,
       #    color = "white"
       # ) +
       # penalty spot defense
@@ -222,7 +234,7 @@ fAddPitchLines = function (
             y = ( nYLimit / 2 )
          ),
          color = cLineColour
-      ) + 
+      ) +
       # left bottom corner arc
       geom_path(
          data = dtCornerArc,
@@ -297,8 +309,8 @@ fAddPitchLines = function (
          ),
          fill = cLineColour
       ) +
-      xlab(NULL) + 
-      ylab(NULL) + 
+      xlab(NULL) +
+      ylab(NULL) +
       cf
 
    return ( plotObject )

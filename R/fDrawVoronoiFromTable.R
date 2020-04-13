@@ -1,10 +1,6 @@
 #' Draws a Voronoi diagram for a time slice
 #'
 #' @param dtTrackingSlice
-#' @param xMinBB
-#' @param yMinBB
-#' @param xMaxBB
-#' @param yMaxBB
 #' @examples
 #' @import magick
 #' @import ggplot2
@@ -17,7 +13,8 @@ fDrawVoronoiFromTable = function(
     nYlimit = 80,
     UseOneFrameEvery = 1,
     DelayBetweenFrames = 5,
-    suppressWarnings = F
+    suppressWarnings = F,
+    markFutureTrajectoryFor = NULL
 ) {
 
     setDT(dtTrackingSlice)
@@ -79,7 +76,9 @@ fDrawVoronoiFromTable = function(
                 dtVoronoiCoordinates[Frame == iFrame],
                 dtTrackingSlice[Frame == iFrame],
                 nXLimit,
-                nYLimit
+                nYLimit,
+                markFutureTrajectoryFor,
+                dtTrackingSlice[Frame >= iFrame]
             )
 
             suppressMessages(
@@ -131,6 +130,8 @@ fDrawVoronoiFromTable = function(
                 cGIFFile
             )
         )
+        # convert image1.jpg image2.jpg +append output.jpg
+
 
         plotVoronoi = cGIFFile
 

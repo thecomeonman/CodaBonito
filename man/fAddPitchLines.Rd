@@ -25,8 +25,8 @@ fAddPitchLines(
 }
 \description{
 Adds pitch markings, green background, etc. for plot background to look like
-a football pitch. ggplot adds things in order so initiate a ggplot object, 
-add the pitch marking with this function, and then add the data you want to 
+a football pitch. ggplot adds things in order so initiate a ggplot object,
+add the pitch marking with this function, and then add the data you want to
 add
 }
 \examples{
@@ -36,7 +36,7 @@ p1
 p1 = p1 + theme_pitch()
 p1
 # adding passing data on top now
-p1 + 
+p1 +
    geom_point(
       data = dtPasses,
       aes(x = x , y = y)

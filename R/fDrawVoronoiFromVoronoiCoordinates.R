@@ -10,10 +10,9 @@ fDrawVoronoiFromVoronoiCoordinates = function(
     dtVoronoiCoordinates,
     dtTrackingSlice,
     nXLimit,
-    nYLimit,
-    markFutureTrajectoryFor,
-    dtTrackingSliceFuture
+    nYLimit
 ) {
+
 
     plotVoronoi = ggplot()
 
@@ -42,41 +41,22 @@ fDrawVoronoiFromVoronoiCoordinates = function(
             size = 3
         )
 
-    if ( !is.null(markFutureTrajectoryFor) ) {
-
-        plotVoronoi = plotVoronoi +
-            geom_path(
-                data = dtTrackingSliceFuture[
-                    Player %in% markFutureTrajectoryFor
-                ][
-                    order(Frame)
-                ],
-                aes(
-                    x = X,
-                    y = Y,
-                    group = Player,
-                    color = Tag
-                )
-            )
-
-    }
-
-
     if ( dtTrackingSlice[, any(Player == 'Ball')] ) {
 
         plotVoronoi = plotVoronoi +
             geom_point(
                 data = dtTrackingSlice[Player == 'Ball'],
                 aes(
-                x = X,
-                y = Y,
-                color = 'Ball',
-                fill = 'Ball'
+                    x = X,
+                    y = Y,
+                    color = 'Ball',
+                    fill = 'Ball'
                 ),
                 size = 3
             )
 
     }
+
 
     plotVoronoi = fAddPitchLines(
         plotVoronoi,
@@ -96,12 +76,15 @@ fDrawVoronoiFromVoronoiCoordinates = function(
             guide = FALSE
         ) + 
         theme_pitch()
+
+    cf = coord_fixed(
+        xlim = c(0,nXLimit),
+        ylim = c(0,nYLimit)
+    )
+    cf$default = T
     
     plotVoronoi = plotVoronoi +
-        coord_fixed(
-            xlim = c(0,nXLimit),
-            ylim = c(0,nYLimit)
-        )
+        cf  
 
     plotVoronoi
 

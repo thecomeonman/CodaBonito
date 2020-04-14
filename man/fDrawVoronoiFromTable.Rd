@@ -6,12 +6,13 @@
 \usage{
 fDrawVoronoiFromTable(
   dtTrackingSlice,
-  nXLimit = 120,
-  nYlimit = 80,
+  nXLimit,
+  nYLimit,
   UseOneFrameEvery = 1,
   DelayBetweenFrames = 5,
-  suppressWarnings = F,
-  markFutureTrajectoryFor = NULL
+  markTrajectoryFor = NULL,
+  markOffsideLineFor = NULL,
+  markLineBetween = NULL
 )
 }
 \description{

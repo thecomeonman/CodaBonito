@@ -49,6 +49,14 @@ fParseTrackingDataBothTeams = function (
       all = T
    )
 
+   dtTrackingData[, c('AwayBallX','AwayBallY') := NULL]
+
+    setnames(
+        dtTrackingData,
+        c('HomeBallX','HomeBallY'),
+        c('BallX','BallY')
+    )
+
    dtEventsData = fread(
       paste0(
          paste0(
@@ -63,7 +71,7 @@ fParseTrackingDataBothTeams = function (
    setnames(
       dtEventsData,
       c('Start Frame','Start Time [s]','End Frame','End Time [s]'),
-      c('Frame','Time_s','EndFrame','EndTime_s'),
+      c('StartFrame','StartTime_s','EndFrame','EndTime_s'),
    )
 
    setnames(
@@ -78,9 +86,9 @@ fParseTrackingDataBothTeams = function (
    dtEventsData[, EventEndY := EventEndY * nYLimit / yMaxBB]
 
    # if ( bOutputLong ) {
-   if ( F ) {
+   if ( T ) {
 
-      dtData = fConvertTrackingDataWideToLong(
+      dtTrackingData = fConvertTrackingDataWideToLong(
          dtTrackingData
       )
 
@@ -88,7 +96,7 @@ fParseTrackingDataBothTeams = function (
       #
       # )
 
-   } else {
+   } else if ( F ) {
 
       dtTrackingData = merge(
          dtEventsData,
@@ -99,6 +107,11 @@ fParseTrackingDataBothTeams = function (
 
    }
 
-   dtTrackingData
+   lData = list(
+       dtTrackingData = dtTrackingData,
+       dtEventsData = dtEventsData
+   )
+
+   lData
 
 }

@@ -9,153 +9,203 @@
 #' @import data.table
 #' @export
 fConvertTrackingDataWideToLong = function(
-   dtTrackingSlice
+    dtTrackingSlice
 ) {
 
-   if ( F ) {
+    # all the intersects and all are happening because I had merged the 
+    # tracking data with the event data earlier.
+    # it's a bad idea to do that so going back to keeping them apart
 
-      dtAllData = copy(dtTrackingSlice)
+    # this will be a very expensive function for a large number of rows so 
+    # we could optimise it to be handled in RAM by breaking the operation
+    # in chunks
 
-      dtTrackingSlice = melt(
-         dtTrackingSlice[,
-            c(
-               c('Period','Frame','Time_s'),
-               grep(
-                   colnames(dtTrackingSlice),
-                   pattern = 'Player',
-                   value = T
-               )
-            ),
-            with = F
-         ],
-         intersect(
-            c('Period','Frame','Time_s'),
-            colnames(dtTrackingSlice)
-         )
-      )
+    if ( T ) {
 
-   } else {
+        # dtAllData = copy(dtTrackingSlice)
 
-    #    dtTrackingSlice = copy(dtTrackingSlice)
-
-      dtTrackingSlice = melt(
-         dtTrackingSlice,
-         intersect(
-            colnames(dtTrackingSlice),
-            c('Period','Frame','Time_s','Team','Type','Subtype','From','To')
-         )
-      )
-
-   }
-
-   dtTrackingSlice = dtTrackingSlice[!is.na(value)]
-
-   dtTrackingSlice[,
-       Coordinate := gsub(
-          x = variable,
-          pattern = '.*Player[[:digit:]]*|.*Ball[[:digit:]]*',
-          replacement = ''
-       )
-   ]
-
-   dtTrackingSlice[
-       !Coordinate %in% c('X','Y'),
-       Coordinate := NA
-   ]
-
-   dtTrackingSlice[,
-      Tag := gsub(
-         x = variable,
-         pattern = 'Ball.*|Player.*',
-         replacement = ''
-      )
-   ]
-
-   dtTrackingSlice[
-       !Tag %in% c('Home','Away'),
-       Tag := NA
-   ]
-
-   dtTrackingSlice[,
-       Player := gsub(
-         x = variable,
-         pattern = paste0(paste0(unique(Coordinate), '$*'), collapse = '|'),
-         replacement = ''
-      )
-   ]
-
-   dtTrackingSlice[
-        Player %in% c("EndFrame", "EndTime_s"),
-        Player := NA
-   ]
-
-   dtTrackingSlice[
-      grepl(
-         Player,
-         pattern = 'Ball'
-      ),
-      c('Player','Tag') := list('Ball', 'Ball')
-   ]
-
-   dtTrackingSlice[, variable := NULL]
-
-   dtTrackingSlice = merge(
-      dtTrackingSlice[
-         1,
-         intersect(
-            colnames(dtTrackingSlice),
-            c(
-               'Period',
-               'Frame',
-               'Time_s',
-               'Team',
-               'Type',
-               'Subtype',
-               'From',
-               'To'
-            )
-         ),
-         with = F
-      ],
-      dcast(
-         dtTrackingSlice[
-             !is.na(Coordinate),
+        dtTrackingSlice = melt(
+            dtTrackingSlice[,
+                c(
+                    intersect(
+                        c('Period','Frame','Time_s'),
+                        colnames(dtTrackingSlice)
+                    ),
+                    grep(
+                         colnames(dtTrackingSlice),
+                         pattern = 'Ball|Player',
+                         value = T
+                    )
+                ),
+                with = F
+            ],
             intersect(
-               colnames(dtTrackingSlice),
-               c(
-                  'Period',
-                  'Frame',
-                  'Time_s',
-                  'Tag',
-                  'Player',
-                  'Coordinate',
-                  'value'
-               )
-            ),
-            with = F
-         ],
-         as.formula(
-            paste0(
-               paste0(
-                  intersect(
-                     colnames(dtTrackingSlice),
-                     c('Period','Frame','Time_s','Tag','Player')
-                  ),
-                  collapse = '+'
-               ),
-               '~ Coordinate'
+                c('Period','Frame','Time_s'),
+                colnames(dtTrackingSlice)
             )
-         ),
-         value.var = 'value',
-         fun.aggregate = mean
-      ),
-      c(intersect(
-         colnames(dtTrackingSlice),
-         c('Period', 'Frame', 'Time_s')
-      )),
-      all = T
-   )
+        )
 
-   dtTrackingSlice
+    } else {
+
+     #     dtTrackingSlice = copy(dtTrackingSlice)
+
+        dtTrackingSlice = melt(
+            dtTrackingSlice,
+            intersect(
+                colnames(dtTrackingSlice),
+                c('Period','Frame','Time_s','Team','Type','Subtype','From','To')
+            )
+        )
+
+    }
+
+    dtTrackingSlice = dtTrackingSlice[!is.na(value)]
+
+    dtTrackingSlice[,
+        Coordinate := gsub(
+            x = variable,
+            pattern = '.*Player[[:digit:]]*|.*Ball[[:digit:]]*',
+            replacement = ''
+        ),
+        variable
+    ]
+
+    dtTrackingSlice[
+         !Coordinate %in% c('X','Y'),
+         Coordinate := NA
+    ]
+
+    dtTrackingSlice[,
+        Tag := gsub(
+            x = variable,
+            pattern = 'Ball.*|Player.*',
+            replacement = ''
+        ),
+        variable
+    ]
+
+    dtTrackingSlice[
+        Tag %in% c(''),
+        Tag := 'Ball'
+    ]
+
+    dtTrackingSlice[
+         !Tag %in% c('Home','Away','Ball'),
+         Tag := NA
+    ]
+
+    dtTrackingSlice[,
+        Player := gsub(
+            x = variable,
+            pattern = paste0(paste0(unique(Coordinate), '$*'), collapse = '|'),
+            replacement = ''
+        ),
+        variable
+    ]
+
+    # dtTrackingSlice[
+    #       Player %in% c("EndFrame", "EndTime_s"),
+    #       Player := NA
+    # ]
+
+    dtTrackingSlice[, variable := NULL]
+
+    if ( F ) {
+
+        dtTrackingSlice = merge(
+            dtTrackingSlice[
+                    1,
+                    intersect(
+                        colnames(dtTrackingSlice),
+                        c(
+                        'Period',
+                        'Frame',
+                        'Time_s',
+                        'Team',
+                        'Type',
+                        'Subtype',
+                        'From',
+                        'To'
+                        )
+                    ),
+                    with = F
+            ],
+            dcast(
+                    dtTrackingSlice[
+                        !is.na(Coordinate),
+                        intersect(
+                        colnames(dtTrackingSlice),
+                        c(
+                            'Period',
+                            'Frame',
+                            'Time_s',
+                            'Tag',
+                            'Player',
+                            'Coordinate',
+                            'value'
+                        )
+                        ),
+                        with = F
+                    ],
+                    as.formula(
+                        paste0(
+                        paste0(
+                            intersect(
+                                    colnames(dtTrackingSlice),
+                                    c('Period','Frame','Time_s','Tag','Player')
+                            ),
+                            collapse = '+'
+                        ),
+                        '~ Coordinate'
+                        )
+                    ),
+                    value.var = 'value',
+                    fun.aggregate = mean
+            ),
+            c(intersect(
+                    colnames(dtTrackingSlice),
+                    c('Period', 'Frame', 'Time_s')
+            )),
+            all = T
+        )
+
+    } else {
+
+        dtTrackingSlice = dcast(
+            dtTrackingSlice[
+                    !is.na(Coordinate),
+                    intersect(
+                        colnames(dtTrackingSlice),
+                        c(
+                            'Period',
+                            'Frame',
+                            'Time_s',
+                            'Tag',
+                            'Player',
+                            'Coordinate',
+                            'value'
+                        )
+                    ),
+                    with = F
+            ],
+            as.formula(
+                    paste0(
+                        paste0(
+                            intersect(
+                                    colnames(dtTrackingSlice),
+                                    c('Period','Frame','Time_s','Tag','Player')
+                            ),
+                            collapse = '+'
+                        ),
+                        '~ Coordinate'
+                    )
+            ),
+            value.var = 'value',
+            fun.aggregate = mean
+        )
+        
+    }
+
+    dtTrackingSlice
 
 }

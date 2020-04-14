@@ -4,7 +4,7 @@
 \alias{fGetVoronoiFromTable}
 \title{Pass network ( WIP )}
 \usage{
-fGetVoronoiFromTable(dtFrame, nXLimit = 120, nYlimit = 80)
+fGetVoronoiFromTable(dtFrame, nXLimit = 120, nYLimit = 80)
 }
 \description{
 Plots a marker for each player at their median passing position, and draws

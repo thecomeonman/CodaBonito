@@ -839,9 +839,9 @@ WIP using the same data structure as
 <a href="https://github.com/metrica-sports/sample-data" class="uri">https://github.com/metrica-sports/sample-data</a>
 
     pVoronoi = fDrawVoronoiFromTable(
-       dtTrackingSlice[1],
-       nXLimit = nXLimit,
-       nYlimit = nYlimit
+       fConvertTrackingDataWideToLong(dtTrackingSlice[Frame == min(Frame)]),
+       nXLimit = 120,
+       nYLimit = 80
     )
 
     print(pVoronoi)
@@ -850,16 +850,14 @@ WIP using the same data structure as
 
 And if you have multiple frames -
 
-    voronoiOutput = suppressWarnings(
-       fDrawVoronoiFromTable(
-          dtTrackingSlice,
-          nXLimit = nXLimit,
-          nYlimit = nYlimit,
-          UseOneFrameEvery = 1,
-          DelayBetweenFrames = 5,
-          suppressWarnings = T
-       )
+    voronoiOutput = fDrawVoronoiFromTable(
+       fConvertTrackingDataWideToLong(dtTrackingSlice),
+       nXLimit = nXLimit,
+       nYLimit = nYLimit,
+       UseOneFrameEvery = 1,
+       DelayBetweenFrames = 5
     )
+
 
     if ( !interactive() ) {
 
@@ -877,7 +875,9 @@ And if you have multiple frames -
 
     }
 
-![](./README_files/figure-markdown_strict/Voronoi.gif)
+![](./README_files/figure-markdown_strict/Voronoi.gif) More experiments
+with Voronoi here -
+<a href="https://github.com/thecomeonman/MakingFriendsWithTrackingData" class="uri">https://github.com/thecomeonman/MakingFriendsWithTrackingData</a>
 
 Logic and Algorithms
 --------------------
@@ -921,7 +921,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.5599163
+    #> [1] 0.340231
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our

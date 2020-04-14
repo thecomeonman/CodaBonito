@@ -8,9 +8,7 @@ fDrawVoronoiFromVoronoiCoordinates(
   dtVoronoiCoordinates,
   dtTrackingSlice,
   nXLimit,
-  nYLimit,
-  markFutureTrajectoryFor,
-  dtTrackingSliceFuture
+  nYLimit
 )
 }
 \description{

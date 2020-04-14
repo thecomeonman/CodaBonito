@@ -7,14 +7,16 @@
 #' @import data.table
 #' @export
 
+
 fDrawVoronoiFromTable = function(
     dtTrackingSlice,
-    nXLimit = 120,
-    nYlimit = 80,
+    nXLimit,
+    nYLimit,
     UseOneFrameEvery = 1,
     DelayBetweenFrames = 5,
-    suppressWarnings = F,
-    markFutureTrajectoryFor = NULL
+    markTrajectoryFor = NULL,
+    markOffsideLineFor = NULL,
+    markLineBetween = NULL
 ) {
 
     setDT(dtTrackingSlice)
@@ -27,9 +29,7 @@ fDrawVoronoiFromTable = function(
 
     }
 
-    dtTrackingSlice = fConvertTrackingDataWideToLong(
-       dtTrackingSlice
-    )
+
 
     dtVoronoiCoordinates = rbindlist(
         lapply(
@@ -45,7 +45,7 @@ fDrawVoronoiFromTable = function(
                 dtVoronoiCoordinates = fGetVoronoiFromTable(
                     dtFrame,
                     nXLimit = 120,
-                    nYlimit = 80
+                    nYLimit = 80
                 )
 
                 dtVoronoiCoordinates[, Frame := iFrame]
@@ -55,6 +55,11 @@ fDrawVoronoiFromTable = function(
             }
         )
     )
+
+
+
+
+
 
     if ( dtTrackingSlice[, length(unique(Frame)) > 1] ) {
 
@@ -70,16 +75,112 @@ fDrawVoronoiFromTable = function(
             showWarnings = FALSE
         )
 
-        for ( iFrame in dtTrackingSlice[, unique(Frame)] ) {
+    }
 
-            plotVoronoi = fDrawVoronoiFromVoronoiCoordinates(
-                dtVoronoiCoordinates[Frame == iFrame],
-                dtTrackingSlice[Frame == iFrame],
-                nXLimit,
-                nYLimit,
-                markFutureTrajectoryFor,
-                dtTrackingSlice[Frame >= iFrame]
-            )
+    for ( iFrame in dtTrackingSlice[, unique(Frame)] ) {
+
+        plotVoronoi = fDrawVoronoiFromVoronoiCoordinates(
+            dtVoronoiCoordinates = dtVoronoiCoordinates[Frame == iFrame],
+            dtTrackingSlice = dtTrackingSlice[Frame == iFrame],
+            nXLimit = nXLimit,
+            nYLimit = nYLimit
+        )
+
+
+        if ( !is.null(markLineBetween) ) {
+
+            for ( i in seq(length((markLineBetween))) ) {
+
+                dtFormationLine = dtTrackingSlice[
+                    Frame == iFrame
+                ][
+                    Player %in% markLineBetween[[i]]
+                ][
+                    order(Y)
+                ]
+
+                dtFormationLine[,
+                    Tag := Tag[
+                        Player == markLineBetween[[i]][1]
+                    ]
+                ]
+
+                plotVoronoi = plotVoronoi +
+                    geom_path(
+                        data = dtFormationLine,
+                        aes(
+                            x = X,
+                            y = Y,
+                            color = Tag
+                        )
+                    )
+
+            }
+
+        }
+
+        if ( !is.null(markOffsideLineFor) ) {
+
+            for ( i in seq(length((markOffsideLineFor))) ) {
+
+                plotVoronoi = plotVoronoi +
+                    geom_vline(
+                        aes(
+                            xintercept = dtTrackingSlice[
+                                Frame == iFrame
+                            ][
+                                Tag == markOffsideLineFor[[i]][1]
+                            ][
+                                Player != markOffsideLineFor[[i]][2]
+                            ][,
+                                markOffsideLineFor[[i]][[3]](X)
+                            ],
+                            color = unlist(markOffsideLineFor[[i]][1])
+                        )
+                    )
+
+            }
+
+        }
+        
+        if ( !is.null(markTrajectoryFor) ) {
+
+            plotVoronoi = plotVoronoi +
+                geom_path(
+                    data = dtTrackingSlice[
+                        Player %in% markTrajectoryFor
+                    ][
+                        order(Frame)
+                    ],
+                    aes(
+                        x = X,
+                        y = Y,
+                        group = Player,
+                        color = Tag
+                    )
+                )
+
+        }
+
+
+        plotVoronoi = fAddPitchLines(
+            plotVoronoi,
+            nXLimit,
+            nYLimit,
+            cLineColour = 'white',
+            cPitchColour = NA
+        )
+
+        cf = coord_fixed(
+            xlim = c(0,nXLimit),
+            ylim = c(0,nYLimit)
+        )
+        cf$default = T
+        
+        plotVoronoi = plotVoronoi +
+            cf  
+
+        if ( dtTrackingSlice[, length(unique(Frame)) > 1] ) {
 
             suppressMessages(
                 ggsave(
@@ -89,7 +190,10 @@ fDrawVoronoiFromTable = function(
                         '/',
                         iFrame,
                         '.png'
-                    )
+                    ),
+                    width = 20,
+                    height = 15,
+                    units = 'cm'
                 )
             )
 
@@ -97,22 +201,15 @@ fDrawVoronoiFromTable = function(
 
         }
 
+    }
+
+    
+    if ( dtTrackingSlice[, length(unique(Frame)) > 1] ) {
+    
         cGIFFile = paste0(
             tempfile(),
             '.gif'
         )
-
-        if ( !suppressWarnings ) { 
-
-            warning(
-                paste0(
-                    'Multiple frames given. Saving a GIF at - ',
-                    cGIFFile,
-                    ' and returning the file path instead of the plot itself'
-                )
-            )
-
-        }
 
         system(
             paste0(
@@ -121,7 +218,7 @@ fDrawVoronoiFromTable = function(
                 paste0(
                     paste0(
                         cTempdir,'/',
-                        dtTrackingSlice[, unique(Frame)], 
+                        dtTrackingSlice[, sort(unique(Frame))], 
                         '.png'
                     ), 
                     collapse = ' '
@@ -132,32 +229,10 @@ fDrawVoronoiFromTable = function(
         )
         # convert image1.jpg image2.jpg +append output.jpg
 
-
         plotVoronoi = cGIFFile
-
-        # list.files(
-        #     path = cTempdir, 
-        #     pattern = '*.png', 
-        #     full.names = TRUE
-        # ) %>% 
-        #     image_read() %>% # reads each path file
-        #     image_join() %>% # joins image
-        #     image_animate(fps=4) %>% # animates, can opt for number of loops
-        #     image_write("FileName.gif") # write to current dir
-
-    } else {
-
-
-        plotVoronoi = fDrawVoronoiFromVoronoiCoordinates(
-            dtVoronoiCoordinates,
-            dtTrackingSlice,
-            nXLimit,
-            nYLimit
-        )
-
 
     }
 
-    plotVoronoi    
+    plotVoronoi
 
 }

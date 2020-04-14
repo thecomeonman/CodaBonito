@@ -246,11 +246,10 @@ print(pXgBuildUpComparison)
 
 ## ----fDrawVoronoiFromTable-----------------------------------------------------
 
-
 pVoronoi = fDrawVoronoiFromTable(
-   dtTrackingSlice[1],
-   nXLimit = nXLimit,
-   nYlimit = nYlimit
+   fConvertTrackingDataWideToLong(dtTrackingSlice[Frame == min(Frame)]),
+   nXLimit = 120,
+   nYLimit = 80
 )
 
 print(pVoronoi)
@@ -258,16 +257,15 @@ print(pVoronoi)
 
 ## ----fDrawVoronoiFromTableAnimated--------------------------------------------
 
-voronoiOutput = suppressWarnings(
-   fDrawVoronoiFromTable(
-      dtTrackingSlice,
-      nXLimit = nXLimit,
-      nYlimit = nYlimit,
-      UseOneFrameEvery = 1,
-      DelayBetweenFrames = 5,
-      suppressWarnings = T
-   )
+
+voronoiOutput = fDrawVoronoiFromTable(
+   fConvertTrackingDataWideToLong(dtTrackingSlice),
+   nXLimit = nXLimit,
+   nYLimit = nYLimit,
+   UseOneFrameEvery = 1,
+   DelayBetweenFrames = 5
 )
+
 
 if ( !interactive() ) {
 

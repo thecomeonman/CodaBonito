@@ -33,6 +33,11 @@ Open R and run this command in the console -
 `install.packages("devtools");` `library(devtools);`
 `install_github("thecomeonman/CodaBonito");`
 
+If you’re interested in running the animated Voronoi, you will also need
+to install ImageMagick from
+<a href="https://imagemagick.org/script/download.php" class="uri">https://imagemagick.org/script/download.php</a>.
+This is a widely used image manipulation library.
+
 And you’re ready to run the examples below!
 
 Data
@@ -139,9 +144,9 @@ their age, etc.
 `dtMetricCategorisation` - some metadata about the metrics. -
 variableLabel is the name that will be displayed in charts for that
 metric, - variableCategory is the grouping of variables used in some
-visualisations, like `fNormalisedValueChart` - HighValueIsBad is marked
-true for variables where a high value is bad. Variables such as fouls
-and goals conceded would be true.
+visualisations, like `fStripChart` - HighValueIsBad is marked true for
+variables where a high value is bad. Variables such as fouls and goals
+conceded would be true.
 
 <table>
 <thead>
@@ -360,203 +365,59 @@ offense. - Success 1 for successful pass, 0 for failed pass
 <thead>
 <tr class="header">
 <th style="text-align: right;">Frame</th>
-<th style="text-align: right;">AwayPlayer0X</th>
-<th style="text-align: right;">AwayPlayer0Y</th>
-<th style="text-align: right;">AwayPlayer1X</th>
-<th style="text-align: right;">AwayPlayer1Y</th>
-<th style="text-align: right;">AwayPlayer2X</th>
-<th style="text-align: right;">AwayPlayer2Y</th>
-<th style="text-align: right;">AwayPlayer3X</th>
-<th style="text-align: right;">AwayPlayer3Y</th>
-<th style="text-align: right;">AwayPlayer4X</th>
-<th style="text-align: right;">AwayPlayer4Y</th>
-<th style="text-align: right;">HomePlayer0X</th>
-<th style="text-align: right;">HomePlayer0Y</th>
-<th style="text-align: right;">HomePlayer1X</th>
-<th style="text-align: right;">HomePlayer1Y</th>
-<th style="text-align: right;">HomePlayer2X</th>
-<th style="text-align: right;">HomePlayer2Y</th>
-<th style="text-align: right;">HomePlayer3X</th>
-<th style="text-align: right;">HomePlayer3Y</th>
-<th style="text-align: right;">HomePlayer4X</th>
-<th style="text-align: right;">HomePlayer4Y</th>
-<th style="text-align: right;">BallPlayerX</th>
-<th style="text-align: right;">BallPlayerY</th>
+<th style="text-align: left;">Tag</th>
+<th style="text-align: left;">Player</th>
+<th style="text-align: right;">X</th>
+<th style="text-align: right;">Y</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">32.55586</td>
-<td style="text-align: right;">50.29455</td>
-<td style="text-align: right;">34.20547</td>
-<td style="text-align: right;">51.66439</td>
-<td style="text-align: right;">33.96926</td>
-<td style="text-align: right;">49.83023</td>
-<td style="text-align: right;">32.48622</td>
-<td style="text-align: right;">46.60298</td>
-<td style="text-align: right;">31.51575</td>
-<td style="text-align: right;">29.26053</td>
-<td style="text-align: right;">31.79807</td>
-<td style="text-align: right;">28.79188</td>
-<td style="text-align: right;">33.07794</td>
-<td style="text-align: right;">32.22896</td>
-<td style="text-align: right;">31.25457</td>
-<td style="text-align: right;">20.00000</td>
-<td style="text-align: right;">31.55217</td>
-<td style="text-align: right;">38.22233</td>
-<td style="text-align: right;">31.69750</td>
-<td style="text-align: right;">54.10373</td>
-<td style="text-align: right;">31.5</td>
-<td style="text-align: right;">21</td>
+<td style="text-align: left;">Away</td>
+<td style="text-align: left;">AwayPlayer0</td>
+<td style="text-align: right;">31.74094</td>
+<td style="text-align: right;">53.12027</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">32.90562</td>
-<td style="text-align: right;">50.35286</td>
-<td style="text-align: right;">37.97009</td>
-<td style="text-align: right;">51.83395</td>
-<td style="text-align: right;">34.36936</td>
-<td style="text-align: right;">50.18844</td>
-<td style="text-align: right;">34.04449</td>
-<td style="text-align: right;">46.61486</td>
-<td style="text-align: right;">31.57939</td>
-<td style="text-align: right;">29.47331</td>
-<td style="text-align: right;">33.16570</td>
-<td style="text-align: right;">28.84700</td>
-<td style="text-align: right;">35.02446</td>
-<td style="text-align: right;">32.40506</td>
-<td style="text-align: right;">34.18699</td>
-<td style="text-align: right;">20.37152</td>
-<td style="text-align: right;">31.89392</td>
-<td style="text-align: right;">38.40522</td>
-<td style="text-align: right;">33.64902</td>
-<td style="text-align: right;">54.34768</td>
-<td style="text-align: right;">33.0</td>
-<td style="text-align: right;">22</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">Away</td>
+<td style="text-align: left;">AwayPlayer1</td>
+<td style="text-align: right;">30.93125</td>
+<td style="text-align: right;">22.80409</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">34.64757</td>
-<td style="text-align: right;">50.49276</td>
-<td style="text-align: right;">39.39422</td>
-<td style="text-align: right;">51.88643</td>
-<td style="text-align: right;">37.61476</td>
-<td style="text-align: right;">50.22465</td>
-<td style="text-align: right;">37.48907</td>
-<td style="text-align: right;">46.64428</td>
-<td style="text-align: right;">31.72541</td>
-<td style="text-align: right;">29.51734</td>
-<td style="text-align: right;">34.51955</td>
-<td style="text-align: right;">29.14071</td>
-<td style="text-align: right;">35.43241</td>
-<td style="text-align: right;">32.43194</td>
-<td style="text-align: right;">34.52284</td>
-<td style="text-align: right;">20.41324</td>
-<td style="text-align: right;">31.96222</td>
-<td style="text-align: right;">38.49100</td>
-<td style="text-align: right;">33.66490</td>
-<td style="text-align: right;">54.40687</td>
-<td style="text-align: right;">34.5</td>
-<td style="text-align: right;">23</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">Away</td>
+<td style="text-align: left;">AwayPlayer2</td>
+<td style="text-align: right;">33.71846</td>
+<td style="text-align: right;">44.04511</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">36.98394</td>
-<td style="text-align: right;">50.51058</td>
-<td style="text-align: right;">39.57247</td>
-<td style="text-align: right;">52.12462</td>
-<td style="text-align: right;">37.93450</td>
-<td style="text-align: right;">50.23367</td>
-<td style="text-align: right;">38.94468</td>
-<td style="text-align: right;">46.88701</td>
-<td style="text-align: right;">36.38850</td>
-<td style="text-align: right;">29.75361</td>
-<td style="text-align: right;">34.78269</td>
-<td style="text-align: right;">29.16300</td>
-<td style="text-align: right;">35.93637</td>
-<td style="text-align: right;">32.89249</td>
-<td style="text-align: right;">36.49239</td>
-<td style="text-align: right;">20.66244</td>
-<td style="text-align: right;">32.10005</td>
-<td style="text-align: right;">38.50102</td>
-<td style="text-align: right;">34.57877</td>
-<td style="text-align: right;">54.63409</td>
-<td style="text-align: right;">36.0</td>
-<td style="text-align: right;">24</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">Away</td>
+<td style="text-align: left;">AwayPlayer3</td>
+<td style="text-align: right;">34.17647</td>
+<td style="text-align: right;">43.21420</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">38.99220</td>
-<td style="text-align: right;">50.55312</td>
-<td style="text-align: right;">40.07305</td>
-<td style="text-align: right;">52.27400</td>
-<td style="text-align: right;">38.34619</td>
-<td style="text-align: right;">50.31231</td>
-<td style="text-align: right;">42.49844</td>
-<td style="text-align: right;">47.02056</td>
-<td style="text-align: right;">36.83313</td>
-<td style="text-align: right;">29.90822</td>
-<td style="text-align: right;">36.14444</td>
-<td style="text-align: right;">29.16342</td>
-<td style="text-align: right;">39.23561</td>
-<td style="text-align: right;">33.22427</td>
-<td style="text-align: right;">38.33900</td>
-<td style="text-align: right;">20.83137</td>
-<td style="text-align: right;">33.08677</td>
-<td style="text-align: right;">38.53923</td>
-<td style="text-align: right;">35.73584</td>
-<td style="text-align: right;">54.78274</td>
-<td style="text-align: right;">37.5</td>
-<td style="text-align: right;">25</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">Away</td>
+<td style="text-align: left;">AwayPlayer4</td>
+<td style="text-align: right;">31.58153</td>
+<td style="text-align: right;">54.04715</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">40.09334</td>
-<td style="text-align: right;">50.74373</td>
-<td style="text-align: right;">41.89556</td>
-<td style="text-align: right;">52.43318</td>
-<td style="text-align: right;">39.75834</td>
-<td style="text-align: right;">50.42094</td>
-<td style="text-align: right;">44.38057</td>
-<td style="text-align: right;">47.29533</td>
-<td style="text-align: right;">39.25388</td>
-<td style="text-align: right;">29.92609</td>
-<td style="text-align: right;">36.58014</td>
-<td style="text-align: right;">29.29511</td>
-<td style="text-align: right;">40.47152</td>
-<td style="text-align: right;">33.36805</td>
-<td style="text-align: right;">39.15145</td>
-<td style="text-align: right;">21.05101</td>
-<td style="text-align: right;">35.87850</td>
-<td style="text-align: right;">38.62949</td>
-<td style="text-align: right;">36.36883</td>
-<td style="text-align: right;">55.00029</td>
-<td style="text-align: right;">39.0</td>
-<td style="text-align: right;">26</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">Ball</td>
+<td style="text-align: left;">Ball</td>
+<td style="text-align: right;">31.50000</td>
+<td style="text-align: right;">21.00000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">## Visua</td>
-<td style="text-align: right;">lisations</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
+<td style="text-align: left;">lisatio</td>
+<td style="text-align: left;">ns</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 </tr>
@@ -600,9 +461,9 @@ theme\_pitch
 
 ![](README_files/figure-markdown_strict/theme_pitch-1.png)
 
-### fNormalisedValueChart
+### fStripChart
 
-    pNormalisedValueChart = fNormalisedValueChart (
+    pStripChart = fStripChart (
        dtPlayerMetrics,
        vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
        dtMetricCategorisation,
@@ -611,9 +472,9 @@ theme\_pitch
     )
     #> Warning: `expand_scale()` is deprecated; use `expansion()` instead.
 
-    print(pNormalisedValueChart)
+    print(pStripChart)
 
-![](README_files/figure-markdown_strict/fNormalisedValueChart-1.png)
+![](README_files/figure-markdown_strict/fStripChart-1.png)
 
 ### fPercentileBarChart
 
@@ -839,7 +700,7 @@ WIP using the same data structure as
 <a href="https://github.com/metrica-sports/sample-data" class="uri">https://github.com/metrica-sports/sample-data</a>
 
     pVoronoi = fDrawVoronoiFromTable(
-       fConvertTrackingDataWideToLong(dtTrackingSlice[Frame == min(Frame)]),
+       dtTrackingSlice[Frame == min(Frame)],
        nXLimit = 120,
        nYLimit = 80
     )
@@ -851,7 +712,7 @@ WIP using the same data structure as
 And if you have multiple frames -
 
     voronoiOutput = fDrawVoronoiFromTable(
-       fConvertTrackingDataWideToLong(dtTrackingSlice),
+       dtTrackingSlice,
        nXLimit = nXLimit,
        nYLimit = nYLimit,
        UseOneFrameEvery = 1,
@@ -921,7 +782,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.340231
+    #> [1] 0.4536791
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our

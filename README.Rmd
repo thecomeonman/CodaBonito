@@ -52,6 +52,10 @@ Open R and run this command in the console -
 `library(devtools);`
 `install_github("thecomeonman/CodaBonito");`
 
+If you're interested in running the animated Voronoi, you will also need to 
+install ImageMagick from https://imagemagick.org/script/download.php. This is 
+a widely used image manipulation library.
+
 And you're ready to run the examples below!
 
 ## Data
@@ -68,7 +72,7 @@ age, etc.
 `dtMetricCategorisation` - some metadata about the metrics. 
 - variableLabel is the name that will be displayed in charts for that metric, 
 - variableCategory is the grouping of variables used in some visualisations,
-like `fNormalisedValueChart`
+like `fStripChart`
 - HighValueIsBad is marked true for variables where a high value is bad. 
 Variables such as fouls and goals conceded would be true.
 ```{r DataDescriptionMetricCategorisation, echo = F}
@@ -117,8 +121,8 @@ If you aren't interested in having the axis markings, etc., use theme_pitch
 ```{r theme_pitch}
 ```
 
-### fNormalisedValueChart
-```{r fNormalisedValueChart}
+### fStripChart
+```{r fStripChart}
 ```
 
 ### fPercentileBarChart

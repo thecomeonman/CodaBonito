@@ -22,7 +22,7 @@
 #' @import data.table
 #' @import ggplot2
 #' @export
-fNormalisedValueChart = function (
+fStripChart = function (
    dtPlayerMetrics,
    vcColumnsToIndex,
    dtMetricCategorisation,
@@ -34,6 +34,8 @@ fNormalisedValueChart = function (
    cFontColour = 'white',
    vnExpand = c(0.1, 0.1)
 ) {
+
+   setDT(dtPlayerMetrics)
 
    viColumnNameOccurrence = table(
       colnames(

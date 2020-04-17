@@ -373,7 +373,7 @@ if ( F ) {
 
 
     dtTrackingSlice[,
-        BallPlayerX := (
+        BallX := (
             nXLimit * ( 1 - pitchBuffer - pitchBuffer) * .I / .N
         ) + (
             nXLimit * pitchBuffer
@@ -382,12 +382,16 @@ if ( F ) {
     ]
     
     dtTrackingSlice[,
-        BallPlayerY := (
+        BallY := (
             nYLimit * ( 1 - pitchBuffer - pitchBuffer) * .I / .N
         ) + (
             nYLimit * pitchBuffer
         )
     ]
+
+    dtTrackingSlice = fConvertTrackingDataWideToLong(
+        dtTrackingSlice
+    )
     
    save(
       list = 'dtTrackingSlice',

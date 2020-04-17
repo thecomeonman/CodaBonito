@@ -60,8 +60,8 @@ pPitch = pPitch +
 
 print(pPitch)
 
-## ----fNormalisedValueChart----------------------------------------------------
-pNormalisedValueChart = fNormalisedValueChart (
+## ----fStripChart----------------------------------------------------
+pStripChart = fStripChart (
    dtPlayerMetrics,
    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
    dtMetricCategorisation,
@@ -69,7 +69,7 @@ pNormalisedValueChart = fNormalisedValueChart (
    cTitle = 'Sample'
 )
 
-print(pNormalisedValueChart)
+print(pStripChart)
 
 ## ----fPercentileBarChart------------------------------------------------------
 pPercentileBarChart = fPercentileBarChart(
@@ -247,7 +247,7 @@ print(pXgBuildUpComparison)
 ## ----fDrawVoronoiFromTable-----------------------------------------------------
 
 pVoronoi = fDrawVoronoiFromTable(
-   fConvertTrackingDataWideToLong(dtTrackingSlice[Frame == min(Frame)]),
+   dtTrackingSlice[Frame == min(Frame)],
    nXLimit = 120,
    nYLimit = 80
 )
@@ -259,7 +259,7 @@ print(pVoronoi)
 
 
 voronoiOutput = fDrawVoronoiFromTable(
-   fConvertTrackingDataWideToLong(dtTrackingSlice),
+   dtTrackingSlice,
    nXLimit = nXLimit,
    nYLimit = nYLimit,
    UseOneFrameEvery = 1,

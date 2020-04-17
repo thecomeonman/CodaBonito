@@ -211,9 +211,15 @@ fDrawVoronoiFromTable = function(
             '.gif'
         )
 
+        cCommand = 'convert'
+        if ( .Platform$OS.type == 'windows' ) {
+            cCommand = 'magick'
+        }
+
         system(
             paste0(
-                'convert -delay ',
+                cCommand,
+                ' -delay ',
                 DelayBetweenFrames, ' ',
                 paste0(
                     paste0(

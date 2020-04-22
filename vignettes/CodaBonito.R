@@ -71,6 +71,17 @@ pStripChart = fStripChart (
 
 print(pStripChart)
 
+## ----fBeeswarmChart----------------------------------------------------
+pStripChart = fBeeswarmChart (
+   dtPlayerMetrics,
+   vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
+   dtMetricCategorisation,
+   iPlayerId = 2,
+   cTitle = 'Sample'
+)
+
+print(pStripChart)
+
 ## ----fPercentileBarChart------------------------------------------------------
 pPercentileBarChart = fPercentileBarChart(
    dtDataset = dtPlayerMetrics,

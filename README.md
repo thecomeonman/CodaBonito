@@ -476,6 +476,20 @@ theme\_pitch
 
 ![](README_files/figure-markdown_strict/fStripChart-1.png)
 
+### fBeeswarmChart
+
+    pStripChart = fBeeswarmChart (
+       dtPlayerMetrics,
+       vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
+       dtMetricCategorisation,
+       iPlayerId = 2,
+       cTitle = 'Sample'
+    )
+
+    print(pStripChart)
+
+![](README_files/figure-markdown_strict/fBeeswarmChart-1.png)
+
 ### fPercentileBarChart
 
     pPercentileBarChart = fPercentileBarChart(
@@ -782,7 +796,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.4536791
+    #> [1] 0.3747069
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our

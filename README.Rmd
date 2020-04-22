@@ -125,6 +125,10 @@ If you aren't interested in having the axis markings, etc., use theme_pitch
 ```{r fStripChart}
 ```
 
+### fBeeswarmChart
+```{r fBeeswarmChart}
+```
+
 ### fPercentileBarChart
 ```{r fPercentileBarChart}
 ```

@@ -73,10 +73,11 @@ fParseTrackingDataOneTeam = function (
 
       }
 
+      # y coordinates are flipped
       if ( grepl(cColname, pattern = 'Y$') ) {
 
          dtRawData[,
-            (cColname) := dtRawData[, cColname, with = F] * nYLimit / yMaxBB
+            (cColname) := ( yMaxBB - dtRawData[, cColname, with = F] )  * nYLimit / yMaxBB
          ]
 
       }

@@ -27,8 +27,8 @@ fParseTrackingDataBothTeams = function (
             '_RawTrackingData_Away_Team.csv'
          ),
          cTag = 'Away',
-         nXLimit = 120,
-         nYLimit = 80,
+         nXLimit = nXLimit,
+         nYLimit = nYLimit,
          xMaxBB = 1,
          yMaxBB = 1
       ),
@@ -40,8 +40,8 @@ fParseTrackingDataBothTeams = function (
             '_RawTrackingData_Home_Team.csv'
          ),
          cTag = 'Home',
-         nXLimit = 120,
-         nYLimit = 80,
+         nXLimit = nXLimit,
+         nYLimit = nYLimit,
          xMaxBB = 1,
          yMaxBB = 1
       ),
@@ -82,8 +82,8 @@ fParseTrackingDataBothTeams = function (
 
    dtEventsData[, EventStartX := EventStartX * nXLimit / xMaxBB]
    dtEventsData[, EventEndX := EventEndX * nXLimit / xMaxBB]
-   dtEventsData[, EventStartY := EventStartY * nYLimit / xMaxBB]
-   dtEventsData[, EventEndY := EventEndY * nYLimit / yMaxBB]
+   dtEventsData[, EventStartY := ( yMaxBB - EventStartY ) * nYLimit / xMaxBB]
+   dtEventsData[, EventEndY := ( yMaxBB - EventEndY ) * nYLimit / yMaxBB]
 
    # if ( bOutputLong ) {
    if ( T ) {

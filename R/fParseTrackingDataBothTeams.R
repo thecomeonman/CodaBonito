@@ -15,7 +15,8 @@ fParseTrackingDataBothTeams = function (
    nXLimit = 120,
    nYLimit = 80,
    xMaxBB = 1,
-   yMaxBB = 1
+   yMaxBB = 1,
+   nUpperLimitSpeed = 10
 ) {
 
    dtTrackingData = merge(
@@ -106,6 +107,55 @@ fParseTrackingDataBothTeams = function (
       )
 
    }
+
+   setorder(
+       dtTrackingData,
+       Frame,
+       Player
+   )
+
+
+   dtTrackingData[,
+        Velocity := c(
+            0,
+           (
+                (
+                    ( diff(X) ^ 2 ) +
+                    ( diff(Y) ^ 2 )
+                ) ^ 0.5
+            ) / diff(Time_s)
+        ),
+        list(
+            Player
+        )
+    ]
+
+
+    dtTrackingData[,
+        VelocityX := c(
+            0,
+            diff(X) / diff(Time_s)
+        ),
+        list(
+            Player
+        )
+    ]
+
+    dtTrackingData[,
+        VelocityY := c(
+            0,
+            diff(Y) / diff(Time_s)
+        ),
+        list(
+           Player
+        )
+   ]
+
+    dtTrackingData[
+        Velocity > nUpperLimitSpeed,
+        Velocity := nUpperLimitSpeed
+    ]
+
 
    lData = list(
        dtTrackingData = dtTrackingData,

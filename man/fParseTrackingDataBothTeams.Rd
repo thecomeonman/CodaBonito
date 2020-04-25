@@ -11,7 +11,8 @@ fParseTrackingDataBothTeams(
   nXLimit = 120,
   nYLimit = 80,
   xMaxBB = 1,
-  yMaxBB = 1
+  yMaxBB = 1,
+  nUpperLimitSpeed = 10
 )
 }
 \description{

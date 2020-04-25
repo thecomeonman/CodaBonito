@@ -12,11 +12,11 @@ fConvertTrackingDataWideToLong = function(
     dtTrackingSlice
 ) {
 
-    # all the intersects and all are happening because I had merged the 
+    # all the intersects and all are happening because I had merged the
     # tracking data with the event data earlier.
     # it's a bad idea to do that so going back to keeping them apart
 
-    # this will be a very expensive function for a large number of rows so 
+    # this will be a very expensive function for a large number of rows so
     # we could optimise it to be handled in RAM by breaking the operation
     # in chunks
 
@@ -112,7 +112,7 @@ fConvertTrackingDataWideToLong = function(
 
     if ( F ) {
 
-        dtTrackingSlice = merge(
+        qwe = merge(
             dtTrackingSlice[
                     1,
                     intersect(
@@ -171,39 +171,84 @@ fConvertTrackingDataWideToLong = function(
 
     } else {
 
-        dtTrackingSlice = dcast(
-            dtTrackingSlice[
-                    !is.na(Coordinate),
-                    intersect(
-                        colnames(dtTrackingSlice),
-                        c(
-                            'Period',
-                            'Frame',
-                            'Time_s',
-                            'Tag',
-                            'Player',
-                            'Coordinate',
-                            'value'
-                        )
-                    ),
-                    with = F
-            ],
-            as.formula(
-                    paste0(
-                        paste0(
-                            intersect(
-                                    colnames(dtTrackingSlice),
-                                    c('Period','Frame','Time_s','Tag','Player')
-                            ),
-                            collapse = '+'
+        if ( F ) {
+
+            asd = dcast(
+                dtTrackingSlice[
+                        !is.na(Coordinate),
+                        intersect(
+                            colnames(dtTrackingSlice),
+                            c(
+                                'Period',
+                                'Frame',
+                                'Time_s',
+                                'Tag',
+                                'Player',
+                                'Coordinate',
+                                'value'
+                            )
                         ),
-                        '~ Coordinate'
+                        with = F
+                ],
+                as.formula(
+                        paste0(
+                            paste0(
+                                intersect(
+                                        colnames(dtTrackingSlice),
+                                        c('Period','Frame','Time_s','Tag','Player')
+                                ),
+                                collapse = '+'
+                            ),
+                            '~ Coordinate'
+                        )
+                ),
+                value.var = 'value',
+                fun.aggregate = mean
+            )
+
+        }
+
+        dtTrackingSlice = merge(
+            dtTrackingSlice[
+                Coordinate == 'X'
+            ][
+                !is.na(Coordinate),
+                intersect(
+                    colnames(dtTrackingSlice),
+                    c(
+                        'Period',
+                        'Frame',
+                        'Time_s',
+                        'Tag',
+                        'Player',
+                        'value'
                     )
-            ),
-            value.var = 'value',
-            fun.aggregate = mean
+                ),
+                with = F
+            ],
+            dtTrackingSlice[
+                Coordinate == 'Y'
+            ][
+                !is.na(Coordinate),
+                intersect(
+                    colnames(dtTrackingSlice),
+                    c(
+                        'Frame',
+                        'Player',
+                        'value'
+                    )
+                ),
+                with = F
+            ],
+            c('Frame','Player')
         )
-        
+
+        setnames(
+            dtTrackingSlice,
+            c('value.x','value.y'),
+            c('X','Y')
+        )
+
     }
 
     dtTrackingSlice

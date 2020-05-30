@@ -18,5 +18,5 @@ fParseTrackingDataBothTeams(
 \description{
 Very tightly tied to how https://github.com/metrica-sports/sample-data is
 organised right now since I don't know how tracking data is otherwise
-organised
+organised. Home team always attacks from left to right, x 0 to x 1.
 }

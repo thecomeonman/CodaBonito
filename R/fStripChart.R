@@ -12,7 +12,7 @@
 #' @param iPlayerId The ID of the player you want visualised
 #' @param cTitle The title on the chart
 #' @examples
-#' fNormalisedValueChart (
+#' fStripChart (
 #'    dtPlayerMetrics,
 #'    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
 #'    dtMetricCategorisation,
@@ -32,10 +32,12 @@ fStripChart = function (
    cForegroundColour = 'green',
    cBackgroundColour = 'black',
    cFontColour = 'white',
-   vnExpand = c(0.1, 0.1)
+   vnExpand = c(0.1, 0.1),
+   bShrinkOtherPlayerPoints = T
 ) {
 
    setDT(dtPlayerMetrics)
+   setDT(dtMetricCategorisation)
 
    viColumnNameOccurrence = table(
       colnames(
@@ -100,8 +102,8 @@ fStripChart = function (
          ),
          alpha = pmax(0.25, 25 / nrow(dtPlayerMetrics)),
          color = 'grey50',
-         size = 5,
-         height = 0.05
+         size = ifelse(bShrinkOtherPlayerPoints, 1, 5),
+         height = ifelse(bShrinkOtherPlayerPoints, 0.25, 0.05),
       ) +
       # geom_point(
       #     data = dtPlayer,
@@ -134,7 +136,7 @@ fStripChart = function (
       scale_x_continuous(
          breaks = c(0:10) / 10,
          name = NULL,
-         expand = expand_scale(mult = 0, add = c(0.05, vnExpand[1]))
+         expand = expansion(mult = 0, add = c(0.05, vnExpand[1]))
       ) +
       scale_y_discrete(
          # expand = c(0.2,0),

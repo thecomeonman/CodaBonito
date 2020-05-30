@@ -40,6 +40,9 @@ fRadarPercentileChart = function (
    vnExpand = c(0.1, 0.1)
 ) {
 
+   setDT(dtPlayerMetrics)
+   setDT(dtMetricCategorisation)
+
    warning(
       'Radar charts are bad. Use fPercentileBarChart instead.'
    )

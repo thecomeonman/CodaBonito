@@ -2,7 +2,7 @@
 #'
 #' Very tightly tied to how https://github.com/metrica-sports/sample-data is
 #' organised right now since I don't know how tracking data is otherwise
-#' organised
+#' organised. Home team always attacks from left to right, x 0 to x 1.
 #'
 #' @param cRootPath
 #' @examples
@@ -107,6 +107,52 @@ fParseTrackingDataBothTeams = function (
       )
 
    }
+
+   iFlipPeriod = dtTrackingData[
+      Frame %in% dtEventsData[
+         Subtype == 'KICK OFF',
+         list(Frame = min(StartFrame)),
+         Period
+      ][,
+         Frame
+      ]
+   ][,
+      mean(X),
+      list(Period, Tag)
+   ][
+      Tag == 'Home' & V1 > nXLimit / 2,
+      Period
+   ]
+
+   dtTrackingData[
+      Period %in% iFlipPeriod,
+      X := nXLimit - X
+   ]
+
+   dtTrackingData[
+      Period %in% iFlipPeriod,
+      Y := nYLimit - Y
+   ]
+
+   dtEventsData[
+      Period %in% iFlipPeriod,
+      EventStartX := nXLimit - EventStartX
+   ]
+
+   dtEventsData[
+      Period %in% iFlipPeriod,
+      EventStartY := nYLimit - EventStartY
+   ]
+
+   dtEventsData[
+      Period %in% iFlipPeriod,
+      EventEndX := nXLimit - EventEndX
+   ]
+
+   dtEventsData[
+      Period %in% iFlipPeriod,
+      EventEndY := nYLimit - EventEndY
+   ]
 
    setorder(
        dtTrackingData,

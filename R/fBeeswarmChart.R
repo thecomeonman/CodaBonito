@@ -36,7 +36,7 @@ fBeeswarmChart = function (
 ) {
 
    setDT(dtPlayerMetrics)
-   rm(dtPlayerMetrics)
+   setDT(dtMetricCategorisation)
 
    viColumnNameOccurrence = table(
       colnames(

@@ -62,6 +62,8 @@ fParseTrackingDataOneTeam = function (
       vcColnames
    )
 
+   dtRawData <<- dtRawData
+
 
    for ( cColname in colnames(dtRawData) ) {
 

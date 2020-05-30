@@ -8,6 +8,11 @@ fXgBuildUpComparison = function(
    iSimulationIterations = 100
 ) {
 
+   setDT(dtXg)
+   if ( !is.null(dtTeamLabels) ) {
+      setDT(dtTeamLabels)
+   }
+
    vcTeamIds = dtXg[, unique(teamId)]
 
    dtXg[, time := minute + ( second / 60 )]

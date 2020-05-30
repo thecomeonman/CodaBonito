@@ -15,7 +15,8 @@ fStripChart(
   cForegroundColour = "green",
   cBackgroundColour = "black",
   cFontColour = "white",
-  vnExpand = c(0.1, 0.1)
+  vnExpand = c(0.1, 0.1),
+  bShrinkOtherPlayerPoints = T
 )
 }
 \arguments{
@@ -39,7 +40,7 @@ Those charts with normailsed metric values and a bright mark indicating
 where the PlayerName of interest lies
 }
 \examples{
-fNormalisedValueChart (
+fStripChart (
    dtPlayerMetrics,
    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
    dtMetricCategorisation,

@@ -1,4 +1,4 @@
-#' Pitch control 
+#' Pitch control
 #'
 #' @param lData
 #' @param viTrackingFrame
@@ -16,32 +16,33 @@ fGetPitchControlProbabilities = function (
     params = c(),
     nYLimit = 120,
     nXLimit = 80,
-    iGridCellsX = 60
+    iGridCellsX = 60,
+    bGetPlayerProbabilities = F
 ) {
 
     paramsFillin = c()
-    
+
     if ( !'time_to_control_veto' %in% names(params) ) {
         params['time_to_control_veto'] = 3
-    }    
-    
+    }
+
     if ( !'tti_sigma' %in% names(params) ) {
         params['tti_sigma'] = 0.45 # Standard deviation of sigmoid function in Spearman 2018 ('s') that determines uncertainty in player arrival time
     }
-    
-    
+
+
     if ( !'kappa_def' %in% names(params) ) {
         params['kappa_def'] = 1. # kappa parameter in Spearman 2018 (=1.72 in the paper) that gives the advantage defending players to control ball, I have set to 1 so that home & away players have same ball control probability
-    }    
-    
+    }
+
     if ( !'lambda_att' %in% names(params) ) {
         params['lambda_att'] = 4.3 # ball control parameter for attacking team
-    }    
-    
+    }
+
     if ( !'lambda_def' %in% names(params) ) {
         params['lambda_def'] = 4.3 * params['kappa_def'] # ball control parameter for defending team
     }
-    
+
     # model parameters
     paramsFillin['max_player_accel'] = 7. # maximum player acceleration m/s/s, not used in this implementation
     paramsFillin['max_player_speed'] = 5. # maximum player speed m/s
@@ -63,6 +64,13 @@ fGetPitchControlProbabilities = function (
         paramsFillin[!names(paramsFillin) %in% names(params)]
     )
 
+    if ( bGetPlayerProbabilities ) {
+
+        params['time_to_control_att'] = Inf
+        params['time_to_control_def'] = Inf
+
+    }
+
     rm(paramsFillin)
 
 
@@ -70,7 +78,7 @@ fGetPitchControlProbabilities = function (
     # Frame details extraction
     ################################################################################
     {
-            
+
         # iTrackingFrame = lData$dtEventsData[Type == 'PASS', sample(StartFrame, 1)]
         # iTrackingFrame = lData$dtEventsData[821, StartFrame]
         dtTrackingSlice = lData$dtTrackingData[
@@ -87,12 +95,12 @@ fGetPitchControlProbabilities = function (
                 Type %in% c("PASS", "SHOT", "SET PIECE", "RECOVERY") |
                 Subtype %in% c("GOAL KICK", "KICK OFF"),
                 list(AttackingTeam = Team[1]),
-                list(Frame = StartFrame)
+                list(Frame = StartFrame, EndFrame)
             ],
             data.table(Frame = viTrackingFrame),
             'Frame',
             all = T
-        )[, 
+        )[, .SD[which.max(EndFrame)], list(Frame)][,
             AttackingTeam := na.locf(AttackingTeam, na.rm = F)
         ]
 
@@ -178,13 +186,13 @@ fGetPitchControlProbabilities = function (
             'Frame'
         )
 
-        # ball travel time is distance to target position from current ball position 
-        # divided assumed average ball speed 
-        # 
+        # ball travel time is distance to target position from current ball position
+        # divided assumed average ball speed
+        #
         # difference from laurie's code
         # laurie's code used the pass start x,y coordinates but i use the ball's
         # tracked x,y coordinates instead
-        dtDetails[, 
+        dtDetails[,
             ball_travel_time := sqrt(
                 ( ( TargetX - BallX ) ^ 2 ) +
                 ( ( TargetY - BallY ) ^ 2 )
@@ -236,13 +244,13 @@ fGetPitchControlProbabilities = function (
             setnames(
                 dcast(
                     dtTrackingSliceVectorised[
-                        Tag != 'Ball', 
+                        Tag != 'Ball',
                         list(
                             tau_min = min(time_to_intercept)
                         ),
                         list(SNO, Tag)
-                    ], 
-                    SNO ~ Tag, 
+                    ],
+                    SNO ~ Tag,
                     value.var= 'tau_min'
                 ),
                 c('Home','Away'),
@@ -278,11 +286,13 @@ fGetPitchControlProbabilities = function (
         dtTrackingSliceVectorised = merge(
             dtTrackingSliceVectorised,
             dtDetails[
-                is.na(AttackProbability), 
+                is.na(AttackProbability),
                 list(SNO, tau_min_att, tau_min_def)
             ],
             'SNO'
         )
+
+        dtDetails[, c('tau_min_def','tau_min_att') := NULL]
 
         dtTrackingSliceVectorised = dtTrackingSliceVectorised[(
                 Tag != AttackingTeam &
@@ -316,7 +326,7 @@ fGetPitchControlProbabilities = function (
 
         vbSNOToEvaluationFlag = rep(T, length(viSNOToEvaluate))
         dtTrackingSliceVectorised[, PlayerPPCF := 0]
-        
+
         i = 2
 
         dtProbabilities = data.table()
@@ -330,15 +340,15 @@ fGetPitchControlProbabilities = function (
                 c('SNO'),
                 all.x = T
             )
-            
+
             dtTrackingSliceVectorised[
-                !is.na(AttackProbability), 
-                PlayerPPCF := 
-                    PlayerPPCF + 
+                !is.na(AttackProbability),
+                PlayerPPCF :=
+                    PlayerPPCF +
                     pmax(
-                        ( 
-                            1 - 
-                            AttackProbability - 
+                        (
+                            1 -
+                            AttackProbability -
                             DefenseProbability
                         ) *
                         fBallInterceptionProbability(
@@ -355,7 +365,7 @@ fGetPitchControlProbabilities = function (
                                     'def'
                                 )
                             )
-                        ] * 
+                        ] *
                         params['int_dt'],
                         0
                     )
@@ -363,10 +373,10 @@ fGetPitchControlProbabilities = function (
 
             dtPPCF = dtTrackingSliceVectorised[
                 !is.na(AttackProbability),
-                list( 
+                list(
                     DefenseProbability = sum(
                         PlayerPPCF[Tag != AttackingTeam]
-                    ), 
+                    ),
                     AttackProbability = sum(
                         PlayerPPCF[Tag == AttackingTeam]
                     )
@@ -438,7 +448,7 @@ fGetPitchControlProbabilities = function (
             merge(
                 dtDetails[
                     is.na(AttackProbability)
-                ][, 
+                ][,
                     !'AttackProbability'
                 ],
                 dtProbabilities,
@@ -448,16 +458,31 @@ fGetPitchControlProbabilities = function (
             fill = T
         )
 
-        dtDetails[
-            is.na(DefenseProbability),
-            DefenseProbability := 1 - AttackProbability
+        dtDetails[,
+            DefenseProbability := NULL
+        ]
+
+        dtDetails[,
+            ball_travel_time := NULL
         ]
 
     }
 
-    list(
+    lReturn = list(
         dtTrackingSlice = dtTrackingSlice,
         dtDetails = dtDetails
     )
+
+    if ( bGetPlayerProbabilities ) {
+
+        lReturn$dtTrackingSliceVectorised = dtTrackingSliceVectorised[,
+            list(
+                SNO, Player, PlayerPPCF
+            )
+        ]
+
+    }
+
+    lReturn
 
 }

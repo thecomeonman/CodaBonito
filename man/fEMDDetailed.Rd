@@ -4,7 +4,7 @@
 \alias{fEMDDetailed}
 \title{emdist:emd is quite restrictive. A more libral alternative.}
 \usage{
-fEMDDetailed(SNO1, SNO2, Distance)
+fEMDDetailed(SNO1, SNO2, Distance, dtWeights1 = NULL, dtWeights2 = NULL)
 }
 \arguments{
 \item{SNO1, }{index of the obervation number from dataset one,
@@ -14,7 +14,10 @@ eg. c(1,2,3,4,1,2,3,4,1,2,3,4)}
 eg. c(1,1,1,1,2,2,2,2,3,3,3,3)}
 
 \item{Distance}{The distance between the data associated with the 
-respective SNO1 and SNO2 values,}
+respective SNO1 and SNO2 values}
+
+\item{dtWeights1}{The weight for the respective SNO1 entry, a data.table with
+two columns - SNO1, Weight}
 }
 \description{
 So long as you can calculate a distance matrix between the two datasets, you

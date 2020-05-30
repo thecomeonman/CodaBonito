@@ -19,7 +19,9 @@
 #' @param SNO2, index of the obervation number from dataset one,
 #' eg. c(1,1,1,1,2,2,2,2,3,3,3,3)
 #' @param Distance The distance between the data associated with the 
-#' respective SNO1 and SNO2 values,
+#' respective SNO1 and SNO2 values
+#' @param dtWeights1 The weight for the respective SNO1 entry, a data.table with
+#' two columns - SNO1, Weight
 #' @examples
 #' # Two random datasets of three dimension
 #' a = data.table(matrix(runif(21), ncol = 3))
@@ -62,20 +64,114 @@
 fEMDDetailed = function(
    SNO1,
    SNO2,
-   Distance
+   Distance,
+   dtWeights1 = NULL,
+   dtWeights2 = NULL
 ) {
 
-   library(data.table)
+   if ( is.null(dtWeights1) ) {
+
+      nScaleUpFactor = length(unique(SNO1)) / length(unique(SNO2))
+
+      if ( nScaleUpFactor < 1 ) {
+
+         dtWeights1 = data.table(
+            SNO1 = unique(SNO1),
+            Weight = 1 / nScaleUpFactor
+         )
+
+         dtWeights2 = data.table(
+            SNO2 = unique(SNO2),
+            Weight = 1
+         )
+
+      } else {
+
+         dtWeights1 = data.table(
+            SNO1 = unique(SNO1),
+            Weight = 1
+         )
+
+         dtWeights2 = data.table(
+            SNO2 = unique(SNO2),
+            Weight = 1 / nScaleUpFactor
+         )
+
+      }
+
+   }
+
+   setDT(dtWeights1)
+   setDT(dtWeights2)
+
+   if ( dtWeights2[, sum(Weight)] > dtWeights1[, sum(Weight)] ) {
+
+      warning('Adding dummy SNO1 to balance weights with SNO2')
+
+      NewSNO = dtWeights1[, max(SNO1) + 1]
+
+      dtWeights1 = rbind(
+         dtWeights1,
+         data.table(
+            SNO1 = NewSNO,
+            Weight = dtWeights2[, sum(Weight)] - dtWeights1[, sum(Weight)]
+         )
+      )
+
+      SNO1 = c(
+         SNO1,
+         rep(NewSNO, nrow(dtWeights2))
+      )
+
+      SNO2 = c(
+         SNO2,
+         dtWeights2[, SNO2]
+      )
+
+      Distance = c(
+         Distance,
+         rep(pmax(10, max(Distance)) ^ 5, nrow(dtWeights2))
+      )
+
+   } else if ( dtWeights1[, sum(Weight)] > dtWeights2[, sum(Weight)] ) {
+
+      warning('Adding dummy SNO2 to balance weights with SNO1')
+
+      NewSNO = dtWeights2[, max(SNO2) + 1]
+
+      dtWeights2 = rbind(
+         dtWeights2,
+         data.table(
+            SNO2 = NewSNO,
+            Weight = dtWeights1[, sum(Weight)] - dtWeights2[, sum(Weight)]
+         )
+      )
+
+      SNO2 = c(
+         SNO2,
+         rep(NewSNO, nrow(dtWeights1))
+      )
+
+      SNO1 = c(
+         SNO1,
+         dtWeights1[, SNO1]
+      )
+
+      Distance = c(
+         Distance,
+         rep(100 * max(Distance), nrow(dtWeights1))
+      )
+
+   }
 
    # dtMatrix = dtMatrix[, list(SNO1, SNO2, Distance)]
    dtMatrix = data.table(SNO1, SNO2, Distance)
 
    lprec = make.lp(
-      nrow = dtMatrix[, length(unique(SNO1))] + dtMatrix[, length(unique(SNO2))] + nrow(dtMatrix),
-      ncol = nrow(dtMatrix)
+      nrow = dtMatrix[, length(unique(SNO1))] + dtMatrix[, length(unique(SNO2))] + nrow(dtMatrix), # constraints
+      ncol = nrow(dtMatrix) # objective function
    )
 
-   nScaleUpFactor = dtMatrix[, length(unique(SNO1))] / dtMatrix[, length(unique(SNO2))]
 
    for ( iSNO1 in dtMatrix[, unique(SNO1) ]) {
 
@@ -86,11 +182,7 @@ fEMDDetailed = function(
             dtMatrix[, sum(iSNO1 == SNO1)]
          ),
          type = c("="),
-         rhs = ifelse(
-            nScaleUpFactor < 1,
-            1 / nScaleUpFactor,
-            1
-         ),
+         rhs = dtWeights1[SNO1 == iSNO1, Weight],
          indices = dtMatrix[, which(iSNO1 == SNO1)]
       )
 
@@ -105,11 +197,7 @@ fEMDDetailed = function(
             dtMatrix[, sum(iSNO2 == SNO2)]
          ),
          type = c("="),
-         rhs = ifelse(
-            nScaleUpFactor < 1,
-            1,
-            nScaleUpFactor
-         ),
+         rhs = dtWeights2[SNO2 == iSNO2, Weight],
          indices = dtMatrix[, which(iSNO2 == SNO2)]
       )
 
@@ -135,7 +223,6 @@ fEMDDetailed = function(
    )
 
    solve(lprec)
-
 
    lprec
 

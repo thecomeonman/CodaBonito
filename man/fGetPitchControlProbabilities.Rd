@@ -10,7 +10,8 @@ fGetPitchControlProbabilities(
   params = c(),
   nYLimit = 120,
   nXLimit = 80,
-  iGridCellsX = 60
+  iGridCellsX = 60,
+  bGetPlayerProbabilities = F
 )
 }
 \description{

@@ -19,9 +19,9 @@ fGetPitchDimensions = function (
    nPenaltySpotOffset_m = nXSpan * 11 / 105
    nCornerArcRadius_m = nXSpan * 1 / 105
    nPointRadius_m = nXSpan * 0.05 / 105
-   nGoalWidth_m = nXSpan * 4 / 105
-   nGoalHeight_m = nXSpan * 2.67 / 105
-   nGoalPostRadius_m = nXSpan * 0.04 / 105
+   nGoalWidth_m = nXSpan * 8 / 105
+   nGoalHeight_m = nXSpan * 2.44 / 105
+   nGoalPostRadius_m = nXSpan * 0.1 / 105
 
 
 
@@ -92,21 +92,29 @@ fGetPitchDimensions = function (
             list(x, y, z = 0)
          ],
 
-         dtCornerArc = data.table(
-            Angle_rad = seq(
-               0,
-               pi/2,
-               0.01
+         dtCornerArc = rbind(
+            data.table(
+               Angle_rad = seq(
+                  0,
+                  pi/2,
+                  0.01
+               )
+            )[,
+               x := nXStart + (
+                  nCornerArcRadius_m * sin(Angle_rad)
+               )
+            ][,
+               y := nYStart + (
+                  nCornerArcRadius_m * cos(Angle_rad)
+               )
+            ][,
+               list(x,y)
+            ],
+            data.table(
+               x = nXStart,
+               y = nYStart
             )
          )[,
-            x := (
-               nCornerArcRadius_m * sin(Angle_rad)
-            )
-         ][,
-            y := (
-               nCornerArcRadius_m * cos(Angle_rad)
-            )
-         ][,
             list(x, y, z = 0)
          ],
 
@@ -142,14 +150,6 @@ fGetPitchDimensions = function (
             z = 0
          )
 
-      ),
-
-      lGoalCoordinates = list(
-         dtGoalFrameDefense = data.table(
-            x = c(nXStart, nXStart, nXStart, nXStart),
-            y = c(( nYSpan / 2 ) - ( nGoalWidth_m / 2), ( nYSpan / 2 ) + ( nGoalWidth_m / 2), ( nYSpan / 2 ) + ( nGoalWidth_m / 2), ( nYSpan / 2 ) - ( nGoalWidth_m / 2)),
-            z = c(nGoalHeight_m / 2, nGoalHeight_m / 2, 0, 0)
-         )
       )
 
    )
@@ -240,6 +240,77 @@ fGetPitchDimensions = function (
    ]
 
    lPitchDimensions$lPitchCoordinates$dtCornerArc = NULL
+
+
+   lPitchDimensions$lGoalframes = list()
+
+   # circle of post on the floor
+   lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseLow = data.table(
+      Angle_rad = seq(
+         pi,
+         3*pi, # so that the missing segment, if at all, is behind
+         0.01
+      )
+   )[,
+      x := ( nXStart ) + (
+         nGoalPostRadius_m * sin(Angle_rad)
+      )
+   ][,
+      y := nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m  ) + (
+         nGoalPostRadius_m * cos(Angle_rad)
+      )
+   ][,
+      list(x, y, z = 0)
+   ]
+
+   # circle of post on the crossbar
+   lPitchDimensions$lGoalframes$dtGoalPostAirDefenseLow = data.table(
+      Angle_rad = seq(
+         3*pi, # mirror image of post on floor so that vertical connecting line is proper
+         pi,
+         -0.01
+      )
+   )[,
+      x := ( nXStart ) + (
+         nGoalPostRadius_m * sin(Angle_rad)
+      )
+   ][,
+      y := nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m  ) + (
+         nGoalPostRadius_m * cos(Angle_rad)
+      )
+   ][,
+      list(
+         x, y,
+         z = nGoalHeight_m +
+         ( nGoalPostRadius_m * (
+            ( y - (nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ) ) /
+            nGoalPostRadius_m
+         ) )
+      )
+   ]
+
+
+   lPitchDimensions$lGoalframes$dtGoalPostAirDefenseHigh = copy(lPitchDimensions$lGoalframes$dtGoalPostAirDefenseLow)
+   lPitchDimensions$lGoalframes$dtGoalPostAirDefenseHigh[, y := nYEnd - y ]
+
+   lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseHigh = copy(lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseLow)
+   lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseHigh[, y := nYEnd - y ]
+
+
+
+   lPitchDimensions$lGoalframes$dtGoalPostAirOffenseHigh = copy(lPitchDimensions$lGoalframes$dtGoalPostAirDefenseHigh)
+   lPitchDimensions$lGoalframes$dtGoalPostAirOffenseHigh[, x := nXEnd - x ]
+
+   lPitchDimensions$lGoalframes$dtGoalPostFloorOffenseHigh = copy(lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseHigh)
+   lPitchDimensions$lGoalframes$dtGoalPostFloorOffenseHigh[, x := nXEnd - x ]
+
+   lPitchDimensions$lGoalframes$dtGoalPostAirOffenseLow = copy(lPitchDimensions$lGoalframes$dtGoalPostAirDefenseLow)
+   lPitchDimensions$lGoalframes$dtGoalPostAirOffenseLow[, x := nXEnd - x ]
+
+   lPitchDimensions$lGoalframes$dtGoalPostFloorOffenseLow = copy(lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseLow)
+   lPitchDimensions$lGoalframes$dtGoalPostFloorOffenseLow[, x := nXEnd - x ]
+
+
 
    lPitchDimensions
 

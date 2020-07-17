@@ -1,9 +1,24 @@
+#' @import zoo
 #' @export
 fGetTransformedCoordinates = function (
     mCoordinates,
     mOrigin,
     mOriginDirection
 ) {
+
+
+   fCrossProduct = function(mZAxisVectorNew, mYAxisVectorNew) {
+
+       matrix(
+           c(
+               ( mZAxisVectorNew[2] * mYAxisVectorNew[3] ) - ( mZAxisVectorNew[3] * mYAxisVectorNew[2] ),
+               ( mZAxisVectorNew[3] * mYAxisVectorNew[1] ) - ( mZAxisVectorNew[1] * mYAxisVectorNew[3] ),
+               ( mZAxisVectorNew[1] * mYAxisVectorNew[2] ) - ( mZAxisVectorNew[2] * mYAxisVectorNew[1] )
+           ),
+           ncol = 3
+       )
+
+   }
 
     # mCoordinates = cbind(
     #     # x = c( 0, -1, 1,-1, 1,-1, 1),
@@ -17,7 +32,8 @@ fGetTransformedCoordinates = function (
     # mOrigin = cbind(0,2,2)
     # mOriginDirection = cbind(0,0,0)
 
-    mTruncatingOrigin = ( ( mOrigin - mOriginDirection) * 0.99 ) + mOriginDirection
+    mTruncatingOrigin = ( ( mOrigin - mOriginDirection) * 0.9999 ) + mOriginDirection
+    mTruncatingOrigin = mOriginDirection
 
     mZAxisVector = c(mOriginDirection[,1:2], mOriginDirection[,3] + 1)
 
@@ -40,28 +56,28 @@ fGetTransformedCoordinates = function (
     )
     # if the above two vectors are parallel, i.e. viewing direction is along z axis
     if ( sum(mAnotherDivisionPlaneAxisVector) == 0 ) {
-        nDvisionPlaneCoefficients = c(
+        nDivisionPlaneCoefficients = c(
             nScreenPlaneCoefficients[1:3],
             nScreenPlaneCoefficients[4] - cbind(mTruncatingOrigin, 1) %*% nScreenPlaneCoefficients
         )
     } else {
 
         mAnotherDivisionPlaneAxisVector = ( mAnotherDivisionPlaneAxisVector / sum(mAnotherDivisionPlaneAxisVector ^ 2 ) ^ 0.5 )
-        nDvisionPlaneCoefficients = fCrossProduct(mZAxisVector - mOriginDirection, mAnotherDivisionPlaneAxisVector)
-        nDvisionPlaneCoefficients = c(
-            nDvisionPlaneCoefficients,
-            -sum(nDvisionPlaneCoefficients * mTruncatingOrigin)
+        nDivisionPlaneCoefficients = fCrossProduct(mZAxisVector - mOriginDirection, mAnotherDivisionPlaneAxisVector)
+        nDivisionPlaneCoefficients = c(
+            nDivisionPlaneCoefficients,
+            -sum(nDivisionPlaneCoefficients * mTruncatingOrigin)
         )
     }
 
-    bOriginDestinationInPositiveDirection = sum(nDvisionPlaneCoefficients * c(mOriginDirection, 1)) > 0
+    bOriginDestinationInPositiveDirection = sum(nDivisionPlaneCoefficients * c(mOrigin, 1)) < 0
 
     # removing points behind the screen with adjacent points also behind the screen
     # at most two points behind the screen should remain for each stretch of points
     # behind the screen
     vbCoordinatesToTransform = c(
         bOriginDestinationInPositiveDirection == (
-            cbind(mCoordinates, 1) %*% nDvisionPlaneCoefficients >= 0
+            cbind(mCoordinates, 1) %*% nDivisionPlaneCoefficients >= 0
         )
     )
 
@@ -93,9 +109,11 @@ fGetTransformedCoordinates = function (
         ),
     ]
 
+    mCoordinates = matrix(mCoordinates, ncol = 3)
+
     vbCoordinatesToTransform = c(
         bOriginDestinationInPositiveDirection == (
-            cbind(mCoordinates, 1) %*% nDvisionPlaneCoefficients >= 0
+            cbind(mCoordinates, 1) %*% nDivisionPlaneCoefficients >= 0
         )
     )
 
@@ -117,7 +135,7 @@ fGetTransformedCoordinates = function (
 
         vbCoordinatesToTransform = c(
             bOriginDestinationInPositiveDirection == (
-                cbind(mCoordinates, 1) %*% nDvisionPlaneCoefficients >= 0
+                cbind(mCoordinates, 1) %*% nDivisionPlaneCoefficients >= 0
             )
         )
 
@@ -125,7 +143,20 @@ fGetTransformedCoordinates = function (
             break
         }
 
-        viRelativeScreenPositionChunks = cumsum(c(1,abs(diff(vbCoordinatesToTransform))))
+        viRelativeScreenPositionChunks = cumsum(
+            c(
+                1,
+                abs(
+                    diff(
+                        # sapply(
+                        #     vbCoordinatesToTransform,
+                        #     function(x) ifelse(is.na(x),-1,x)
+                        # )
+                        zoo::na.locf(vbCoordinatesToTransform)
+                    ) != 0
+                )
+            )
+        )
         viCoordinatesToTransform = table(viRelativeScreenPositionChunks[!vbCoordinatesToTransform])
         viCoordinatesToTransform = which(
             viRelativeScreenPositionChunks == as.integer(names(viCoordinatesToTransform)[1])
@@ -139,7 +170,7 @@ fGetTransformedCoordinates = function (
         iPrevPoint[iPrevPoint == 0] = nrow(mCoordinates)
         iNextPoint[iNextPoint == nrow(mCoordinates) + 1] = 1
 
-        vnDistancesFromPlane = cbind(mCoordinates[c(iPrevPoint, viCoordinatesToTransform, iNextPoint),], 1) %*% nDvisionPlaneCoefficients
+        vnDistancesFromPlane = cbind(mCoordinates[c(iPrevPoint, viCoordinatesToTransform, iNextPoint),], 1) %*% nDivisionPlaneCoefficients
 
         mReplacementPoints = rbind(
             mCoordinates[viCoordinatesToTransform[1], ] - ( diff(mCoordinates[c(iPrevPoint, viCoordinatesToTransform[1]),]) * abs(vnDistancesFromPlane[2]) / ( abs(vnDistancesFromPlane[1]) + abs(vnDistancesFromPlane[2]) ) ),
@@ -313,8 +344,8 @@ fGetTransformedCoordinates = function (
 
         mSolutions = mSolutions[-1,]
         mYAxis = mSolutions[nrow(mSolutions), ]
-        mSolutions = mSolutions[-nrow(mSolutions), ]
-        mCoordinates = mCoordinates[-nrow(mCoordinates), ]
+        mSolutions = matrix(mSolutions[-nrow(mSolutions), ], ncol = 3)
+        mCoordinates = matrix(mCoordinates[-nrow(mCoordinates), ], ncol = 3)
 
     }
 

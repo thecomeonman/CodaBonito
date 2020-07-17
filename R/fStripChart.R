@@ -7,10 +7,16 @@
 #' @param vcColumnsToIndex The non-metric columns in your dataset, these are
 #' typically columns like name, age, team, position, etc.
 #' @param dtMetricCategorisation A table with metadata about the variables in
-#' dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the
-#' library for an example.
+#' dtPlayerMetrics. Refer to the `CodaBonito::dtMetricCategorisation` object
+#' declared in the library for an example.
 #' @param iPlayerId The ID of the player you want visualised
 #' @param cTitle The title on the chart
+#' @param vnExpand The X axis stretches between 0 and 1 but you need space on both
+#' sides to fit the annotations. Specify what values the category label, the
+#' stat value, and the comparison stat value should come at
+#' @param compareWith, either 'median', another playerId, or NULL. If not null,
+#' will add a second set of points for either the median or another player to
+#' have some reference for the player you're looking at.
 #' @examples
 #' fStripChart (
 #'    dtPlayerMetrics,
@@ -29,11 +35,15 @@ fStripChart = function (
    iPlayerId,
    cTitle,
    cFontFamily = 'arial',
-   cForegroundColour = 'green',
+   cPlayerColour = 'green',
    cBackgroundColour = 'black',
-   cFontColour = 'white',
-   vnExpand = c(0.1, 0.1),
-   bShrinkOtherPlayerPoints = T
+   cComparisonColour = 'white',
+   cNeutralColour = 'grey50',
+   vnExpand = c(-0.25, -0.03, 1.1, 1.15),
+   bShrinkOtherPlayerPoints = T,
+   compareWith = 'median',
+   bDisplayCategories = T,
+   bDisplayValue = T
 ) {
 
    setDT(dtPlayerMetrics)
@@ -89,22 +99,121 @@ fStripChart = function (
       MappedValue := 1 - MappedValue
    ]
 
+   dtPlayerMetrics = dtPlayerMetrics[
+      order(
+         variableCategory, variableLabel
+      )
+   ]
+
+   dtPlayerMetrics[,
+      variablePosition := cumsum(
+         c(
+            1,
+            (tail(variableLabel, -1) != head(variableLabel, -1)) +
+            (tail(variableCategory, -1) != head(variableCategory, -1))
+         )
+      )
+   ]
+
    dtPlayer = dtPlayerMetrics[playerId == iPlayerId]
    dtPlayerMetrics = dtPlayerMetrics[!playerId == iPlayerId]
 
    p1 = ggplot(
       dtPlayerMetrics
    ) +
-       geom_jitter(
+      geom_segment(
+         data = dtPlayerMetrics[,
+            list(
+               variablePositionMin = min(variablePosition),
+               variablePositionMax = max(variablePosition),
+               x = seq(0, 1, 0.25)
+            )
+         ],
+         aes(
+            y = variablePositionMin,
+            yend = variablePositionMax,
+            x = x,
+            xend = x
+         ),
+         color = cNeutralColour,
+         alpha = 0.5
+      ) +
+      geom_jitter(
          aes(
             x = MappedValue,
-            y = variableLabel
+            y = variablePosition
          ),
          alpha = pmax(0.25, 25 / nrow(dtPlayerMetrics)),
-         color = 'grey50',
+         color = cNeutralColour,
          size = ifelse(bShrinkOtherPlayerPoints, 1, 5),
          height = ifelse(bShrinkOtherPlayerPoints, 0.25, 0.05),
+      )
+
+   if ( is.null(compareWith) ) {
+
+      dtComparison = dtPlayer[, list(median(MappedValue), median(value)), list(variableLabel)]
+
+   } else {
+
+      if ( compareWith == 'median' ) {
+
+         dtComparison = dtPlayerMetrics[, list(median(MappedValue), median(value)), list(variableLabel)]
+
+      } else if ( compareWith %in% dtPlayerMetrics[, playerId] ) {
+
+         dtComparison = dtPlayerMetrics[compareWith == playerId, list(median(MappedValue), median(value)), list(variableLabel)]
+
+      }
+
+   }
+
+   dtComparison = merge(
+      dtPlayer,
+      dtComparison,
+      'variableLabel'
+   )
+
+   dtComparison[, NumericLabel := '']
+   dtComparison[V1 == MappedValue, NumericLabel := round(value, 2)]
+   dtComparison[V1 != MappedValue, NumericLabel := paste0(round(value, 2), ' | ', round(V2, 2))]
+
+   p1 = p1 +
+      geom_segment(
+         data = dtComparison[ MappedValue < V1 ],
+         aes(
+            x = V1,
+            xend = MappedValue,
+            y = variablePosition,
+            yend = variablePosition
+         ),
+         color = cComparisonColour,
+         size = 2,
+         alpha = 0.8
       ) +
+      geom_segment(
+         data = dtComparison[ MappedValue >= V1 ],
+         aes(
+            x = V1,
+            xend = MappedValue,
+            y = variablePosition,
+            yend = variablePosition
+         ),
+         color = cPlayerColour,
+         size = 2,
+         alpha = 0.8
+      ) +
+      geom_point(
+         data = dtComparison,
+         aes(
+            x = V1,
+            y = variablePosition
+         ),
+         color = cPlayerColour,
+         size = 3,
+         alpha = 0
+      )
+
+   p1 = p1 +
       # geom_point(
       #     data = dtPlayer,
       #     aes(x = MappedValue, y = variable2),
@@ -112,72 +221,223 @@ fStripChart = function (
       #     size = 6
       # ) +
       geom_point(
-         data = dtPlayer,
+         data = dtComparison[ MappedValue >= V1 ],
          aes(
             x = MappedValue,
-            y = variableLabel
+            y = variablePosition
          ),
-         color = cForegroundColour,
+         color = cPlayerColour,
          size = 7
       ) +
-      geom_text(
-         data = dtPlayer,
+      geom_point(
+         data = dtComparison[ MappedValue < V1 ],
          aes(
-            x = 1.03,
-            y = variableLabel,
-            label = round(value, 2)
+            x = MappedValue,
+            y = variablePosition
          ),
-         color = cForegroundColour,
+         color = cComparisonColour,
+         size = 7
+      )
+
+   p1 = p1 +
+      geom_text(
+         data = dtComparison[
+            MappedValue < V1,
+            list(
+               x = c(vnExpand[2]),
+               hjust = c(1),
+               # Label = c(NumericLabel, variableLabel)
+               Label = c(
+                  variableLabel
+               )
+            ),
+            list(variableCategory, variableLabel, variablePosition)
+         ],
+         aes(
+            x = x,
+            y = variablePosition,
+            label = Label,
+            hjust = hjust
+         ),
+         color = cComparisonColour,
          size = 5,
-         hjust = 0,
          fontface = 'bold',
          family = cFontFamily
       ) +
+      geom_text(
+         data = dtComparison[
+            MappedValue >= V1,
+            list(
+               x = c(vnExpand[2]),
+               hjust = c(1),
+               # Label = c(NumericLabel, variableLabel)
+               Label = c(
+                  variableLabel
+               )
+            ),
+            list(variableCategory, variableLabel, variablePosition)
+         ],
+         aes(
+            x = x,
+            y = variablePosition,
+            label = Label,
+            hjust = hjust
+         ),
+         color = cPlayerColour,
+         size = 5,
+         fontface = 'bold',
+         family = cFontFamily
+      )
+
+   if ( bDisplayValue ) {
+
+      p1 = p1 +
+         geom_text(
+            data = dtComparison[
+               MappedValue < V1,
+               list(
+                  x = c(1.03),
+                  hjust = c(0),
+                  # Label = c(NumericLabel, variableLabel)
+                  Label = c(
+                     paste0(c(round(value, ifelse(suffix == '%', 0, 2))), suffix)
+                  )
+               ),
+               list(variableCategory, variableLabel, variablePosition)
+            ],
+            aes(
+               x = x,
+               y = variablePosition,
+               label = Label,
+               hjust = hjust
+            ),
+            color = cComparisonColour,
+            size = 5,
+            fontface = 'bold',
+            family = cFontFamily
+         ) +
+         geom_text(
+            data = dtComparison[
+               MappedValue >= V1,
+               list(
+                  x = c(1.03),
+                  hjust = c(0),
+                  # Label = c(NumericLabel, variableLabel)
+                  Label = c(
+                     paste0(c(round(value, ifelse(suffix == '%', 0, 2))), suffix)
+                  )
+               ),
+               list(variableCategory, variableLabel, variablePosition)
+            ],
+            aes(
+               x = x,
+               y = variablePosition,
+               label = Label,
+               hjust = hjust
+            ),
+            color = cPlayerColour,
+            size = 5,
+            fontface = 'bold',
+            family = cFontFamily
+         )
+
+      if ( dtComparison[, any(V1 != MappedValue) ] ) {
+
+         p1 = p1 +
+            geom_text(
+               data = dtComparison[,
+                  list(
+                     x = c(vnExpand[3]),
+                     hjust = c(0),
+                     # Label = c(NumericLabel, variableLabel)
+                     Label = paste0(c(round(V2, ifelse(suffix == '%', 0, 2))), suffix)
+                  ),
+                  list(variableCategory, variableLabel, variablePosition)
+               ],
+               aes(
+                  x = x,
+                  y = variablePosition,
+                  label = Label,
+                  hjust = hjust
+               ),
+               color = cNeutralColour,
+               size = 5,
+               fontface = 'bold',
+               family = cFontFamily
+            )
+
+         if ( compareWith %in% 'median' ) {
+
+            p1 = p1 +
+               geom_text(
+                  aes(
+                     x = vnExpand[3],
+                     y = dtComparison[, max(variablePosition) + 0.6],
+                     label = 'median'
+                  ),
+                  hjust = 0,
+                  color = cNeutralColour,
+                  size = 3,
+                  family = cFontFamily
+               )
+
+         }
+
+      }
+
+   }
+
+
+   if ( bDisplayCategories ) {
+
+      p1 = p1 +
+         geom_text(
+            data = dtComparison[, list(variablePosition = sum(range(variablePosition)) / 2, x = vnExpand[1]), variableCategory],
+            aes(
+               x = x,
+               y = variablePosition,
+               label = variableCategory
+            ),
+            color = cNeutralColour,
+            size = 5,
+            fontface = 'bold',
+            family = cFontFamily,
+            angle = 90,
+            vjust = 1.1,
+         )
+   }
+
+   p1 = p1 +
       scale_x_continuous(
          breaks = c(0:10) / 10,
          name = NULL,
-         expand = expansion(mult = 0, add = c(0.05, vnExpand[1]))
+         limits = c(vnExpand[1], vnExpand[4]),
+         expand = expansion()
       ) +
       scale_y_discrete(
          # expand = c(0.2,0),
-         name = 'Stat category names'
-      ) +
-      facet_grid(
-         variableCategory~.,
-         # ncol = 1,
-         scale = 'free_y',
-         # strip.position = 'left',
-         space = 'free',
-         switch = 'y'
+         expand = expansion(mult = 0, add = c(0.5, 0.1)),
+         name = NULL
       ) +
       theme(
          panel.background = element_rect(fill = cBackgroundColour),
          panel.border = element_blank(),
          plot.background = element_rect(fill = cBackgroundColour),
-         panel.grid.major.x = element_line(size = 1, color = 'grey20'),
+         panel.grid.major.x = element_blank(),
          panel.grid.minor.x = element_blank(),
          panel.grid.major.y = element_blank(),
          panel.grid.minor.y = element_blank(),
+         axis.line = element_blank(),
+         axis.ticks = element_blank(),
          axis.text.x = element_blank(),
-         axis.text.y = element_text(
-            color = 'white',
-            hjust = 1,
-            margin = margin(15,0,0,15)
-         ),
+         axis.text.y = element_blank(),
          axis.title = element_blank(),
          panel.spacing = unit(3, "lines"),
          strip.placement = 'outside',
-         strip.background = element_rect(
-            fill = cForegroundColour
-         ),
-         strip.text = element_text(
-            size = 15,
-            face = 'bold',
-            color = cFontColour,
-            family = cFontFamily
-         ),
+         strip.background = element_blank(),
+         strip.text = element_blank(),
          plot.title = element_text(
-            color = cFontColour,
+            color = cNeutralColour,
             size = 15,
             hjust = 0.5,
             margin = margin(15, 15, 15, 15),
@@ -188,6 +448,7 @@ fStripChart = function (
       labs(
          title = cTitle
       )
+
 
    p1
 

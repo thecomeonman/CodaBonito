@@ -12,11 +12,15 @@ fStripChart(
   iPlayerId,
   cTitle,
   cFontFamily = "arial",
-  cForegroundColour = "green",
+  cPlayerColour = "green",
   cBackgroundColour = "black",
-  cFontColour = "white",
-  vnExpand = c(0.1, 0.1),
-  bShrinkOtherPlayerPoints = T
+  cComparisonColour = "white",
+  cNeutralColour = "grey50",
+  vnExpand = c(-0.25, -0.03, 1.1, 1.15),
+  bShrinkOtherPlayerPoints = T,
+  compareWith = "median",
+  bDisplayCategories = T,
+  bDisplayValue = T
 )
 }
 \arguments{
@@ -28,12 +32,20 @@ dtPlayerMetrics dataset packaged with the library for an example}
 typically columns like name, age, team, position, etc.}
 
 \item{dtMetricCategorisation}{A table with metadata about the variables in
-dtPlayerMetrics. Refer to the dtMetricCategorisation object declared in the
-library for an example.}
+dtPlayerMetrics. Refer to the `CodaBonito::dtMetricCategorisation` object
+declared in the library for an example.}
 
 \item{iPlayerId}{The ID of the player you want visualised}
 
 \item{cTitle}{The title on the chart}
+
+\item{vnExpand}{The X axis stretches between 0 and 1 but you need space on both
+sides to fit the annotations. Specify what values the category label, the
+stat value, and the comparison stat value should come at}
+
+\item{compareWith, }{either 'median', another playerId, or NULL. If not null,
+will add a second set of points for either the median or another player to
+have some reference for the player you're looking at.}
 }
 \description{
 Those charts with normailsed metric values and a bright mark indicating

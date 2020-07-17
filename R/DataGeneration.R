@@ -92,7 +92,8 @@ if ( F ) {
       variable = c('Metric1','Metric2','Metric3','Metric4','Metric5','Metric7'),
       variableLabel = c('Metric 1','Metric 2','Metric 3','Metric 4','Metric 5','Metric 7'),
       variableCategory = c('Offense','Offense','Defense','Offense','Defense','Defense'),
-      HighValueIsBad = c(F,F,F,T,F,F)
+      HighValueIsBad = c(F,F,F,T,F,F),
+      suffix = c('','','%','','','%')
    )
 
    save(
@@ -321,20 +322,20 @@ if ( F ) {
     ]
 
     dtTrackingSlice[,
-        X := cumsum(X), 
+        X := cumsum(X),
         Player
     ]
 
     dtTrackingSlice[,
-        X :=  ( 
-            ( X - min(X) ) * 
-            ( 1 - pitchBuffer - pitchBuffer ) * nXLimit / 
-            diff(range(X)) 
+        X :=  (
+            ( X - min(X) ) *
+            ( 1 - pitchBuffer - pitchBuffer ) * nXLimit /
+            diff(range(X))
         ) + (
             pitchBuffer * nXLimit
         )
     ]
-    
+
     dtTrackingSlice[,
         Y := cumsum(Y),
         Player
@@ -351,10 +352,10 @@ if ( F ) {
     ]
 
     dtTrackingSlice[,
-        Y := ( 
-            ( Y - min(Y) ) * 
-            ( 1 - pitchBuffer - pitchBuffer ) * nYLimit / 
-            diff(range(Y)) 
+        Y := (
+            ( Y - min(Y) ) *
+            ( 1 - pitchBuffer - pitchBuffer ) * nYLimit /
+            diff(range(Y))
         ) + (
             pitchBuffer * nYLimit
         )
@@ -380,7 +381,7 @@ if ( F ) {
         )
 
     ]
-    
+
     dtTrackingSlice[,
         BallY := (
             nYLimit * ( 1 - pitchBuffer - pitchBuffer) * .I / .N
@@ -392,7 +393,7 @@ if ( F ) {
     dtTrackingSlice = fConvertTrackingDataWideToLong(
         dtTrackingSlice
     )
-    
+
    save(
       list = 'dtTrackingSlice',
       file = './data/dtTrackingSlice.rda'

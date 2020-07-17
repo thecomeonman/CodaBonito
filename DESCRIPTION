@@ -9,7 +9,7 @@ BugReports: https://github.com/thecomeonman/CodaBonito/issues
 License: Use for non-commercial purpose with credit, author permission required for commercial use
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Imports: data.table,
     ggplot2,
     zoo,

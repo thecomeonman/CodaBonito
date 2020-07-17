@@ -110,12 +110,12 @@ fRadarPercentileChart = function (
    dtPlayerMetrics = dtPlayerMetrics[!playerId == iPlayerId]
 
    ggplot() +
-      geom_polygon(
+      geom_path(
          data = data.table(
            Radius = c(1:5) / 5
          )[,
             list(Angle = seq(0, 2 * pi, 1/100)),
-           Radius
+            Radius
          ][,
             list(
                RadarX = cos(Angle) * Radius,
@@ -124,8 +124,8 @@ fRadarPercentileChart = function (
            Radius
          ],
          aes(x = RadarX, y = RadarY, group = Radius),
-         alpha = 0,
-         color = 'grey20'
+         alpha = 0.2,
+         color = cFontColour
       ) +
       geom_polygon(
          data = dtPlayer,
@@ -293,7 +293,8 @@ fRadarPercentileChart = function (
          aes(
             x = 0,
             y = 0
-         )
+         ),
+         color = cFontColour
       ) +
       coord_fixed() +
       scale_x_continuous(expand = expand_scale(mult = 0, add = vnExpand[1])) +

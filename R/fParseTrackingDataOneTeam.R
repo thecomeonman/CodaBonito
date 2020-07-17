@@ -62,9 +62,6 @@ fParseTrackingDataOneTeam = function (
       vcColnames
    )
 
-   dtRawData <<- dtRawData
-
-
    for ( cColname in colnames(dtRawData) ) {
 
       if ( grepl(cColname, pattern = 'X$') ) {

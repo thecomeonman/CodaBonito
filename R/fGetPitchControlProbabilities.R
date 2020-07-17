@@ -88,8 +88,8 @@ fGetPitchControlProbabilities = function (
         dtTrackingSlice[,
             c('Period','Time_s') := NULL
         ]
+
         # last team to make a pass is in control
-        # todo
         dtAttackingTeam = merge(
             lData$dtEventsData[
                 Type %in% c("PASS", "SHOT", "SET PIECE", "RECOVERY") |
@@ -100,7 +100,14 @@ fGetPitchControlProbabilities = function (
             data.table(Frame = viTrackingFrame),
             'Frame',
             all = T
-        )[, .SD[which.max(EndFrame)], list(Frame)][,
+        )
+
+        dtAttackingTeam[is.na(EndFrame), EndFrame := Frame]
+
+        dtAttackingTeam = dtAttackingTeam[,
+            .SD[which.max(EndFrame)],
+            list(Frame)
+        ][,
             AttackingTeam := na.locf(AttackingTeam, na.rm = F)
         ]
 

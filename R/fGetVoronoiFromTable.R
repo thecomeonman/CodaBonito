@@ -1,9 +1,3 @@
-#' Pass network ( WIP )
-#'
-#' Plots a marker for each player at their median passing position, and draws
-#' connections between players to represent the number of passes exchanged
-#' between them
-#'
 #' @param dtFrame
 #' @param xMinBB
 #' @param yMinBB
@@ -24,7 +18,7 @@ fGetVoronoiFromTable = function(
     # vnYCoordinates = unlist(dtFrame[, grep(x = colnames(dtFrame), pattern = 'Player.*Y$', value = T), with = F])
     # vnYCoordinates = vnYCoordinates[!is.na(vnYCoordinates)]
     # dtFrame = dtRandomSlice
-    
+
     setDT(dtFrame)
 
     dtPlayerTag = data.table(
@@ -79,7 +73,7 @@ fGetVoronoiFromTable = function(
 
     }
 
-    bPointsOnPitch = 
+    bPointsOnPitch =
         x >= Zero & x <= nXLimit &
         y >= Zero & y <= nYLimit
 
@@ -153,34 +147,6 @@ fGetVoronoiFromTable = function(
 
     dtVoronoiCoordinates[, length(unique(c(ind1, ind2)))]
 
-    if ( F ) {
-
-        dtVoronoiCoordinates[
-            ind1 == iNbrPoints + 1 |
-            ind2 == iNbrPoints + 1,
-            c('x1','y1','x2','y2') := list(Zero, Zero, Zero, Zero)
-        ]
-
-        dtVoronoiCoordinates[
-            ind1 == iNbrPoints + 2 |
-            ind2 == iNbrPoints + 2,
-            c('x1','y1','x2','y2') := list(nXLimit, Zero, nXLimit, Zero)
-        ]
-
-        dtVoronoiCoordinates[
-            ind1 == iNbrPoints + 3 |
-            ind2 == iNbrPoints + 3,
-            c('x1','y1','x2','y2') := list(Zero, nYLimit, Zero, nYLimit)
-        ]
-
-        dtVoronoiCoordinates[
-            ind1 == iNbrPoints + 4 |
-            ind2 == iNbrPoints + 4,
-            c('x1','y1','x2','y2') := list(nXLimit, nYLimit, nXLimit, nYLimit)
-        ]
-
-    }
-
     dtVoronoiCoordinates[, VoronoiEdgeId := .I]
 
     dtVoronoiCoordinates = rbind(
@@ -194,6 +160,19 @@ fGetVoronoiFromTable = function(
     )
 
     dtVoronoiCoordinates[, VoronoiPointId := .GRP, list(x, y)]
+
+    # we lose out on information that the same point will be on two edges
+    # when we do this. Also removing voronoin edge id since evey edge will
+    # just be a unique combination of two points anyway
+    dtVoronoiCoordinates = dtVoronoiCoordinates[,
+        .SD[1],
+        list(
+            ind,
+            VoronoiPointId
+        )
+    ]
+
+    dtVoronoiCoordinates[, VoronoiEdgeId := NULL ]
 
     dtVoronoiCoordinates = dtVoronoiCoordinates[,
         .SD[

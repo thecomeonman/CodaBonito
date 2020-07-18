@@ -11,6 +11,8 @@ fGetPitchDimensions = function (
    nXSpan = nXEnd - nXStart
    nYSpan = nYEnd - nYStart
 
+   iSideNettingRows = 6
+   iTopNettingRows = 20
    nPenaltyAreaLength_m = nXSpan * 16.5 / 105
    nPenaltyAreaWidth_m = nYSpan * 40 / 68
    nSixYardBoxLength_m = nXSpan * 5.5 / 105
@@ -20,7 +22,7 @@ fGetPitchDimensions = function (
    nCornerArcRadius_m = nXSpan * 1 / 105
    nPointRadius_m = nXSpan * 0.05 / 105
    nGoalWidth_m = nXSpan * 8 / 105
-   nGoalHeight_m = nXSpan * 2.44 / 105
+   nGoalHeight_m = nXSpan * ( iSideNettingRows / iTopNettingRows ) * nGoalWidth_m / 105
    nGoalPostRadius_m = nXSpan * 0.1 / 105
 
 
@@ -283,7 +285,7 @@ fGetPitchDimensions = function (
          x, y,
          z = nGoalHeight_m +
          ( nGoalPostRadius_m * (
-            ( y - (nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ) ) /
+            ( y - ( nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ) ) /
             nGoalPostRadius_m
          ) )
       )
@@ -311,6 +313,111 @@ fGetPitchDimensions = function (
    lPitchDimensions$lGoalframes$dtGoalPostFloorOffenseLow[, x := nXEnd - x ]
 
 
+   lPitchDimensions$lGoalnet$dtSideLowDefense = rbind(
+      # front to back
+      data.table(
+         x = nXStart,
+         y = ( nYStart + ( nYSpan / 2) - ( nGoalWidth_m * 0.5 ) - ( nGoalPostRadius_m ) ),
+         z = seq(0, nGoalHeight_m, nGoalHeight_m / iSideNettingRows)
+      )[,
+         xend := x - nGoalHeight_m
+      ][,
+         yend := y
+      ][,
+         zend := z
+      ],
+      # bottom to top
+      data.table(
+         x = seq(0, -nGoalHeight_m, -nGoalHeight_m / iSideNettingRows),
+         y = ( nYStart + ( nYSpan / 2) - ( nGoalWidth_m * 0.5 ) - ( nGoalPostRadius_m ) ),
+         z = 0
+      )[,
+         xend := x
+      ][,
+         yend := y
+      ][,
+         zend := z + nGoalHeight_m
+      ]
+   )
+
+   lPitchDimensions$lGoalnet$dtSideHighDefense = copy(lPitchDimensions$lGoalnet$dtSideLowDefense)
+   lPitchDimensions$lGoalnet$dtSideHighDefense[, y := nYEnd - y]
+   lPitchDimensions$lGoalnet$dtSideHighDefense[, yend := nYEnd - yend]
+
+   lPitchDimensions$lGoalnet$dtTopDefense = rbind(
+      # side to side
+      data.table(
+         x = nXStart - seq(0, nGoalHeight_m, nGoalHeight_m / iSideNettingRows),
+         y = ( nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ),
+         z = nGoalHeight_m
+      )[,
+         xend := x
+      ][,
+         yend := y - nGoalWidth_m - nGoalPostRadius_m
+      ][,
+         zend := z
+      ],
+      # back to front
+      data.table(
+         x = nXStart,
+         y = seq(
+            ( nYStart + ( nYSpan / 2) - ( nGoalWidth_m * 0.5 ) - ( nGoalPostRadius_m ) ),
+            ( nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ),
+            nGoalHeight_m / iSideNettingRows
+         ),
+         z = nGoalHeight_m
+      )[,
+         xend := x - nGoalHeight_m
+      ][,
+         zend := z
+      ][,
+         yend := y
+      ]
+   )
+
+   lPitchDimensions$lGoalnet$dtBackDefense = rbind(
+      # side to side
+      data.table(
+         x = nXStart - nGoalHeight_m,
+         y = ( nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ),
+         z = seq(0, nGoalHeight_m, nGoalHeight_m / iSideNettingRows)
+      )[,
+         xend := x
+      ][,
+         yend := y - nGoalWidth_m - nGoalPostRadius_m
+      ][,
+         zend := z
+      ],
+      # bottom to top
+      data.table(
+         x = nXStart - nGoalHeight_m,
+         y = seq(
+            ( nYStart + ( nYSpan / 2) - ( nGoalWidth_m * 0.5 ) - ( nGoalPostRadius_m ) ),
+            ( nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ),
+            nGoalHeight_m / iSideNettingRows
+         ),
+         z = 0
+      )[,
+         xend := x
+      ][,
+         yend := y
+      ][,
+         zend := z + nGoalHeight_m
+      ]
+   )
+
+   lPitchDimensions$lGoalnet$dtSideHighOffense = copy(lPitchDimensions$lGoalnet$dtSideHighDefense)
+   lPitchDimensions$lGoalnet$dtSideHighOffense[, x := -x + nXSpan]
+   lPitchDimensions$lGoalnet$dtSideHighOffense[, xend := -xend + nXSpan]
+   lPitchDimensions$lGoalnet$dtSideLowOffense = copy(lPitchDimensions$lGoalnet$dtSideLowDefense)
+   lPitchDimensions$lGoalnet$dtSideLowOffense[, x := -x + nXSpan]
+   lPitchDimensions$lGoalnet$dtSideLowOffense[, xend := -xend + nXSpan]
+   lPitchDimensions$lGoalnet$dtTopOffense = copy(lPitchDimensions$lGoalnet$dtTopDefense)
+   lPitchDimensions$lGoalnet$dtTopOffense[, x := -x + nXSpan]
+   lPitchDimensions$lGoalnet$dtTopOffense[, xend := -xend + nXSpan]
+   lPitchDimensions$lGoalnet$dtBackOffense = copy(lPitchDimensions$lGoalnet$dtBackDefense)
+   lPitchDimensions$lGoalnet$dtBackOffense[, x := -x + nXSpan]
+   lPitchDimensions$lGoalnet$dtBackOffense[, xend := -xend + nXSpan]
 
    lPitchDimensions
 

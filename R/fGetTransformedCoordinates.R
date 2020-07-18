@@ -1,18 +1,28 @@
 #' Transforming coordinate spaces
-#' @param mCoordinates matrix with three columns. if mCoordinates is an isolated point then it is treated
+#' @param mCoordinates matrix with three columns - x,y,z coorinates.
+#' if mCoordinates is an isolated point then it is treated
 #' as an isolated point, if it is two points, it is treated as a line segment,
-#' but 3 or more points are treated as closed polygons
+#' but 3 or more points are treated as closed polygons unless bTreatAsClosedPolyon = F.
+#' Recommendation is to ensure start point is repeated as end point in mCoordinates
+#' and bTreatAsClosedPolyon = F. That way, where the polygon / path went behind the
+#' screen, there will be a marker specifying that the line has to be broken there
+#' when plotting or anywhere else
 #' @param mOrigin three column, one row matrix specifying coordinates of where
 #' the scene is being viewed from
 #' @param mScreenCoordinate three column, one row matrix specifying coordinates of
 #' where the screen on which the scene is being projected on. Also dictates the
 #' direction along which which the scene is being viewed from
+#' @param bTreatAsClosedPolyon
+#' @return a matrix with 2 columns for the x,y coordinates on the screen + an
+#' optional column linking continuous stretches in front of the screening plane
+#' which can be used in geom_path(aes(group = V3))
 #' @import zoo
 #' @export
 fGetTransformedCoordinates = function (
     mCoordinates,
     mOrigin,
-    mScreenCoordinate
+    mScreenCoordinate,
+    bTreatAsClosedPolyon = T
 ) {
 
 
@@ -26,6 +36,25 @@ fGetTransformedCoordinates = function (
            ),
            ncol = 3
         )
+
+    }
+
+    # removing repeat points
+    if ( nrow(mCoordinates) > 1 ) {
+
+        mCoordinates = mCoordinates[c(T, !rowSums(matrix(apply(mCoordinates, 2, diff), ncol = 3) ^ 2) == 0), ]
+
+        if ( bTreatAsClosedPolyon & nrow(mCoordinates) > 1 ) {
+
+            if (
+                all(
+                    mCoordinates[1,] == mCoordinates[nrow(mCoordinates),]
+                )
+            ) {
+                mCoordinates = mCoordinates[-nrow(mCoordinates),]
+            }
+
+        }
 
     }
 
@@ -121,7 +150,7 @@ fGetTransformedCoordinates = function (
     # if the start and the end stretches of the coordinates are both behind the polygon
     # then compress them into a single stretch and cycle the polygon coordinates
     # such that the starting coordinate is ahead of the screen
-    # THIS CHANGES THE ORDER OF POINTS
+    # THIS CHANGES THE ORDER OF POINTS for closed polygons
 
     vbCoordinatesToTransform = c(
         bOriginDestinationInPositiveDirection == (
@@ -134,12 +163,51 @@ fGetTransformedCoordinates = function (
     if ( all(!vbCoordinatesToTransform[viRelativeScreenPositionChunks %in% range(viRelativeScreenPositionChunks)]) ) {
 
         viIndicestoKeep = max(which(viRelativeScreenPositionChunks == 1)):min(which(viRelativeScreenPositionChunks == max(viRelativeScreenPositionChunks)))
-        viIndicestoKeep = c(viIndicestoKeep[-1],viIndicestoKeep[1])
+
+        if ( bTreatAsClosedPolyon ) {
+
+            viIndicestoKeep = c(viIndicestoKeep[-1],viIndicestoKeep[1])
+
+        }
+
         mCoordinates = mCoordinates[viIndicestoKeep, ]
 
     }
 
     mCoordinates = matrix(mCoordinates, ncol = 3)
+
+    if ( nrow(mCoordinates) >= 2 ) {
+
+        vbCoordinatesToTransform = c(
+            bOriginDestinationInPositiveDirection == (
+                cbind(mCoordinates, 1) %*% nDivisionPlaneCoefficients >= 0
+            )
+        )
+
+        if ( vbCoordinatesToTransform[1] == F & vbCoordinatesToTransform[2] == F & !bTreatAsClosedPolyon ) {
+
+            mCoordinates = mCoordinates[-1,]
+
+        }
+
+    }
+
+
+    if ( nrow(mCoordinates) >= 2 ) {
+
+        vbCoordinatesToTransform = c(
+            bOriginDestinationInPositiveDirection == (
+                cbind(mCoordinates, 1) %*% nDivisionPlaneCoefficients >= 0
+            )
+        )
+
+        if ( vbCoordinatesToTransform[length(vbCoordinatesToTransform)] == F & vbCoordinatesToTransform[length(vbCoordinatesToTransform)-1] == F & !bTreatAsClosedPolyon ) {
+
+            mCoordinates = mCoordinates[-length(mCoordinates), ]
+
+        }
+
+    }
 
     # interpolating the connecting points between the adjacent behind screen - in front of screen points
     # such that the connecting point is a point on the screen
@@ -175,22 +243,45 @@ fGetTransformedCoordinates = function (
         viCoordinatesToTransform = which(
             viRelativeScreenPositionChunks == as.integer(names(viCoordinatesToTransform)[1])
         )
-        # in caise it's just one point
+
+        # in case it's just one point
         viCoordinatesToTransform = range(viCoordinatesToTransform)
 
-        iPrevPoint = viCoordinatesToTransform[1] - 1
-        iNextPoint = viCoordinatesToTransform[2] + 1
+        if ( viCoordinatesToTransform[2] == 1 & !bTreatAsClosedPolyon ) {
 
-        iPrevPoint[iPrevPoint == 0] = nrow(mCoordinates)
-        iNextPoint[iNextPoint == nrow(mCoordinates) + 1] = 1
+            iNextPoint = viCoordinatesToTransform[2] + 1
 
-        vnDistancesFromPlane = cbind(mCoordinates[c(iPrevPoint, viCoordinatesToTransform, iNextPoint),], 1) %*% nDivisionPlaneCoefficients
+            vnDistancesFromPlane = cbind(mCoordinates[c(viCoordinatesToTransform[2], iNextPoint),], 1) %*% nDivisionPlaneCoefficients
 
-        mReplacementPoints = rbind(
-            mCoordinates[viCoordinatesToTransform[1], ] - ( diff(mCoordinates[c(iPrevPoint, viCoordinatesToTransform[1]),]) * abs(vnDistancesFromPlane[2]) / ( abs(vnDistancesFromPlane[1]) + abs(vnDistancesFromPlane[2]) ) ),
-            cbind(NA,NA,NA),
-            mCoordinates[viCoordinatesToTransform[2], ] - ( diff(mCoordinates[c(iNextPoint, viCoordinatesToTransform[2]),]) * abs(vnDistancesFromPlane[3]) / ( abs(vnDistancesFromPlane[3]) + abs(vnDistancesFromPlane[4]) ) )
-        )
+            mReplacementPoints = mCoordinates[viCoordinatesToTransform[2], ] - ( diff(mCoordinates[c(iNextPoint, viCoordinatesToTransform[2]),]) * abs(vnDistancesFromPlane[1]) / ( abs(vnDistancesFromPlane[1]) + abs(vnDistancesFromPlane[2]) ) )
+
+        } else if ( viCoordinatesToTransform[1] == nrow(mCoordinates) & !bTreatAsClosedPolyon ) {
+
+            iPrevPoint = viCoordinatesToTransform[1] - 1
+
+            vnDistancesFromPlane = cbind(
+                mCoordinates[c(iPrevPoint, viCoordinatesToTransform[1]),],
+            1) %*% nDivisionPlaneCoefficients
+
+            mReplacementPoints = mCoordinates[viCoordinatesToTransform[1], ] - ( diff(mCoordinates[c(iPrevPoint, viCoordinatesToTransform[1]),]) * abs(vnDistancesFromPlane[2]) / ( abs(vnDistancesFromPlane[1]) + abs(vnDistancesFromPlane[2]) ) )
+
+        } else {
+
+            iPrevPoint = viCoordinatesToTransform[1] - 1
+            iNextPoint = viCoordinatesToTransform[2] + 1
+
+            iPrevPoint[iPrevPoint == 0] = nrow(mCoordinates)
+            iNextPoint[iNextPoint == nrow(mCoordinates) + 1] = 1
+
+            vnDistancesFromPlane = cbind(mCoordinates[c(iPrevPoint, viCoordinatesToTransform, iNextPoint),], 1) %*% nDivisionPlaneCoefficients
+
+            mReplacementPoints = rbind(
+                mCoordinates[viCoordinatesToTransform[1], ] - ( diff(mCoordinates[c(iPrevPoint, viCoordinatesToTransform[1]),]) * abs(vnDistancesFromPlane[2]) / ( abs(vnDistancesFromPlane[1]) + abs(vnDistancesFromPlane[2]) ) ),
+                cbind(NA,NA,NA),
+                mCoordinates[viCoordinatesToTransform[2], ] - ( diff(mCoordinates[c(iNextPoint, viCoordinatesToTransform[2]),]) * abs(vnDistancesFromPlane[3]) / ( abs(vnDistancesFromPlane[3]) + abs(vnDistancesFromPlane[4]) ) )
+            )
+
+        }
 
         if ( viCoordinatesToTransform[1] == 1 ) {
 
@@ -412,20 +503,36 @@ fGetTransformedCoordinates = function (
 
     } else {
 
+        if ( !bTreatAsClosedPolyon ) {
+            mResult = cbind(mResult, 1)
+        }
+
         viPointsToFillIn = which(is.na(mResult[,1]))
-        viPointsHowToFillInMax = mResult[viPointsToFillIn - 1, 2] > mean(range(mResult[,2], na.rm = T))
 
-        mResult[viPointsToFillIn[!viPointsHowToFillInMax], 2] =
-            min(mResult[,2], na.rm = T) -
-            # ( 0.0000001 * diff(range(mResult[,2], na.rm = T)) )
-            0
+        if ( length(viPointsToFillIn) ) {
 
-        mResult[viPointsToFillIn[viPointsHowToFillInMax], 2] =
-            max(mResult[,2], na.rm = T) +
-            # ( 0.0000001 * diff(range(mResult[,2], na.rm = T)) )
-            0
+            if ( bTreatAsClosedPolyon ) {
 
-        mResult[viPointsToFillIn, 1] = ( mResult[viPointsToFillIn - 1, 1] + mResult[viPointsToFillIn + 1, 1] ) / 2
+                viPointsHowToFillInMax = mResult[viPointsToFillIn - 1, 2] > mean(range(mResult[,2], na.rm = T))
+
+                mResult[viPointsToFillIn[!viPointsHowToFillInMax], 2] =
+                    min(mResult[,2], na.rm = T) -
+                    # ( 0.0000001 * diff(range(mResult[,2], na.rm = T)) )
+                    0
+
+                mResult[viPointsToFillIn[viPointsHowToFillInMax], 2] =
+                    max(mResult[,2], na.rm = T) +
+                    # ( 0.0000001 * diff(range(mResult[,2], na.rm = T)) )
+                    0
+
+                mResult[viPointsToFillIn, 1] = ( mResult[viPointsToFillIn - 1, 1] + mResult[viPointsToFillIn + 1, 1] ) / 2
+
+            } else {
+
+                mResult = cbind(mResult[,1:2], cumsum(is.na(mResult[,1])))
+                mResult = mResult[-viPointsToFillIn,]
+            }
+        }
 
     }
 

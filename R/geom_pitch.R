@@ -53,12 +53,14 @@ geom_pitch = function (
               mTransformedCoordinates = fGetTransformedCoordinates(
                   mCoordinates,
                   mOrigin,
-                  mScreenCoordinate
+                  mScreenCoordinate,
+                  bTreatAsClosedPolyon = F
               )
 
               data.table(
                   x = mTransformedCoordinates[, 1],
-                  y = mTransformedCoordinates[, 2]
+                  y = mTransformedCoordinates[, 2],
+                  group = mTransformedCoordinates[, 3]
               )
 
           }
@@ -96,7 +98,7 @@ geom_pitch = function (
           lPitchDimensions$lGoalnet,
           function( dtSegments ) {
 
-              # dtDimensions = lPitchDimensions$lGoalnet[[5]]
+              # dtSegments = lPitchDimensions$lGoalnet[[5]]
 
               lapply(
                   dtSegments,
@@ -111,7 +113,8 @@ geom_pitch = function (
                       mTransformedCoordinates = fGetTransformedCoordinates(
                           mCoordinates,
                           mOrigin,
-                          mScreenCoordinate
+                          mScreenCoordinate,
+                          bTreatAsClosedPolyon = F
                       )
 
                       data.table(
@@ -134,19 +137,36 @@ geom_pitch = function (
    cf = coord_fixed()
    cf$default = TRUE
 
-   lPitchElements = lapply(
-      lPitchDimensions$lPitchCoordinates[sapply(lPitchDimensions$lPitchCoordinates, nrow) > 0],
-      function( dtPolygon ) {
-         geom_polygon(
-            data = dtPolygon,
-            aes(
-               x = x,
-               y = y
-            ),
-            color = cLineColour,
-            fill = cPitchColour
-         )
-      }
+   lPitchElements = append(
+      lapply(
+         lPitchDimensions$lPitchCoordinates[sapply(lPitchDimensions$lPitchCoordinates, nrow) > 0],
+         function( dtPolygon ) {
+            geom_polygon(
+               data = dtPolygon,
+               aes(
+                  x = x,
+                  y = y
+               ),
+               color = NA,
+               fill = cPitchColour
+            )
+         }
+      ),
+      lapply(
+         lPitchDimensions$lPitchCoordinates[sapply(lPitchDimensions$lPitchCoordinates, nrow) > 0],
+         function( dtPolygon ) {
+            geom_path(
+               data = dtPolygon,
+               aes(
+                  x = x,
+                  y = y,
+                  group = group
+               ),
+               color = cLineColour,
+               fill = NA
+            )
+         }
+      )
    )
 
    lGoalFrameElements = lapply(

@@ -20,7 +20,7 @@ fGetPitchDimensions = function (
    nCentreCircleRadius_m = nXSpan * 9.15 / 105
    nPenaltySpotOffset_m = nXSpan * 11 / 105
    nCornerArcRadius_m = nXSpan * 1 / 105
-   nPointRadius_m = nXSpan * 0.05 / 105
+   nPointRadius_m = nXSpan * 0.5 / 105
    nGoalWidth_m = nXSpan * 8 / 105
    nGoalHeight_m = ( iSideNettingRows / iTopNettingRows ) * nGoalWidth_m
    nGoalPostRadius_m = nXSpan * 0.1 / 105
@@ -69,8 +69,8 @@ fGetPitchDimensions = function (
       lPitchCoordinates = list(
 
          dtPitch = data.table(
-            x = c( nXStart + 0,  nXStart + 0, nXStart + nXSpan, nXStart + nXSpan),
-            y = c(nYStart + 0, nYStart + nYSpan, nYStart + nYSpan, nYStart + 0),
+            x = c( nXStart + 0, nXStart + 0,      nXStart + nXSpan, nXStart + nXSpan),
+            y = c( nYStart + 0, nYStart + nYSpan, nYStart + nYSpan, nYStart + 0     ),
             z = 0
          ),
 
@@ -441,6 +441,19 @@ fGetPitchDimensions = function (
 
    names(lPitchDimensions$lGoalnet) = qwe
 
+
+
+   qwe = names(lPitchDimensions$lPitchCoordinates)
+   lPitchDimensions$lPitchCoordinates = lapply(
+      lPitchDimensions$lPitchCoordinates,
+      function( dt ) {
+         rbind(
+            dt,
+            dt[1]
+         )[, group := 1]
+      }
+   )
+   names(lPitchDimensions$lPitchCoordinates) = qwe
 
    lPitchDimensions
 

@@ -103,6 +103,8 @@ dtPassesReoriented = rbindlist(
         seq(nrow(dtPasses)),
         function( iRow ) {
 
+            # print(iRow)
+
             mCoordinates = cbind(
                 dtPasses[iRow, x],
                 dtPasses[iRow, y],

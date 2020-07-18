@@ -34,7 +34,7 @@ fRadarPercentileChart = function (
    iPlayerId,
    cTitle,
    cFontFamily = 'arial',
-   cForegroundColour = 'green',
+   cForegroundColour = 'red',
    cBackgroundColour = 'black',
    cFontColour = 'white',
    vnExpand = c(0.1, 0.1)
@@ -44,7 +44,7 @@ fRadarPercentileChart = function (
    setDT(dtMetricCategorisation)
 
    warning(
-      'Radar charts are bad. Use fPercentileBarChart instead.'
+      'Radar charts can be misleading. Use fPercentileBarChart instead.'
    )
 
    viColumnNameOccurrence = table(
@@ -297,8 +297,8 @@ fRadarPercentileChart = function (
          color = cFontColour
       ) +
       coord_fixed() +
-      scale_x_continuous(expand = expand_scale(mult = 0, add = vnExpand[1])) +
-      scale_y_continuous(expand = expand_scale(mult = 0, add = vnExpand[2])) +
+      scale_x_continuous(expand = expansion(mult = 0, add = vnExpand[1])) +
+      scale_y_continuous(expand = expansion(mult = 0, add = vnExpand[2])) +
       theme(
          panel.background = element_rect(fill = cBackgroundColour),
          panel.border = element_blank(),

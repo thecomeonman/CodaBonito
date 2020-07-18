@@ -382,13 +382,15 @@ fPlotSonar = function (
    # Adding a football pitch in the background.
    if ( bAddPitchBackground ) {
 
-      p1 = fAddPitchLines(
-         p1,
-         nXLimit = nZoomFactor * nXLimit,
-         nYLimit = nZoomFactor * nYLimit,
-         cPitchColour = '#111111',
-         cLineColour = '#333333'
-      )
+      p1 = p1 +
+         geom_pitch(
+            nXStart = 0,
+            nYStart = 0,
+            nXEnd = nZoomFactor * nXLimit,
+            nYEnd = nZoomFactor * nYLimit,
+            cPitchColour = '#111111',
+            cLineColour = '#333333'
+         )
 
    } else {
 

@@ -291,112 +291,84 @@ if ( F ) {
 
 
 
-    iNbrFrames = 40
-    iNbrPlayers = 10
+    iNbrFrames = 10
+    iNbrPlayers = 23
     pitchBuffer = 0.25
-
+    set.seed(1)
     # minimal tracking slice example
-    dtTrackingSlice = data.table(
-        X = abs(rnorm(iNbrPlayers * iNbrFrames, 0, 0.01)),
-        Y = abs(rnorm(iNbrPlayers * iNbrFrames, 0, 0.01))
+
+    lTrackingData = list()
+    # lTrackingData$dtTrackingData = data.table(
+    #     X = abs(rnorm(iNbrPlayers * iNbrFrames, 0, 0.06)),
+    #     Y = abs(rnorm(iNbrPlayers * iNbrFrames, 0, 0.03))
+    # )
+
+    lTrackingData$dtTrackingData = data.table(
+        X = (runif(iNbrPlayers) * (nXLimit/2)) + (nXLimit/5),
+        Y = (runif(iNbrPlayers) * (nYLimit/2)) + (nYLimit/4)
     )
 
-    dtTrackingSlice[
-        1:(.N/2),
-        Player := paste0(
-            'HomePlayer',
-            (.I - 1) %/% iNbrFrames
-        )
+    lTrackingData$dtTrackingData[, PlayerID := .I %% 23]
+    lTrackingData$dtTrackingData[PlayerID == 0, c('Tag','Player') := list('Ball','Ball')]
+    lTrackingData$dtTrackingData[
+      PlayerID > 0 & PlayerID <= 11,
+      c('Tag','Player') := list('Away', paste0('AwayPlayer', PlayerID))
     ]
 
-    dtTrackingSlice[
-        (1 + (.N/2)):.N,
-        Player := paste0(
-            'AwayPlayer',
-            (.I - 1) %/% iNbrFrames
-        )
+    lTrackingData$dtTrackingData[
+      PlayerID > 11 & PlayerID <= 23,
+      c('Tag','Player') := list('Home', paste0('HomePlayer', PlayerID))
     ]
 
-    dtTrackingSlice[,
-        Frame := (.I - 1) %% iNbrFrames
-    ]
+    lTrackingData$dtTrackingData[, XEnd := X + ( (nXLimit/30) * runif(.N) )]
+    lTrackingData$dtTrackingData[, YEnd := Y + ( (nXLimit/30) * runif(.N) )]
 
-    dtTrackingSlice[,
-        X := cumsum(X),
+    lTrackingData$dtTrackingData = lTrackingData$dtTrackingData[,
+      list(
+        Frame = 0:iNbrFrames,
+        X = ( ( X - XEnd ) * (0:iNbrFrames) / iNbrFrames ) + X,
+        Y = ( ( Y - YEnd ) * (0:iNbrFrames) / iNbrFrames ) + Y
+      ),
+      list(
+        Tag,
         Player
+      )
     ]
 
-    dtTrackingSlice[,
-        X :=  (
-            ( X - min(X) ) *
-            ( 1 - pitchBuffer - pitchBuffer ) * nXLimit /
-            diff(range(X))
-        ) + (
-            pitchBuffer * nXLimit
-        )
-    ]
-
-    dtTrackingSlice[,
-        Y := cumsum(Y),
-        Player
-    ]
-
-    dtTrackingSlice[,
-        Y := Y + ( 2 * runif(1)),
-        Player
-    ]
-
-    dtTrackingSlice[,
-        X := X + ( 2 * runif(1)),
-        Player
-    ]
-
-    dtTrackingSlice[,
-        Y := (
-            ( Y - min(Y) ) *
-            ( 1 - pitchBuffer - pitchBuffer ) * nYLimit /
-            diff(range(Y))
-        ) + (
-            pitchBuffer * nYLimit
-        )
-    ]
-
-    dtTrackingSlice = dcast(
-        melt(
-            dtTrackingSlice,
-            id.var = c('Frame','Player')
-        )[,
-            variable := paste0(Player, variable)
-        ],
-        Frame ~ variable,
-        value.var = 'value'
+    lTrackingData$dtEventsData = data.table(
+        StartFrame = min(lTrackingData$dtTrackingData[, Frame]),
+        EndFrame = min(lTrackingData$dtTrackingData[, Frame]),
+        Type = 'PASS',
+        Subtype = '',
+        Team = 'Home'
     )
 
+    lTrackingData$dtTrackingData[, Time_s := Frame * 0.2]
 
-    dtTrackingSlice[,
-        BallX := (
-            nXLimit * ( 1 - pitchBuffer - pitchBuffer) * .I / .N
-        ) + (
-            nXLimit * pitchBuffer
-        )
-
-    ]
-
-    dtTrackingSlice[,
-        BallY := (
-            nYLimit * ( 1 - pitchBuffer - pitchBuffer) * .I / .N
-        ) + (
-            nYLimit * pitchBuffer
+    lTrackingData$dtTrackingData[,
+        VelocityX := c(
+            0,
+            diff(X) / diff(Time_s)
+        ),
+        list(
+            Player
         )
     ]
 
-    dtTrackingSlice = fConvertTrackingDataWideToLong(
-        dtTrackingSlice
-    )
+    lTrackingData$dtTrackingData[,
+        VelocityY := c(
+            0,
+            diff(Y) / diff(Time_s)
+        ),
+        list(
+            Player
+        )
+    ]
+
 
    save(
-      list = 'dtTrackingSlice',
-      file = './data/dtTrackingSlice.rda'
+      list = 'lTrackingData',
+      file = './data/lTrackingData$lTrackingData.rda'
    )
 
 

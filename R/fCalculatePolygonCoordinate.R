@@ -1,4 +1,4 @@
-#' Draws a block based on the angle bucket and length bucket, respectively 
+#' Draws a block based on the angle bucket and length bucket, respectively
 #' indicated by x and y, used by fPlotSonar
 #'
 #' Hard to describe it. Play with the example
@@ -10,17 +10,18 @@
 #'       nAngleMax_rad = pi/2,
 #'       nRadiusMin = 1,
 #'       nRadiusMax = 2,
-#'       cos   
+#'       cos
 #'    ),
 #'    fCalculatePolygonCoordinate(
 #'       nAngleMin_rad = pi/4,
 #'       nAngleMax_rad = pi/2,
 #'       nRadiusMin = 1,
 #'       nRadiusMax = 2,
-#'       sin   
-#'    )      
+#'       sin
+#'    )
 #' )
 #' @import ggplot2
+#' @export
 fCalculatePolygonCoordinate = function (
    nAngleMin_rad,
    nAngleMax_rad,
@@ -28,9 +29,9 @@ fCalculatePolygonCoordinate = function (
    nRadiusMax,
    fTrigFunction
 ) {
-   
+
    c(
-      # radial path from in to out along nAngleMin_rad 
+      # radial path from in to out along nAngleMin_rad
       seq(
          nRadiusMin,
          nRadiusMax,
@@ -46,7 +47,7 @@ fCalculatePolygonCoordinate = function (
          )
       ) * nRadiusMax,
 
-      # radial path from out to in along nAngleMax_rad 
+      # radial path from out to in along nAngleMax_rad
       seq(
          nRadiusMax,
          nRadiusMin,
@@ -63,5 +64,5 @@ fCalculatePolygonCoordinate = function (
       ) * nRadiusMin
 
    )
-   
+
 }

@@ -35,7 +35,7 @@ fStripChart = function (
    iPlayerId,
    cTitle,
    cFontFamily = 'arial',
-   cPlayerColour = 'green',
+   cPlayerColour = 'red',
    cBackgroundColour = 'black',
    cComparisonColour = 'white',
    cNeutralColour = 'grey50',

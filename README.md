@@ -33,11 +33,6 @@ Open R and run this command in the console -
 `install.packages("devtools");` `library(devtools);`
 `install_github("thecomeonman/CodaBonito");`
 
-If you’re interested in running the animated Voronoi, you will also need
-to install ImageMagick from
-<a href="https://imagemagick.org/script/download.php" class="uri">https://imagemagick.org/script/download.php</a>.
-This is a widely used image manipulation library.
-
 And you’re ready to run the examples below!
 
 Data
@@ -144,9 +139,9 @@ their age, etc.
 `dtMetricCategorisation` - some metadata about the metrics. -
 variableLabel is the name that will be displayed in charts for that
 metric, - variableCategory is the grouping of variables used in some
-visualisations, like `fStripChart` - HighValueIsBad is marked true for
-variables where a high value is bad. Variables such as fouls and goals
-conceded would be true.
+visualisations, like `fNormalisedValueChart` - HighValueIsBad is marked
+true for variables where a high value is bad. Variables such as fouls
+and goals conceded would be true.
 
 <table>
 <thead>
@@ -155,6 +150,7 @@ conceded would be true.
 <th style="text-align: left;">variableLabel</th>
 <th style="text-align: left;">variableCategory</th>
 <th style="text-align: left;">HighValueIsBad</th>
+<th style="text-align: left;">suffix</th>
 </tr>
 </thead>
 <tbody>
@@ -163,36 +159,42 @@ conceded would be true.
 <td style="text-align: left;">Metric 1</td>
 <td style="text-align: left;">Offense</td>
 <td style="text-align: left;">FALSE</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Metric2</td>
 <td style="text-align: left;">Metric 2</td>
 <td style="text-align: left;">Offense</td>
 <td style="text-align: left;">FALSE</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Metric3</td>
 <td style="text-align: left;">Metric 3</td>
 <td style="text-align: left;">Defense</td>
 <td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">%</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Metric4</td>
 <td style="text-align: left;">Metric 4</td>
 <td style="text-align: left;">Offense</td>
 <td style="text-align: left;">TRUE</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Metric5</td>
 <td style="text-align: left;">Metric 5</td>
 <td style="text-align: left;">Defense</td>
 <td style="text-align: left;">FALSE</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Metric7</td>
 <td style="text-align: left;">Metric 7</td>
 <td style="text-align: left;">Defense</td>
 <td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">%</td>
 </tr>
 </tbody>
 </table>
@@ -359,82 +361,105 @@ offense. - Success 1 for successful pass, 0 for failed pass
 </tbody>
 </table>
 
-`dtTrackingSlice` - Tracking data
+`lTrackingData$dtTrackingData` - Tracking data
 
 <table>
 <thead>
 <tr class="header">
-<th style="text-align: right;">Frame</th>
 <th style="text-align: left;">Tag</th>
 <th style="text-align: left;">Player</th>
+<th style="text-align: right;">Frame</th>
 <th style="text-align: right;">X</th>
 <th style="text-align: right;">Y</th>
+<th style="text-align: right;">Time_s</th>
+<th style="text-align: right;">VelocityX</th>
+<th style="text-align: right;">VelocityY</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">Away</td>
-<td style="text-align: left;">AwayPlayer0</td>
-<td style="text-align: right;">31.74094</td>
-<td style="text-align: right;">53.12027</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">0</td>
 <td style="text-align: left;">Away</td>
 <td style="text-align: left;">AwayPlayer1</td>
-<td style="text-align: right;">30.93125</td>
-<td style="text-align: right;">22.80409</td>
-</tr>
-<tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: left;">Away</td>
-<td style="text-align: left;">AwayPlayer2</td>
-<td style="text-align: right;">33.71846</td>
-<td style="text-align: right;">44.04511</td>
+<td style="text-align: right;">80.69826</td>
+<td style="text-align: right;">55.22010</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">0</td>
 <td style="text-align: left;">Away</td>
-<td style="text-align: left;">AwayPlayer3</td>
-<td style="text-align: right;">34.17647</td>
-<td style="text-align: right;">43.21420</td>
+<td style="text-align: left;">AwayPlayer1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">80.35326</td>
+<td style="text-align: right;">55.11603</td>
+<td style="text-align: right;">0.2</td>
+<td style="text-align: right;">-1.724991</td>
+<td style="text-align: right;">-0.5203465</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">0</td>
 <td style="text-align: left;">Away</td>
-<td style="text-align: left;">AwayPlayer4</td>
-<td style="text-align: right;">31.58153</td>
-<td style="text-align: right;">54.04715</td>
+<td style="text-align: left;">AwayPlayer1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">80.00826</td>
+<td style="text-align: right;">55.01196</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">-1.724991</td>
+<td style="text-align: right;">-0.5203465</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">Ball</td>
-<td style="text-align: left;">Ball</td>
-<td style="text-align: right;">31.50000</td>
-<td style="text-align: right;">21.00000</td>
+<td style="text-align: left;">Away</td>
+<td style="text-align: left;">AwayPlayer1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">79.66327</td>
+<td style="text-align: right;">54.90789</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">-1.724991</td>
+<td style="text-align: right;">-0.5203465</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">## Visua</td>
-<td style="text-align: left;">lisatio</td>
-<td style="text-align: left;">ns</td>
+<td style="text-align: left;">Away</td>
+<td style="text-align: left;">AwayPlayer1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">79.31827</td>
+<td style="text-align: right;">54.80382</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">-1.724991</td>
+<td style="text-align: right;">-0.5203465</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Away</td>
+<td style="text-align: left;">AwayPlayer1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">78.97327</td>
+<td style="text-align: right;">54.69975</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">-1.724991</td>
+<td style="text-align: right;">-0.5203465</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">## Visu</td>
+<td style="text-align: left;">alisations</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 </tr>
 </tbody>
 </table>
 
-### fAddPitchLines
+### geom\_pitch
 
 fAddPitchLines draws pitch markings with further customisations
 available
 
-    pPitch = ggplot()
-    pPitch = fAddPitchLines(pPitch)
+    pPitch = ggplot() + geom_pitch()
 
     print(pPitch)
 
-![](README_files/figure-markdown_strict/fAddPitchLines-1.png)
+![](README_files/figure-markdown_strict/geom_pitch-1.png)
 
 You can add whatever stats you want on top of it like regular ggplot2
 
@@ -447,7 +472,7 @@ You can add whatever stats you want on top of it like regular ggplot2
 
     print(pPitch)
 
-![](README_files/figure-markdown_strict/fAddPitchLinesData-1.png)
+![](README_files/figure-markdown_strict/geom_pitch_Data-1.png)
 
 ### theme\_pitch
 
@@ -461,6 +486,85 @@ theme\_pitch
 
 ![](README_files/figure-markdown_strict/theme_pitch-1.png)
 
+Oh, do you want the pitch from a different perspective?
+
+    mOrigin = cbind(
+        60,
+        60,
+        10
+    )
+
+    mScreenCoordinate = cbind(
+        60 + ( ( nXLimit ) / 12 ),
+        60 - ( ( nYLimit ) / 12 ),
+        0
+    )
+
+    pPitch = ggplot() + geom_pitch(
+       nXStart = 0,
+       nYStart = 0,
+       nXEnd = 120,
+       nYEnd = 80,
+       cPitchColour = 'black', 
+       mOrigin = mOrigin,
+       mScreenCoordinate = mScreenCoordinate
+    ) + 
+       theme_pitch() +
+       theme(
+          plot.background = element_rect( fill = 'black' ),
+          panel.background = element_rect( fill = 'black' ),
+          legend.position = 'none'
+       )
+
+    print(pPitch)
+
+![](README_files/figure-markdown_strict/reoriented_geom_pitch-1.png)
+
+    dtPassesReoriented = rbindlist(
+        lapply(
+            seq(nrow(dtPasses)),
+            function( iRow ) {
+
+                mCoordinates = cbind(
+                    dtPasses[iRow, x],
+                    dtPasses[iRow, y],
+                    0 # z
+                )
+
+                mTransformedCoordinates = fGetTransformedCoordinates(
+                    mCoordinates,
+                    mOrigin,
+                    mScreenCoordinate
+                )
+
+                data.table(
+                    x = mTransformedCoordinates[, 1],
+                    y = mTransformedCoordinates[, 2]
+                )
+            }
+        )
+    )
+
+    pPitch = pPitch +
+        geom_point(
+            data = dtPassesReoriented,
+            aes(
+                x = x,
+                y = y
+            ),
+            color = 'red'
+        )
+
+    print(pPitch)
+
+![](README_files/figure-markdown_strict/reoriented_data-1.png)
+
+The pass origins are points so they don’t look as nicely mapped to the
+surface but if you were to use a 2+ dimensional shape, like a polygon,
+rectangle, cuboid, etc. then it would map well. The pitch, the goal
+frame, the net, all of that is also paths and polygons which is why it
+looks well fit in the 3D version.
+
 ### fStripChart
 
     pStripChart = fStripChart (
@@ -468,17 +572,16 @@ theme\_pitch
        vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
        dtMetricCategorisation,
        iPlayerId = 2,
-       cTitle = 'Sample'
+       cTitle = 'Sample',
+       vnExpand = c(-0.3, -0.03, 1.2, 1.3)
     )
-    #> Warning: `expand_scale()` is deprecated; use `expansion()` instead.
 
     print(pStripChart)
 
-![](README_files/figure-markdown_strict/fStripChart-1.png)
+![](README_files/figure-markdown_strict/fStripChart-1.png) \#\#\#
+fBeeswarmChart
 
-### fBeeswarmChart
-
-    pStripChart = fBeeswarmChart (
+    pBeeswarmChart = fBeeswarmChart (
        dtPlayerMetrics,
        vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
        dtMetricCategorisation,
@@ -486,7 +589,7 @@ theme\_pitch
        cTitle = 'Sample'
     )
 
-    print(pStripChart)
+    print(pBeeswarmChart)
 
 ![](README_files/figure-markdown_strict/fBeeswarmChart-1.png)
 
@@ -530,8 +633,8 @@ I disapprove of radar charts. It’s a bad visualisation, prone to
 misinterpretation. They seem to be the accepted norm of comparing
 players though which is why I had to sell out and have an implementation
 of that in the package, but I’ve added a warning which states how you
-should use fPercentileBarChart instead as that is a better structured
-visualisation.
+should use one of the other visualisations instead as those are better
+structured visualisation.
 
     pRadarPercentileChart = fRadarPercentileChart (
        dtPlayerMetrics = dtPlayerMetrics,
@@ -541,11 +644,8 @@ visualisation.
        cTitle = 'Sample'
     )
     #> Warning in fRadarPercentileChart(dtPlayerMetrics = dtPlayerMetrics,
-    #> vcColumnsToIndex = c("playerId", : Radar charts are bad. Use fPercentileBarChart
-    #> instead.
-    #> Warning: `expand_scale()` is deprecated; use `expansion()` instead.
-
-    #> Warning: `expand_scale()` is deprecated; use `expansion()` instead.
+    #> vcColumnsToIndex = c("playerId", : Radar charts can be misleading. Use
+    #> fPercentileBarChart instead.
     print(pRadarPercentileChart)
 
 ![](README_files/figure-markdown_strict/fRadarPercentileChart-1.png)
@@ -712,9 +812,12 @@ visualisation.
 
 WIP using the same data structure as
 <a href="https://github.com/metrica-sports/sample-data" class="uri">https://github.com/metrica-sports/sample-data</a>
+which you can parse with fParseTrackingDataBothTeams
+
+You can draw Voronois
 
     pVoronoi = fDrawVoronoiFromTable(
-       dtTrackingSlice[Frame == min(Frame)],
+       lTrackingData$dtTrackingData[Frame == min(Frame)],
        nXLimit = 120,
        nYLimit = 80
     )
@@ -726,7 +829,7 @@ WIP using the same data structure as
 And if you have multiple frames -
 
     voronoiOutput = fDrawVoronoiFromTable(
-       dtTrackingSlice,
+       lTrackingData$dtTrackingData,
        nXLimit = nXLimit,
        nYLimit = nYLimit,
        UseOneFrameEvery = 1,
@@ -750,12 +853,29 @@ And if you have multiple frames -
 
     }
 
-![](./README_files/figure-markdown_strict/Voronoi.gif) More experiments
-with Voronoi here -
-<a href="https://github.com/thecomeonman/MakingFriendsWithTrackingData" class="uri">https://github.com/thecomeonman/MakingFriendsWithTrackingData</a>
+![](./README_files/figure-markdown_strict/Voronoi.gif)
 
-Logic and Algorithms
---------------------
+The Friends of Tracking pitch control model -
+
+    lPitchControl = fGetPitchControlProbabilities (
+        lData = lTrackingData,
+        viTrackingFrame = lTrackingData$dtTrackingData[, unique(Frame)[5]],
+        nYLimit = nYLimit,
+        nXLimit = nXLimit,
+        iGridCellsX = nXLimit / 3
+    )
+        
+    pPlotPitchControl = fPlotPitchControl(
+        lPitchControl
+    )
+
+    print(pPlotPitchControl)
+
+![](README_files/figure-markdown_strict/fPlotPitchControl-1.png)
+
+Some of my other experiments with tracking data are here -
+<a href="https://github.com/thecomeonman/MakingFriendsWithTrackingData" class="uri">https://github.com/thecomeonman/MakingFriendsWithTrackingData</a>
+\#\# Logic and Algorithms
 
 ### fEMDDetailed
 
@@ -796,7 +916,7 @@ nature of the data.
     )
 
     print(fGetEMDFromDetailedEMD(lprec))
-    #> [1] 0.3747069
+    #> [1] 0.3871557
 
     # This value should be the same as that computed by emdist package's emd function.
     # EMD needs the weightage of each point, which is assigned as equal in our

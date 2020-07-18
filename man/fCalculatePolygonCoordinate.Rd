@@ -2,7 +2,7 @@
 % Please edit documentation in R/fCalculatePolygonCoordinate.R
 \name{fCalculatePolygonCoordinate}
 \alias{fCalculatePolygonCoordinate}
-\title{Draws a block based on the angle bucket and length bucket, respectively 
+\title{Draws a block based on the angle bucket and length bucket, respectively
 indicated by x and y, used by fPlotSonar}
 \usage{
 fCalculatePolygonCoordinate(
@@ -23,14 +23,14 @@ plot(
       nAngleMax_rad = pi/2,
       nRadiusMin = 1,
       nRadiusMax = 2,
-      cos   
+      cos
    ),
    fCalculatePolygonCoordinate(
       nAngleMin_rad = pi/4,
       nAngleMax_rad = pi/2,
       nRadiusMin = 1,
       nRadiusMax = 2,
-      sin   
-   )      
+      sin
+   )
 )
 }

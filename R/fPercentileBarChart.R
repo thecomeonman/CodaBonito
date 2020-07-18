@@ -39,6 +39,9 @@ fPercentileBarChart = function(
    nBufferForTextHorizontal = 0.005,
    nBufferForTextVertical = 0.05,
    vnQuantileMarkers = NULL,
+   cForegroundColour = 'red',
+   cBackgroundColour = 'black',
+   cFontColour = 'white',
    bAddAbsoluteIndicator = F
 ) {
 
@@ -96,7 +99,7 @@ fPercentileBarChart = function(
             ymax = variableIndex + nColumnWidthByTwo,
             group = paste(PlayerName, variable)
          ),
-         fill = 'green'
+         fill = cForegroundColour
       ) +
       # geom_text(
       #    data = dtDataset[
@@ -128,30 +131,30 @@ fPercentileBarChart = function(
          switch = 'y'
       ) +
       theme(
-         panel.background = element_rect(fill = 'black'),
+         panel.background = element_rect(fill = cBackgroundColour),
          panel.border = element_blank(),
-         plot.background = element_rect(fill = 'black'),
+         plot.background = element_rect(fill = cBackgroundColour),
          panel.grid.major.x = element_line(size = 1, color = 'grey20'),
          panel.grid.minor.x = element_blank(),
          panel.grid.major.y = element_blank(),
          panel.grid.minor.y = element_blank(),
          axis.text.x = element_blank(),
          axis.text.y = element_text(
-            color = 'white',
+            color = cFontColour,
             hjust = 1,
             margin = margin(15,0,0,15)
          ),
          axis.title = element_blank(),
          panel.spacing = unit(3, "lines"),
          strip.placement = 'outside',
-         strip.background = element_rect(fill = 'green'),
+         strip.background = element_rect(fill = cForegroundColour),
          strip.text = element_text(
             size = 15,
             face = 'bold',
-            color = 'white'
+            color = cFontColour
          ),
          plot.title = element_text(
-            color = 'white',
+            color = cFontColour,
             size = 15,
             hjust = 0.5,
             margin = margin(15, 15, 15, 15),
@@ -174,7 +177,7 @@ fPercentileBarChart = function(
                x = Value_pile,
                y = variableIndex - nColumnWidthByTwo
             ),
-            color = 'white'
+            color = cFontColour
          ) +
          geom_segment(
             data = dtDataset[,
@@ -193,7 +196,7 @@ fPercentileBarChart = function(
                y = variableIndex - nColumnWidthByTwo,
                yend = variableIndex - nColumnWidthByTwo
             ),
-            color = 'white'
+            color = cFontColour
          ) +
          geom_text(
             data = dtDataset[,
@@ -212,7 +215,7 @@ fPercentileBarChart = function(
                y = variableIndex - nColumnWidthByTwo - nBufferForTextVertical,
                label = round(value, 2)
             ),
-            color = 'white',
+            color = cFontColour,
             vjust = 1
          )
 
@@ -255,7 +258,7 @@ fPercentileBarChart = function(
                yend = variableIndex - nColumnWidthByTwo,
                group = paste(PlayerName, variable)
             ),
-            color = 'white'
+            color = cFontColour
          ) +
          geom_segment(
             data = dtAnnotations[
@@ -267,7 +270,7 @@ fPercentileBarChart = function(
                y = variableIndex + valueScaled,
                yend = variableIndex + valueScaled
             ),
-            color = 'white'
+            color = cFontColour
          ) +
          geom_text(
             data = dtAnnotations[
@@ -278,7 +281,7 @@ fPercentileBarChart = function(
                y = variableIndex + valueScaled,
                label = round(value, 2)
             ),
-            color = 'white',
+            color = cFontColour,
             hjust = 0
          ) +
          geom_text(
@@ -298,7 +301,7 @@ fPercentileBarChart = function(
                y = variableIndex + valueScaled - nBufferForTextVertical,
                label = round(value, 2)
             ),
-            color = 'white',
+            color = cFontColour,
             hjust = 1,
             vjust = 1
          ) +
@@ -318,7 +321,7 @@ fPercentileBarChart = function(
                y = variableIndex + valueScaled + nBufferForTextVertical,
                label = round(value, 2)
             ),
-            color = 'white',
+            color = cFontColour,
             hjust = 1,
             vjust = 0
          )

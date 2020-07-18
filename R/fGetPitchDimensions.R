@@ -22,7 +22,7 @@ fGetPitchDimensions = function (
    nCornerArcRadius_m = nXSpan * 1 / 105
    nPointRadius_m = nXSpan * 0.05 / 105
    nGoalWidth_m = nXSpan * 8 / 105
-   nGoalHeight_m = nXSpan * ( iSideNettingRows / iTopNettingRows ) * nGoalWidth_m / 105
+   nGoalHeight_m = ( iSideNettingRows / iTopNettingRows ) * nGoalWidth_m
    nGoalPostRadius_m = nXSpan * 0.1 / 105
 
 
@@ -418,6 +418,29 @@ fGetPitchDimensions = function (
    lPitchDimensions$lGoalnet$dtBackOffense = copy(lPitchDimensions$lGoalnet$dtBackDefense)
    lPitchDimensions$lGoalnet$dtBackOffense[, x := -x + nXSpan]
    lPitchDimensions$lGoalnet$dtBackOffense[, xend := -xend + nXSpan]
+
+   qwe = names(lPitchDimensions$lGoalnet)
+   lPitchDimensions$lGoalnet = lapply(
+      lPitchDimensions$lGoalnet,
+      function ( lSegments ) {
+
+         lSegments = lapply(
+            seq(nrow(lSegments)),
+            function(x) {
+               rbind(
+                  lSegments[x, list(x,y,z)],
+                  lSegments[x, list(x = xend, y = yend, z = zend)]
+               )
+            }
+         )
+
+         lSegments
+
+      }
+   )
+
+   names(lPitchDimensions$lGoalnet) = qwe
+
 
    lPitchDimensions
 

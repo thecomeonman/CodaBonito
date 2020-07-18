@@ -17,6 +17,12 @@ library(CodaBonito)
 library(ggplot2)
 library(lpSolveAPI)
 
+opts_chunk$set(
+   dev.args = list(
+      bg = "black"
+   )
+)
+
 nXLimit = 120
 nYLimit = 80
 
@@ -36,15 +42,14 @@ kable(head(dtFormation))
 kable(head(dtPlayerLabels))
 
 ## ----DataDescriptionTrackingSlice, echo = F------------------------------------
-kable(head(dtTrackingSlice))
+kable(head(lTrackingData$dtTrackingData))
 
-## ----fAddPitchLines-----------------------------------------------------------
-pPitch = ggplot()
-pPitch = fAddPitchLines(pPitch)
+## ----geom_pitch-----------------------------------------------------------
+pPitch = ggplot() + geom_pitch()
 
 print(pPitch)
 
-## ----fAddPitchLinesData-------------------------------------------------------
+## ----geom_pitch_Data-------------------------------------------------------
 # adding passing data on top now
 pPitch = pPitch +
    geom_point(
@@ -60,19 +65,90 @@ pPitch = pPitch +
 
 print(pPitch)
 
+## ----reoriented_geom_pitch-----------------------------------------------------------
+
+mOrigin = cbind(
+    60,
+    60,
+    10
+)
+
+mScreenCoordinate = cbind(
+    60 + ( ( nXLimit ) / 12 ),
+    60 - ( ( nYLimit ) / 12 ),
+    0
+)
+
+pPitch = ggplot() + geom_pitch(
+   nXStart = 0,
+   nYStart = 0,
+   nXEnd = 120,
+   nYEnd = 80,
+   cPitchColour = 'black', 
+   mOrigin = mOrigin,
+   mScreenCoordinate = mScreenCoordinate
+) + 
+   theme_pitch() +
+   theme(
+      plot.background = element_rect( fill = 'black' ),
+      panel.background = element_rect( fill = 'black' ),
+      legend.position = 'none'
+   )
+
+print(pPitch)
+
+## ----reoriented_data----------------------------------------------------------
+dtPassesReoriented = rbindlist(
+    lapply(
+        seq(nrow(dtPasses)),
+        function( iRow ) {
+
+            mCoordinates = cbind(
+                dtPasses[iRow, x],
+                dtPasses[iRow, y],
+                0 # z
+            )
+
+            mTransformedCoordinates = fGetTransformedCoordinates(
+                mCoordinates,
+                mOrigin,
+                mScreenCoordinate
+            )
+
+            data.table(
+                x = mTransformedCoordinates[, 1],
+                y = mTransformedCoordinates[, 2]
+            )
+        }
+    )
+)
+
+pPitch = pPitch +
+    geom_point(
+        data = dtPassesReoriented,
+        aes(
+            x = x,
+            y = y
+        ),
+        color = 'red'
+    )
+
+print(pPitch)
+
 ## ----fStripChart----------------------------------------------------
 pStripChart = fStripChart (
    dtPlayerMetrics,
    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
    dtMetricCategorisation,
    iPlayerId = 2,
-   cTitle = 'Sample'
+   cTitle = 'Sample',
+   vnExpand = c(-0.3, -0.03, 1.2, 1.3)
 )
 
 print(pStripChart)
 
 ## ----fBeeswarmChart----------------------------------------------------
-pStripChart = fBeeswarmChart (
+pBeeswarmChart = fBeeswarmChart (
    dtPlayerMetrics,
    vcColumnsToIndex = c('playerId','PlayerName','TeamName'),
    dtMetricCategorisation,
@@ -80,7 +156,7 @@ pStripChart = fBeeswarmChart (
    cTitle = 'Sample'
 )
 
-print(pStripChart)
+print(pBeeswarmChart)
 
 ## ----fPercentileBarChart------------------------------------------------------
 pPercentileBarChart = fPercentileBarChart(
@@ -258,7 +334,7 @@ print(pXgBuildUpComparison)
 ## ----fDrawVoronoiFromTable-----------------------------------------------------
 
 pVoronoi = fDrawVoronoiFromTable(
-   dtTrackingSlice[Frame == min(Frame)],
+   lTrackingData$dtTrackingData[Frame == min(Frame)],
    nXLimit = 120,
    nYLimit = 80
 )
@@ -268,9 +344,8 @@ print(pVoronoi)
 
 ## ----fDrawVoronoiFromTableAnimated--------------------------------------------
 
-
 voronoiOutput = fDrawVoronoiFromTable(
-   dtTrackingSlice,
+   lTrackingData$dtTrackingData,
    nXLimit = nXLimit,
    nYLimit = nYLimit,
    UseOneFrameEvery = 1,
@@ -294,6 +369,21 @@ if ( !interactive() ) {
 
 }
 
+## ----fPlotPitchControl--------------------------------------------
+
+lPitchControl = fGetPitchControlProbabilities (
+    lData = lTrackingData,
+    viTrackingFrame = lTrackingData$dtTrackingData[, unique(Frame)[5]],
+    nYLimit = nYLimit,
+    nXLimit = nXLimit,
+    iGridCellsX = nXLimit / 3
+)
+    
+pPlotPitchControl = fPlotPitchControl(
+    lPitchControl
+)
+
+print(pPlotPitchControl)
 
 ## ----fEMDDetailed-------------------------------------------------------------
 # Two random datasets of three dimension

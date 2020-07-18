@@ -142,7 +142,7 @@ fDrawVoronoiFromTable = function(
             }
 
         }
-        
+
         if ( !is.null(markTrajectoryFor) ) {
 
             plotVoronoi = plotVoronoi +
@@ -163,22 +163,24 @@ fDrawVoronoiFromTable = function(
         }
 
 
-        plotVoronoi = fAddPitchLines(
-            plotVoronoi,
-            nXLimit,
-            nYLimit,
-            cLineColour = 'white',
-            cPitchColour = NA
-        )
+        plotVoronoi = plotVoronoi +
+            geom_pitch(
+                nXStart = 0,
+                nYStart = 0,
+                nXEnd = nXLimit,
+                nYEnd = nYLimit,
+                cLineColour = 'white',
+                cPitchColour = NA
+            )
 
         cf = coord_fixed(
-            xlim = c(0,nXLimit),
-            ylim = c(0,nYLimit)
+            xlim = c(0, nXLimit),
+            ylim = c(0, nYLimit)
         )
         cf$default = T
-        
+
         plotVoronoi = plotVoronoi +
-            cf  
+            cf
 
         if ( dtTrackingSlice[, length(unique(Frame)) > 1] ) {
 
@@ -203,9 +205,9 @@ fDrawVoronoiFromTable = function(
 
     }
 
-    
+
     if ( dtTrackingSlice[, length(unique(Frame)) > 1] ) {
-    
+
         cGIFFile = paste0(
             tempfile(),
             '.gif'
@@ -224,9 +226,9 @@ fDrawVoronoiFromTable = function(
                 paste0(
                     paste0(
                         cTempdir,'/',
-                        dtTrackingSlice[, sort(unique(Frame))], 
+                        dtTrackingSlice[, sort(unique(Frame))],
                         '.png'
-                    ), 
+                    ),
                     collapse = ' '
                 ),
                     ' ',

@@ -11,7 +11,7 @@ fRadarPercentileChart(
   iPlayerId,
   cTitle,
   cFontFamily = "arial",
-  cForegroundColour = "green",
+  cForegroundColour = "red",
   cBackgroundColour = "black",
   cFontColour = "white",
   vnExpand = c(0.1, 0.1)

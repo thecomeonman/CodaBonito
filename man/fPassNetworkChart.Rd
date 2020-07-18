@@ -9,21 +9,25 @@ fPassNetworkChart(
   dtPlayerLabels,
   nXLimit = 120,
   nYLimit = 80,
-  nSegmentWidth = 1
+  nSegmentWidth = 1,
+  cFontFamily = "arial",
+  cForegroundColour = "red",
+  cBackgroundColour = "black",
+  cFontColour = "white"
 )
 }
 \arguments{
 \item{dtPasses}{a data.table with the columns playerId ( the player who
 made the pass, ) recipientPlayerId ( the player who received the pass, )
-Success ( 1/0 for whether the pass reached the recipient, ) x ( the 
-coordinate along the length of the pitch, 0 is defensive end, nXLimit is 
-offensive end, ) and y ( along the breadth of the pitch, 0 is right wing and 
-nYLimit is left wing. ) Refer to the dtPasses dataset packaged with the 
+Success ( 1/0 for whether the pass reached the recipient, ) x ( the
+coordinate along the length of the pitch, 0 is defensive end, nXLimit is
+offensive end, ) and y ( along the breadth of the pitch, 0 is right wing and
+nYLimit is left wing. ) Refer to the dtPasses dataset packaged with the
 library}
 
-\item{dtPlayerLabels}{a data.table with the colums playerId ( same as 
-dtPasses, ) and playerName ( the label that the point of the respective 
-player should be labelled as. ) Leaving this blank will mean no labels in 
+\item{dtPlayerLabels}{a data.table with the colums playerId ( same as
+dtPasses, ) and playerName ( the label that the point of the respective
+player should be labelled as. ) Leaving this blank will mean no labels in
 the diagram. Refer to the dtPlayerLabels dataset packaged with the library.}
 
 \item{nXLimit}{Length of the pitch}
@@ -32,7 +36,7 @@ the diagram. Refer to the dtPlayerLabels dataset packaged with the library.}
 }
 \description{
 Plots a marker for each player at their median passing position, and draws
-connections between players to represent the number of passes exchanged 
+connections between players to represent the number of passes exchanged
 between them
 }
 \examples{

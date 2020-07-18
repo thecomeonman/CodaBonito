@@ -9,9 +9,10 @@ geom_pitch(
   nYStart = 0,
   nXEnd = 120,
   nYEnd = 80,
-  cLineColour = "white",
-  cPitchColour = "#038253",
-  bMarkDirectionOfAttack = T
+  mOrigin = NULL,
+  mScreenCoordinate = NULL,
+  cLineColour = "#BBBBBB",
+  cPitchColour = "#038253"
 )
 }
 \arguments{

@@ -14,6 +14,24 @@ fGetPitchControlProbabilities(
   bGetPlayerProbabilities = F
 )
 }
+\arguments{
+\item{lData}{output of fParseTrackingDataBothTeams}
+
+\item{viTrackingFrame}{frames you want processed}
+
+\item{params}{has defaults in the function code but refer to the function
+code to see what values are there that you can override}
+
+\item{nYLimit}{pitch dimensions, top right corner. Bottom left is 0,0}
+
+\item{nXLimit}{pitch dimensions, top right corner value. Bottom left is 0,0}
+
+\item{iGridCellsX}{resolution of the calculation}
+
+\item{bGetPlayerProbabilities}{Whether only the overall probability per team
+should be returned or even the deatils of the break up between players
+should be returned}
+}
 \description{
 Pitch control
 }

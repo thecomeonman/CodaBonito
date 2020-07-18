@@ -9,7 +9,10 @@
 fPlotPitchControl = function(
     lPitchControl,
     cFolderPathToSaveImagesSubdir = NULL,
-    DelayBetweenFrames = 10
+    DelayBetweenFrames = 10,
+    nXLimit = 120,
+    nYLimit = 80,
+    vcColourAssignment = c('Home' = 'red', 'Away' = 'blue', 'Ball' = 'black')
 ) {
 
     viTrackingFrame = lPitchControl$dtDetails[, unique(Frame)]
@@ -17,7 +20,7 @@ fPlotPitchControl = function(
     if ( length(viTrackingFrame) > 0 ) {
 
         if ( is.null(cFolderPathToSaveImagesSubdir) ) {
-            
+
             cFolderPathToSaveImagesSubdir = paste0(
                 tempdir(), '/',
                 min(viTrackingFrame), '_',
@@ -29,7 +32,7 @@ fPlotPitchControl = function(
         cFolderPathToSaveImagesSubdir = paste0(
             cFolderPathToSaveImagesSubdir, '/'
         )
-           
+
         dir.create(
             cFolderPathToSaveImagesSubdir,
             recursive = T,
@@ -37,7 +40,7 @@ fPlotPitchControl = function(
         )
 
     }
-     
+
     for ( iTrackingFrame in viTrackingFrame ) {
 
         plotPitchControl = ggplot() +
@@ -105,8 +108,8 @@ fPlotPitchControl = function(
             scale_fill_gradient2(
                 low = vcColourAssignment[
                     lPitchControl$dtDetails[Frame == iTrackingFrame, setdiff(c('Home','Away'), AttackingTeam[1])]
-                ], 
-                mid = 'white', 
+                ],
+                mid = 'white',
                 high = vcColourAssignment[
                     lPitchControl$dtDetails[Frame == iTrackingFrame, AttackingTeam[1]]
                 ],
@@ -118,15 +121,17 @@ fPlotPitchControl = function(
                 guide = FALSE
             )
 
-        plotPitchControl = fAddPitchLines(
-            plotPitchControl,
-            nXLimit = nXLimit,
-            nYLimit = nYLimit,
-            cLineColour = 'black',
-            cPitchColour = NA
-        )
+        plotPitchControl = plotPitchControl +
+            geom_pitch(
+                nXStart = 0,
+                nYStart = 0,
+                nXEnd = nXLimit,
+                nYEnd = nYLimit,
+                cLineColour = 'black',
+                cPitchColour = NA
+            )
 
-        plotPitchControl = plotPitchControl + 
+        plotPitchControl = plotPitchControl +
             theme_pitch()
 
         if ( length(viTrackingFrame) > 1 ) {
@@ -171,7 +176,7 @@ fPlotPitchControl = function(
                         cFolderPathToSaveImagesSubdir,'/',
                         sort(viTrackingFrame),
                         '.png'
-                    ), 
+                    ),
                     collapse = ' '
                 ),
                     ' ',

@@ -7,7 +7,10 @@
 fPlotPitchControl(
   lPitchControl,
   cFolderPathToSaveImagesSubdir = NULL,
-  DelayBetweenFrames = 10
+  DelayBetweenFrames = 10,
+  nXLimit = 120,
+  nYLimit = 80,
+  vcColourAssignment = c(Home = "red", Away = "blue", Ball = "black")
 )
 }
 \description{

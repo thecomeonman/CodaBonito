@@ -1,19 +1,19 @@
 #' Pass network ( WIP )
 #'
 #' Plots a marker for each player at their median passing position, and draws
-#' connections between players to represent the number of passes exchanged 
+#' connections between players to represent the number of passes exchanged
 #' between them
 #'
 #' @param dtPasses a data.table with the columns playerId ( the player who
 #' made the pass, ) recipientPlayerId ( the player who received the pass, )
-#' Success ( 1/0 for whether the pass reached the recipient, ) x ( the 
-#' coordinate along the length of the pitch, 0 is defensive end, nXLimit is 
-#' offensive end, ) and y ( along the breadth of the pitch, 0 is right wing and 
-#' nYLimit is left wing. ) Refer to the dtPasses dataset packaged with the 
-#' library 
-#' @param dtPlayerLabels a data.table with the colums playerId ( same as 
-#' dtPasses, ) and playerName ( the label that the point of the respective 
-#' player should be labelled as. ) Leaving this blank will mean no labels in 
+#' Success ( 1/0 for whether the pass reached the recipient, ) x ( the
+#' coordinate along the length of the pitch, 0 is defensive end, nXLimit is
+#' offensive end, ) and y ( along the breadth of the pitch, 0 is right wing and
+#' nYLimit is left wing. ) Refer to the dtPasses dataset packaged with the
+#' library
+#' @param dtPlayerLabels a data.table with the colums playerId ( same as
+#' dtPasses, ) and playerName ( the label that the point of the respective
+#' player should be labelled as. ) Leaving this blank will mean no labels in
 #' the diagram. Refer to the dtPlayerLabels dataset packaged with the library.
 #' @param nXLimit Length of the pitch
 #' @param nYLimit Breadth of the pitch
@@ -27,13 +27,17 @@
 #' @export
 fPassNetworkChart = function(
    dtPasses,
-   dtPlayerLabels, 
+   dtPlayerLabels,
    nXLimit = 120,
    nYLimit = 80,
-   nSegmentWidth = 1
+   nSegmentWidth = 1,
+   cFontFamily = 'arial',
+   cForegroundColour = 'red',
+   cBackgroundColour = 'black',
+   cFontColour = 'white'
 ) {
 
-   vnAngleSequence = seq(0, 2*pi, pi/50)   
+   vnAngleSequence = seq(0, 2*pi, pi/50)
 
    dtNodes = dtPasses[
       Success == 1,
@@ -96,16 +100,18 @@ fPassNetworkChart = function(
 
    p1 = ggplot()
 
-   p1 = fAddPitchLines(
-      p1, 
-      nXLimit = nXLimit,
-      nYLimit = nYLimit,
-      cLineColour = 'green',
-      cPitchColour = 'white'
-   )
+   p1 = p1 +
+      geom_pitch(
+         nXStart = 0,
+         nYStart = 0,
+         nXEnd = nXLimit,
+         nYEnd = nYLimit,
+         cLineColour = cForegroundColour,
+         cPitchColour = cFontColour
+      )
 
 
-   p1 = p1 + 
+   p1 = p1 +
       geom_polygon(
          data = dtNodes[,
             list(
@@ -129,7 +135,7 @@ fPassNetworkChart = function(
       )
 
    if ( F ) {
-         
+
       p1 = p1 +
          geom_segment(
          # geom_curve(
@@ -144,7 +150,7 @@ fPassNetworkChart = function(
             size = 4,
             # curvature = 0.1,
             # arrow = arrow(length = unit(0.03,"npc")),
-            # arrow.fill = 'black'
+            # arrow.fill = cBackgroundColour
          )
 
    } else if ( F ) {
@@ -161,10 +167,10 @@ fPassNetworkChart = function(
                alpha = CountBetween
             ),
             size = 4,
-            color = 'black'
+            color = cBackgroundColour
             # curvature = 0.1,
             # arrow = arrow(length = unit(0.03,"npc")),
-            # arrow.fill = 'black'
+            # arrow.fill = cBackgroundColour
          )
 
    } else if ( F ) {
@@ -199,20 +205,20 @@ fPassNetworkChart = function(
                group = paste(formatC(CountBetween, flag='0', width = 3), playerId, recipientPlayerId),
                fill = CountBetween
             ),
-            color = 'black'
+            color = cBackgroundColour
          )
 
    } else if ( T ) {
 
-      # ascending order of max of back and fro between each two players is the 
-      # order in which the segments get placed. Highest passing between two 
+      # ascending order of max of back and fro between each two players is the
+      # order in which the segments get placed. Highest passing between two
       # players should be visible on top
       dtSegmentOutlines = rbind(
          dtSegments[, list(playerId, recipientPlayerId, CountBetween)],
          dtSegments[, list(playerId = recipientPlayerId, recipientPlayerId = playerId, CountBetween)]
       )[
          playerId < recipientPlayerId
-      ][, 
+      ][,
          .SD[which.max(CountBetween)][1],
          list(playerId, recipientPlayerId)
       ]
@@ -256,7 +262,7 @@ fPassNetworkChart = function(
                   # alpha = CountBetween
                   fill = CountBetween
                ),
-               # fill = 'black'
+               # fill = cBackgroundColour
             )
 
 
@@ -324,14 +330,14 @@ fPassNetworkChart = function(
                   group = paste(formatC(CountBetween, flag='0', width = 3), playerId, recipientPlayerId),
                ),
                alpha = 0,
-               color = 'black'
+               color = cBackgroundColour
             )
 
-      }         
+      }
 
    }
 
-   # p1 = p1 + 
+   # p1 = p1 +
    #    geom_segment(
    #       data = dtSegments[playerId < recipientPlayerId],
    #       aes(
@@ -340,13 +346,13 @@ fPassNetworkChart = function(
    #          xend = receipientX,
    #          yend = receipientY
    #       ),
-   #       color = 'black'
+   #       color = cBackgroundColour
    #    )
-   
+
    p1 = p1 +
       scale_fill_continuous(
-         low = 'white',
-         high = 'black',
+         low = cFontColour,
+         high = cBackgroundColour,
          limits = c(
             0,
             dtSegments[, max(CountBetween)]
@@ -354,15 +360,15 @@ fPassNetworkChart = function(
          guide = 'none'
       ) +
       scale_color_continuous(
-         low = 'white',
-         high = 'black',
+         low = cFontColour,
+         high = cBackgroundColour,
          guide = 'none'
       ) +
       theme_pitch()
 
    if ( !is.null(dtPlayerLabels) ) {
-      
-      p1 = p1 + 
+
+      p1 = p1 +
          geom_label(
             data = dtNodes,
             aes(

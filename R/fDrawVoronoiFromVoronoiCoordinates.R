@@ -36,7 +36,7 @@ fDrawVoronoiFromVoronoiCoordinates = function(
             aes(
                 x = X,
                 y = Y,
-            color = Tag
+                color = Tag
             ),
             size = 3
         )
@@ -58,13 +58,15 @@ fDrawVoronoiFromVoronoiCoordinates = function(
     }
 
 
-    plotVoronoi = fAddPitchLines(
-        plotVoronoi,
-        nXLimit,
-        nYLimit,
-        cLineColour = 'white',
-        cPitchColour = NA
-    )
+    plotVoronoi = plotVoronoi +
+        geom_pitch(
+            nXStart = 0,
+            nYStart = 0,
+            nXEnd = nXLimit,
+            nYEnd = nYLimit,
+            cLineColour = 'white',
+            cPitchColour = NA
+        )
 
     plotVoronoi = plotVoronoi +
         scale_color_manual(
@@ -74,7 +76,7 @@ fDrawVoronoiFromVoronoiCoordinates = function(
         scale_fill_manual(
             values = c('Home' = '#1f78b4','Ball' = 'black','Away' = '#33a02c'),
             guide = FALSE
-        ) + 
+        ) +
         theme_pitch()
 
     cf = coord_fixed(
@@ -82,9 +84,9 @@ fDrawVoronoiFromVoronoiCoordinates = function(
         ylim = c(0,nYLimit)
     )
     cf$default = T
-    
+
     plotVoronoi = plotVoronoi +
-        cf  
+        cf
 
     plotVoronoi
 

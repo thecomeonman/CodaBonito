@@ -14,6 +14,9 @@ fPercentileBarChart(
   nBufferForTextHorizontal = 0.005,
   nBufferForTextVertical = 0.05,
   vnQuantileMarkers = NULL,
+  cForegroundColour = "red",
+  cBackgroundColour = "black",
+  cFontColour = "white",
   bAddAbsoluteIndicator = F
 )
 }

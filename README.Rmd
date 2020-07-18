@@ -52,10 +52,6 @@ Open R and run this command in the console -
 `library(devtools);`
 `install_github("thecomeonman/CodaBonito");`
 
-If you're interested in running the animated Voronoi, you will also need to 
-install ImageMagick from https://imagemagick.org/script/download.php. This is 
-a widely used image manipulation library.
-
 And you're ready to run the examples below!
 
 ## Data
@@ -72,7 +68,7 @@ age, etc.
 `dtMetricCategorisation` - some metadata about the metrics. 
 - variableLabel is the name that will be displayed in charts for that metric, 
 - variableCategory is the grouping of variables used in some visualisations,
-like `fStripChart`
+like `fNormalisedValueChart`
 - HighValueIsBad is marked true for variables where a high value is bad. 
 Variables such as fouls and goals conceded would be true.
 ```{r DataDescriptionMetricCategorisation, echo = F}
@@ -97,21 +93,21 @@ where 0 is along the pitch from defense to offense.
 ```{r DataDescriptionPlayerLabels, echo = F}
 ```
 
-`dtTrackingSlice` - Tracking data
+`lTrackingData$dtTrackingData` - Tracking data
 ```{r DataDescriptionTrackingSlice, echo = F}
 ```
 ## Visualisations
 
-### fAddPitchLines
+### geom_pitch
 
 fAddPitchLines draws pitch markings with further customisations available
 
-```{r fAddPitchLines}
+```{r geom_pitch}
 ```
 
 You can add whatever stats you want on top of it like regular ggplot2
 
-```{r fAddPitchLinesData}
+```{r geom_pitch_Data}
 ```
 
 ### theme_pitch
@@ -121,10 +117,22 @@ If you aren't interested in having the axis markings, etc., use theme_pitch
 ```{r theme_pitch}
 ```
 
+Oh, do you want the pitch from a different perspective?
+
+```{r reoriented_geom_pitch, warning = F}
+```
+
+```{r reoriented_data, warning = F}
+```
+
+The pass origins are points so they don't look as nicely mapped to the surface
+but if you were to use a 2+ dimensional shape, like a polygon, rectangle, cuboid, etc.
+then it would map well. The pitch, the goal frame, the net, all of that is also 
+paths and polygons which is why it looks well fit in the 3D version.
+
 ### fStripChart
 ```{r fStripChart}
 ```
-
 ### fBeeswarmChart
 ```{r fBeeswarmChart}
 ```
@@ -146,7 +154,7 @@ I disapprove of radar charts. It's a bad visualisation, prone to
 misinterpretation. They seem to be the accepted norm of comparing players 
 though which is why I had to sell out and have an implementation of that in the 
 package, but I've added a warning which states how you should use 
-fPercentileBarChart instead as that is a better structured visualisation.
+one of the other visualisations instead as those are better structured visualisation.
 ```{r fRadarPercentileChart}
 ```
 
@@ -165,8 +173,9 @@ fPercentileBarChart instead as that is a better structured visualisation.
 
 ### fDrawVoronoi
 
-WIP using the same data structure as https://github.com/metrica-sports/sample-data
+WIP using the same data structure as https://github.com/metrica-sports/sample-data which you can parse with fParseTrackingDataBothTeams
 
+You can draw Voronois
 ```{r fDrawVoronoiFromTable}
 ```
 
@@ -176,8 +185,12 @@ And if you have multiple frames -
 ```
 
 ![](./README_files/figure-markdown_strict/Voronoi.gif)
-More experiments with Voronoi here - https://github.com/thecomeonman/MakingFriendsWithTrackingData
 
+The Friends of Tracking pitch control model -
+```{r fPlotPitchControl}
+```
+
+Some of my other experiments with tracking data are here - https://github.com/thecomeonman/MakingFriendsWithTrackingData
 ## Logic and Algorithms
 
 ### fEMDDetailed

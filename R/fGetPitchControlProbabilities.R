@@ -1,11 +1,15 @@
 #' Pitch control
 #'
-#' @param lData
-#' @param viTrackingFrame
-#' @param params
-#' @param nYLimit
-#' @param nXLimit
-#' @param iGridCellsX
+#' @param lData output of fParseTrackingDataBothTeams
+#' @param viTrackingFrame frames you want processed
+#' @param params has defaults in the function code but refer to the function
+#' code to see what values are there that you can override
+#' @param nYLimit pitch dimensions, top right corner. Bottom left is 0,0
+#' @param nXLimit pitch dimensions, top right corner value. Bottom left is 0,0
+#' @param iGridCellsX resolution of the calculation
+#' @param bGetPlayerProbabilities Whether only the overall probability per team
+#' should be returned or even the deatils of the break up between players
+#' should be returned
 #' @examples
 #' @import data.table
 #' @import zoo
@@ -86,7 +90,10 @@ fGetPitchControlProbabilities = function (
         ]
 
         dtTrackingSlice[,
-            c('Period','Time_s') := NULL
+            intersect(
+                colnames(dtTrackingSlice),
+                c('Period','Time_s')
+            ):= NULL
         ]
 
         # last team to make a pass is in control
@@ -434,8 +441,7 @@ fGetPitchControlProbabilities = function (
 
             warning(
                 paste0(
-                    "Integration failed to converge for some cases",
-                    ptot
+                    "Integration failed to converge for some cases"
                 )
             )
 

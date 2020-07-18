@@ -2,6 +2,7 @@
 
 export(fBallInterceptionProbability)
 export(fBeeswarmChart)
+export(fCalculatePolygonCoordinate)
 export(fConvertTrackingDataWideToLong)
 export(fDrawVoronoiFromTable)
 export(fDrawVoronoiFromVoronoiCoordinates)

@@ -117,18 +117,6 @@ If you aren't interested in having the axis markings, etc., use theme_pitch
 ```{r theme_pitch}
 ```
 
-Oh, do you want the pitch from a different perspective?
-
-```{r reoriented_geom_pitch, warning = F}
-```
-
-```{r reoriented_data, warning = F}
-```
-
-The pass origins are points so they don't look as nicely mapped to the surface
-but if you were to use a 2+ dimensional shape, like a polygon, rectangle, cuboid, etc.
-then it would map well. The pitch, the goal frame, the net, all of that is also 
-paths and polygons which is why it looks well fit in the 3D version.
 
 ### fStripChart
 ```{r fStripChart}

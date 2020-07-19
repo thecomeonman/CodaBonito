@@ -162,8 +162,8 @@ geom_pitch = function (
                   y = y,
                   group = group
                ),
-               color = cLineColour,
-               fill = NA
+               color = cLineColour
+               # fill = NA
             )
          }
       )

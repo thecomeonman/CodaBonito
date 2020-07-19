@@ -84,14 +84,14 @@ pPitch = ggplot() + geom_pitch(
    nYStart = 0,
    nXEnd = 120,
    nYEnd = 80,
-   cPitchColour = 'black', 
+   cPitchColour = '#444444', 
    mOrigin = mOrigin,
    mScreenCoordinate = mScreenCoordinate
 ) + 
    theme_pitch() +
    theme(
-      plot.background = element_rect( fill = 'black' ),
-      panel.background = element_rect( fill = 'black' ),
+      plot.background = element_rect( fill = 'black', color = NA ),
+      panel.background = element_rect( fill = 'black', color = NA ),
       legend.position = 'none'
    )
 

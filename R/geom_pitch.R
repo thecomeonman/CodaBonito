@@ -67,32 +67,68 @@ geom_pitch = function (
       )
       # names(lPitchDimensions$lPitchCoordinates) = names(lPitchDimensions$lPitchCoordinates)
 
+      if ( F ) {
+
+         lPitchDimensions$lGoalframes = lapply(
+             lPitchDimensions$lGoalframes,
+             function( dtDimensions ) {
+
+                 # dtDimensions = lPitchDimensions$lGoalframes[[1]]
+
+                 mCoordinates = cbind(
+                     dtDimensions[, x],
+                     dtDimensions[, y],
+                     dtDimensions[, z]
+                 )
+
+                 mTransformedCoordinates = fGetTransformedCoordinates(
+                     mCoordinates,
+                     mOrigin,
+                     mScreenCoordinate
+                 )
+
+                 data.table(
+                     x = mTransformedCoordinates[, 1],
+                     y = mTransformedCoordinates[, 2]
+                 )
+
+             }
+         )
+         # names(lPitchDimensions$lGoalframes) = names(lPitchDimensions$lGoalframes)
+
+      }
+
+
       lPitchDimensions$lGoalframes = lapply(
           lPitchDimensions$lGoalframes,
-          function( dtDimensions ) {
+          function( lRectangles ) {
+             lapply(
+                lRectangles,
+                function( dtDimensions ) {
 
-              # dtDimensions = lPitchDimensions$lGoalframes[[1]]
+                    # dtDimensions = lPitchDimensions$lGoalframes[[1]]
 
-              mCoordinates = cbind(
-                  dtDimensions[, x],
-                  dtDimensions[, y],
-                  dtDimensions[, z]
-              )
+                    mCoordinates = cbind(
+                        dtDimensions[, x],
+                        dtDimensions[, y],
+                        dtDimensions[, z]
+                    )
 
-              mTransformedCoordinates = fGetTransformedCoordinates(
-                  mCoordinates,
-                  mOrigin,
-                  mScreenCoordinate
-              )
+                    mTransformedCoordinates = fGetTransformedCoordinates(
+                        mCoordinates,
+                        mOrigin,
+                        mScreenCoordinate
+                    )
 
-              data.table(
-                  x = mTransformedCoordinates[, 1],
-                  y = mTransformedCoordinates[, 2]
-              )
+                    data.table(
+                        x = mTransformedCoordinates[, 1],
+                        y = mTransformedCoordinates[, 2]
+                    )
 
+                }
+            )
           }
       )
-      # names(lPitchDimensions$lGoalframes) = names(lPitchDimensions$lGoalframes)
 
       lPitchDimensions$lGoalnet = lapply(
           lPitchDimensions$lGoalnet,
@@ -169,80 +205,117 @@ geom_pitch = function (
       )
    )
 
-   lGoalFrameElements = lapply(
-      lPitchDimensions$lGoalframes[sapply(lPitchDimensions$lGoalframes, nrow) > 0],
-      function( dtPolygon ) {
-         geom_polygon(
-            data = dtPolygon,
-            aes(
-               x = x,
-               y = y
-            ),
-            color = cLineColour,
-            fill = cLineColour
-         )
-      }
-   )
+   if ( F ) {
 
-   lGoalFrameElements = append(
-      lGoalFrameElements,
-      list(
-         geom_polygon(
-            data = rbind(
-                lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseLow[x %in% range(x)][order(x)],
-                lPitchDimensions$lGoalframes$dtGoalPostAirDefenseLow[x %in% range(x)][rev(order(x))]
+      lGoalFrameElements = lapply(
+         lPitchDimensions$lGoalframes[sapply(lPitchDimensions$lGoalframes, nrow) > 0],
+         function( dtPolygon ) {
+            geom_polygon(
+               data = dtPolygon,
+               aes(
+                  x = x,
+                  y = y
+               ),
+               color = cLineColour,
+               fill = cLineColour
+            )
+         }
+      )
+
+      lGoalFrameElements = append(
+         lGoalFrameElements,
+         list(
+            geom_polygon(
+               data = rbind(
+                   lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseLow[x %in% range(x)][order(x)],
+                   lPitchDimensions$lGoalframes$dtGoalPostAirDefenseLow[x %in% range(x)][rev(order(x))]
+               ),
+               aes(x = x, y = y),
+               fill = cLineColour
+               # color = 'black'
             ),
-            aes(x = x, y = y),
-            fill = cLineColour
-            # color = 'black'
-         ),
-         geom_polygon(
-            data = rbind(
-                lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseHigh[x %in% range(x)][order(x)],
-                lPitchDimensions$lGoalframes$dtGoalPostAirDefenseHigh[x %in% range(x)][rev(order(x))]
+            geom_polygon(
+               data = rbind(
+                   lPitchDimensions$lGoalframes$dtGoalPostFloorDefenseHigh[x %in% range(x)][order(x)],
+                   lPitchDimensions$lGoalframes$dtGoalPostAirDefenseHigh[x %in% range(x)][rev(order(x))]
+               ),
+               aes(x = x, y = y),
+               fill = cLineColour
+               # color = 'black'
             ),
-            aes(x = x, y = y),
-            fill = cLineColour
-            # color = 'black'
-         ),
-         geom_polygon(
-            data = rbind(
-                lPitchDimensions$lGoalframes$dtGoalPostAirDefenseLow[y %in% range(y)][order(y)],
-                lPitchDimensions$lGoalframes$dtGoalPostAirDefenseHigh[y %in% range(y)][rev(order(y))]
+            geom_polygon(
+               data = rbind(
+                   lPitchDimensions$lGoalframes$dtGoalPostAirDefenseLow[y %in% range(y)][order(y)],
+                   lPitchDimensions$lGoalframes$dtGoalPostAirDefenseHigh[y %in% range(y)][rev(order(y))]
+               ),
+               aes(x = x, y = y),
+               fill = cLineColour,
+               # color = 'black'
             ),
-            aes(x = x, y = y),
-            fill = cLineColour,
-            # color = 'black'
-         ),
-         geom_polygon(
-            data = rbind(
-                lPitchDimensions$lGoalframes$dtGoalPostFloorOffenseLow[x %in% range(x)][order(x)],
-                lPitchDimensions$lGoalframes$dtGoalPostAirOffenseLow[x %in% range(x)][rev(order(x))]
+            geom_polygon(
+               data = rbind(
+                   lPitchDimensions$lGoalframes$dtGoalPostFloorOffenseLow[x %in% range(x)][order(x)],
+                   lPitchDimensions$lGoalframes$dtGoalPostAirOffenseLow[x %in% range(x)][rev(order(x))]
+               ),
+               aes(x = x, y = y),
+               fill = cLineColour
+               # color = 'black'
             ),
-            aes(x = x, y = y),
-            fill = cLineColour
-            # color = 'black'
-         ),
-         geom_polygon(
-            data = rbind(
-                lPitchDimensions$lGoalframes$dtGoalPostFloorOffenseHigh[x %in% range(x)][order(x)],
-                lPitchDimensions$lGoalframes$dtGoalPostAirOffenseHigh[x %in% range(x)][rev(order(x))]
+            geom_polygon(
+               data = rbind(
+                   lPitchDimensions$lGoalframes$dtGoalPostFloorOffenseHigh[x %in% range(x)][order(x)],
+                   lPitchDimensions$lGoalframes$dtGoalPostAirOffenseHigh[x %in% range(x)][rev(order(x))]
+               ),
+               aes(x = x, y = y),
+               fill = cLineColour
+               # color = 'black'
             ),
-            aes(x = x, y = y),
-            fill = cLineColour
-            # color = 'black'
-         ),
-         geom_polygon(
-            data = rbind(
-                lPitchDimensions$lGoalframes$dtGoalPostAirOffenseLow[y %in% range(y)][order(y)],
-                lPitchDimensions$lGoalframes$dtGoalPostAirOffenseHigh[y %in% range(y)][rev(order(y))]
-            ),
-            aes(x = x, y = y),
-            fill = cLineColour,
-            # color = 'black'
+            geom_polygon(
+               data = rbind(
+                   lPitchDimensions$lGoalframes$dtGoalPostAirOffenseLow[y %in% range(y)][order(y)],
+                   lPitchDimensions$lGoalframes$dtGoalPostAirOffenseHigh[y %in% range(y)][rev(order(y))]
+               ),
+               aes(x = x, y = y),
+               fill = cLineColour,
+               # color = 'black'
+            )
          )
       )
-   )
+
+   }
+
+   for ( i in seq(length(lPitchDimensions$lGoalframes)) ) {
+
+      lPitchElements = append(
+         lPitchElements,
+         lapply(
+            seq(length(lPitchDimensions$lGoalframes[[i]])),
+            function (j) {
+
+               nextJ = j + 1
+               nextJ = ifelse(nextJ > length(lPitchDimensions$lGoalframes[[i]]), 1, nextJ)
+
+
+               geom_polygon(
+                  data = rbind(
+                     lPitchDimensions$lGoalframes[[i]][[j]],
+                     lPitchDimensions$lGoalframes[[i]][[nextJ]][.N:1]
+                  ),
+                  aes(
+                     x = nXStart + x,
+                     y = nYStart + y
+                  ),
+                  color = cLineColour,
+                  fill = cLineColour
+               )
+
+
+
+            }
+         )
+      )
+
+   }
 
    dtGoalNetElements = rbindlist(
       lapply(
@@ -282,23 +355,17 @@ geom_pitch = function (
    )
 
    lPitchElements = append(
-      append(
-         lPitchElements,
-         lGoalFrameElements
-      ),
-      append(
-         geom_segment(
-            data = dtGoalNetElements,
-            aes(
-               x = x,
-               y = y,
-               xend = xend,
-               yend = yend
-            ),
-            color = cLineColour,
-            alpha = 0.4
+      lPitchElements,
+      geom_segment(
+         data = dtGoalNetElements,
+         aes(
+            x = x,
+            y = y,
+            xend = xend,
+            yend = yend
          ),
-         cf
+         color = cLineColour,
+         alpha = 0.4
       )
    )
 
@@ -349,6 +416,11 @@ geom_pitch = function (
       )
 
    }
+
+   lPitchElements = append(
+      lPitchElements,
+      cf
+   )
 
    return ( lPitchElements )
 

@@ -22,8 +22,8 @@ geom_pitch = function (
    nYStart = 0,
    nXEnd = 120,
    nYEnd = 80,
-   mOrigin = NULL,
-   mScreenCoordinate = NULL,
+   # mOrigin = NULL,
+   # mScreenCoordinate = NULL,
    cLineColour = '#BBBBBB',
    cPitchColour = '#038253'
 ) {
@@ -36,7 +36,8 @@ geom_pitch = function (
    )
 
 
-   if ( !is.null(mOrigin) )  {
+   if ( F )  {
+   # if ( !is.null(mOrigin) )  {
 
       lPitchDimensions$lPitchCoordinates = lapply(
           lPitchDimensions$lPitchCoordinates,

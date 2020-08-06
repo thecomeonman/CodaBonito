@@ -20,9 +20,10 @@ fGetPitchDimensions = function (
    nCentreCircleRadius_m = nXSpan * 9.15 / 105
    nPenaltySpotOffset_m = nXSpan * 11 / 105
    nCornerArcRadius_m = nXSpan * 1 / 105
-   nPointRadius_m = nXSpan * 0.5 / 105
+   nPointRadius_m = nXSpan * 0.2 / 105
    nGoalWidth_m = nXSpan * 8 / 105
    nGoalHeight_m = ( iSideNettingRows / iTopNettingRows ) * nGoalWidth_m
+   nGoalDepth_m = nGoalHeight_m # let this be, net spacing is easier
    nGoalPostRadius_m = nXSpan * 0.1 / 105
 
 
@@ -63,7 +64,11 @@ fGetPitchDimensions = function (
          nCentreCircleRadius_m = nCentreCircleRadius_m,
          nPenaltySpotOffset_m = nPenaltySpotOffset_m,
          nCornerArcRadius_m = nCornerArcRadius_m,
-         nPointRadius_m = nPointRadius_m
+         nPointRadius_m = nPointRadius_m,
+         nGoalWidth_m = nGoalWidth_m,
+         nGoalHeight_m = nGoalHeight_m,
+         nGoalDepth_m = nGoalDepth_m,
+         nGoalPostRadius_m = nGoalPostRadius_m
       ),
 
       lPitchCoordinates = list(
@@ -376,7 +381,7 @@ fGetPitchDimensions = function (
       lPitchDimensions$lGoalnet$dtTopDefense = rbind(
          # side to side
          data.table(
-            x = nXStart - seq(0, nGoalHeight_m, nGoalHeight_m / iSideNettingRows),
+            x = nXStart - seq(0, nGoalDepth_m, nGoalDepth_m / iSideNettingRows),
             y = ( nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ),
             z = nGoalHeight_m
          )[,
@@ -407,7 +412,7 @@ fGetPitchDimensions = function (
       lPitchDimensions$lGoalnet$dtBackDefense = rbind(
          # side to side
          data.table(
-            x = nXStart - nGoalHeight_m,
+            x = nXStart - nGoalDepth_m,
             y = ( nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ),
             z = seq(0, nGoalHeight_m, nGoalHeight_m / iSideNettingRows)
          )[,
@@ -419,7 +424,7 @@ fGetPitchDimensions = function (
          ],
          # bottom to top
          data.table(
-            x = nXStart - nGoalHeight_m,
+            x = nXStart - nGoalDepth_m,
             y = seq(
                ( nYStart + ( nYSpan / 2) - ( nGoalWidth_m * 0.5 ) - ( nGoalPostRadius_m ) ),
                ( nYStart + ( nYSpan / 2) + ( nGoalWidth_m * 0.5 ) + ( nGoalPostRadius_m ) ),

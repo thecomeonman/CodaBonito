@@ -9,6 +9,10 @@ geom_pitch(
   nYStart = 0,
   nXEnd = 120,
   nYEnd = 80,
+  mOriginCoordinates = NULL,
+  mScreenCoordinates = NULL,
+  mViewBeginsFromCoordinates = NULL,
+  mZAxisVector = c(0, 0, 1),
   cLineColour = "#BBBBBB",
   cPitchColour = "#038253"
 )

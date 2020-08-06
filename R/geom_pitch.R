@@ -22,11 +22,15 @@ geom_pitch = function (
    nYStart = 0,
    nXEnd = 120,
    nYEnd = 80,
-   # mOrigin = NULL,
-   # mScreenCoordinate = NULL,
+   mOriginCoordinates = NULL,
+   mScreenCoordinates = NULL,
+   mViewBeginsFromCoordinates = NULL,
+   mZAxisVector = c(0,0,1),
    cLineColour = '#BBBBBB',
    cPitchColour = '#038253'
 ) {
+
+   # nXStart = 0; nYStart = 0; nXEnd = 120; nYEnd = 80; mZAxisVector = c(0,0,1)
 
    lPitchDimensions = fGetPitchDimensions (
       nXStart = nXStart,
@@ -36,8 +40,8 @@ geom_pitch = function (
    )
 
 
-   if ( F )  {
-   # if ( !is.null(mOrigin) )  {
+   # if ( T )  {
+   if ( !is.null(mOriginCoordinates) )  {
 
       lPitchDimensions$lPitchCoordinates = lapply(
           lPitchDimensions$lPitchCoordinates,
@@ -52,10 +56,12 @@ geom_pitch = function (
               )
 
               mTransformedCoordinates = fGetTransformedCoordinates(
-                  mCoordinates,
-                  mOrigin,
-                  mScreenCoordinate,
-                  bTreatAsClosedPolyon = F
+                  mCoordinates = mCoordinates,
+                  mOriginCoordinates = mOriginCoordinates,
+                  mScreenCoordinates = mScreenCoordinates,
+                  iTreatAs = 2,
+                  mZAxisVector = mZAxisVector,
+                  mViewBeginsFromCoordinates = mViewBeginsFromCoordinates
               )
 
               data.table(
@@ -83,9 +89,11 @@ geom_pitch = function (
                  )
 
                  mTransformedCoordinates = fGetTransformedCoordinates(
-                     mCoordinates,
-                     mOrigin,
-                     mScreenCoordinate
+                     mCoordinates = mCoordinates,
+                     mOriginCoordinates = mOriginCoordinates,
+                     mScreenCoordinates = mScreenCoordinates,
+                     mZAxisVector = mZAxisVector,
+                     mViewBeginsFromCoordinates = mViewBeginsFromCoordinates
                  )
 
                  data.table(
@@ -116,10 +124,13 @@ geom_pitch = function (
                     )
 
                     mTransformedCoordinates = fGetTransformedCoordinates(
-                        mCoordinates,
-                        mOrigin,
-                        mScreenCoordinate
+                        mCoordinates = mCoordinates,
+                        mOriginCoordinates = mOriginCoordinates,
+                        mScreenCoordinates = mScreenCoordinates,
+                        mZAxisVector = mZAxisVector,
+                        mViewBeginsFromCoordinates = mViewBeginsFromCoordinates
                     )
+
 
                     data.table(
                         x = mTransformedCoordinates[, 1],
@@ -148,11 +159,13 @@ geom_pitch = function (
                       )
 
                       mTransformedCoordinates = fGetTransformedCoordinates(
-                          mCoordinates,
-                          mOrigin,
-                          mScreenCoordinate,
-                          bTreatAsClosedPolyon = F
-                      )
+                           mCoordinates = mCoordinates,
+                           mOriginCoordinates = mOriginCoordinates,
+                           mScreenCoordinates = mScreenCoordinates,
+                           mZAxisVector = mZAxisVector,
+                           iTreatAs = 2,
+                           mViewBeginsFromCoordinates = mViewBeginsFromCoordinates
+                       )
 
                       data.table(
                           x = mTransformedCoordinates[, 1],
@@ -285,10 +298,11 @@ geom_pitch = function (
 
    }
 
+   lGoalFrameElements = list()
    for ( i in seq(length(lPitchDimensions$lGoalframes)) ) {
 
-      lPitchElements = append(
-         lPitchElements,
+      lGoalFrameElements = append(
+         lGoalFrameElements,
          lapply(
             seq(length(lPitchDimensions$lGoalframes[[i]])),
             function (j) {
@@ -296,27 +310,42 @@ geom_pitch = function (
                nextJ = j + 1
                nextJ = ifelse(nextJ > length(lPitchDimensions$lGoalframes[[i]]), 1, nextJ)
 
-
-               geom_polygon(
-                  data = rbind(
-                     lPitchDimensions$lGoalframes[[i]][[j]],
-                     lPitchDimensions$lGoalframes[[i]][[nextJ]][.N:1]
-                  ),
-                  aes(
-                     x = nXStart + x,
-                     y = nYStart + y
-                  ),
-                  color = cLineColour,
-                  fill = cLineColour
+               dtCoordinates = rbind(
+                  lPitchDimensions$lGoalframes[[i]][[j]],
+                  lPitchDimensions$lGoalframes[[i]][[nextJ]][.N:1]
                )
 
+               if ( nrow(dtCoordinates) ) {
 
+                  returnObject = geom_polygon(
+                     data = dtCoordinates,
+                     aes(
+                        x = nXStart + x,
+                        y = nYStart + y
+                     ),
+                     color = cLineColour,
+                     fill = cLineColour
+                  )
+
+               } else {
+
+                  returnObject = NULL
+
+               }
+
+               return ( returnObject )
 
             }
          )
       )
 
    }
+   lGoalFrameElements = lGoalFrameElements[!sapply(lGoalFrameElements, is.null)]
+   lPitchElements = append(
+      lPitchElements,
+      lGoalFrameElements
+   )
+   rm(lGoalFrameElements)
 
    dtGoalNetElements = rbindlist(
       lapply(
@@ -330,15 +359,19 @@ geom_pitch = function (
                   lSegments,
                   function( dtSegment ) {
 
-                     if ( !is.null(dtSegment) ) {
+                     if ( nrow(dtSegment) ) {
+
                         dtSegment = data.table(
                            x = dtSegment[1, x],
                            y = dtSegment[1, y],
                            xend = dtSegment[2, x],
                            yend = dtSegment[2, y]
                         )
+
                      } else {
+
                         dtSegment = data.table()
+
                      }
 
                      dtSegment

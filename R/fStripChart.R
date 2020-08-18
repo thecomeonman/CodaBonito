@@ -27,6 +27,7 @@
 #' )
 #' @import data.table
 #' @import ggplot2
+#' @import colorspace
 #' @export
 fStripChart = function (
    dtPlayerMetrics,
@@ -39,7 +40,7 @@ fStripChart = function (
    cBackgroundColour = 'black',
    cComparisonColour = 'white',
    cNeutralColour = 'grey50',
-   vnExpand = c(-0.25, -0.03, 1.1, 1.15),
+   vnExpand = c(-0.25, -0.03, 1.03, 1.1, 1.15),
    bShrinkOtherPlayerPoints = T,
    compareWith = 'median',
    bDisplayCategories = T,
@@ -115,11 +116,14 @@ fStripChart = function (
       )
    ]
 
-   dtPlayer = dtPlayerMetrics[playerId == iPlayerId]
-   dtPlayerMetrics = dtPlayerMetrics[!playerId == iPlayerId]
+   dtPlayer = dtPlayerMetrics[get(vcColumnsToIndex[1]) == iPlayerId]
+   dtPlayerMetrics = dtPlayerMetrics[!get(vcColumnsToIndex[1]) == iPlayerId]
+
+   dtPlayerMetrics[, MappedValueAlternatingColour := ( ( (rank(MappedValue) / .N ) %/% 0.25 ) ), variable]
+   dtPlayerMetrics[MappedValueAlternatingColour == max(MappedValueAlternatingColour), MappedValueAlternatingColour := MappedValueAlternatingColour - 1]
 
    p1 = ggplot(
-      dtPlayerMetrics
+      # dtPlayerMetrics
    ) +
       geom_segment(
          data = dtPlayerMetrics[,
@@ -137,17 +141,26 @@ fStripChart = function (
          ),
          color = cNeutralColour,
          alpha = 0.5
-      ) +
-      geom_jitter(
-         aes(
-            x = MappedValue,
-            y = variablePosition
-         ),
-         alpha = pmax(0.25, 25 / nrow(dtPlayerMetrics)),
-         color = cNeutralColour,
-         size = ifelse(bShrinkOtherPlayerPoints, 1, 5),
-         height = ifelse(bShrinkOtherPlayerPoints, 0.25, 0.05),
       )
+
+   viMappedValueAlternatingColour = dtPlayerMetrics[, sort(unique(MappedValueAlternatingColour))]
+   for ( iMappedValueAlternatingColour in viMappedValueAlternatingColour ) {
+
+      p1 = p1 +
+         geom_jitter(
+            data = dtPlayerMetrics[MappedValueAlternatingColour == iMappedValueAlternatingColour],
+            aes(
+               x = MappedValue,
+               y = variablePosition
+            ),
+            shape = 21,
+            # alpha = pmax(0.25, 5 / nrow(dtPlayerMetrics)),
+            color = lighten(cNeutralColour, ( 0.5 * ( iMappedValueAlternatingColour - median(viMappedValueAlternatingColour) ) ) / max(viMappedValueAlternatingColour)),
+            fill = NA,
+            size = ifelse(bShrinkOtherPlayerPoints, 1, 1),
+            height = ifelse(bShrinkOtherPlayerPoints, 0.25, 0.25),
+         )
+   }
 
    if ( is.null(compareWith) ) {
 
@@ -159,9 +172,9 @@ fStripChart = function (
 
          dtComparison = dtPlayerMetrics[, list(median(MappedValue), median(value)), list(variableLabel)]
 
-      } else if ( compareWith %in% dtPlayerMetrics[, playerId] ) {
+      } else if ( compareWith %in% dtPlayerMetrics[, get(vcColumnsToIndex[1])] ) {
 
-         dtComparison = dtPlayerMetrics[compareWith == playerId, list(median(MappedValue), median(value)), list(variableLabel)]
+         dtComparison = dtPlayerMetrics[compareWith == get(vcColumnsToIndex[1]), list(median(MappedValue), median(value)), list(variableLabel)]
 
       }
 
@@ -227,7 +240,7 @@ fStripChart = function (
             y = variablePosition
          ),
          color = cPlayerColour,
-         size = 7
+         size = 3
       ) +
       geom_point(
          data = dtComparison[ MappedValue < V1 ],
@@ -236,7 +249,7 @@ fStripChart = function (
             y = variablePosition
          ),
          color = cComparisonColour,
-         size = 7
+         size = 3
       )
 
    p1 = p1 +
@@ -296,7 +309,7 @@ fStripChart = function (
             data = dtComparison[
                MappedValue < V1,
                list(
-                  x = c(1.03),
+                  x = c(vnExpand[3]),
                   hjust = c(0),
                   # Label = c(NumericLabel, variableLabel)
                   Label = c(
@@ -320,7 +333,7 @@ fStripChart = function (
             data = dtComparison[
                MappedValue >= V1,
                list(
-                  x = c(1.03),
+                  x = c(vnExpand[3]),
                   hjust = c(0),
                   # Label = c(NumericLabel, variableLabel)
                   Label = c(
@@ -347,7 +360,7 @@ fStripChart = function (
             geom_text(
                data = dtComparison[,
                   list(
-                     x = c(vnExpand[3]),
+                     x = c(vnExpand[4]),
                      hjust = c(0),
                      # Label = c(NumericLabel, variableLabel)
                      Label = paste0(c(round(V2, ifelse(suffix == '%', 0, 2))), suffix)
@@ -371,7 +384,7 @@ fStripChart = function (
             p1 = p1 +
                geom_text(
                   aes(
-                     x = vnExpand[3],
+                     x = vnExpand[4],
                      y = dtComparison[, max(variablePosition) + 0.6],
                      label = 'median'
                   ),
@@ -404,6 +417,7 @@ fStripChart = function (
             family = cFontFamily,
             angle = 90,
             vjust = 1.1,
+            lineheight = 0.7
          )
    }
 
@@ -411,7 +425,7 @@ fStripChart = function (
       scale_x_continuous(
          breaks = c(0:10) / 10,
          name = NULL,
-         limits = c(vnExpand[1], vnExpand[4]),
+         limits = c(vnExpand[1], vnExpand[5]),
          expand = expansion()
       ) +
       scale_y_discrete(

@@ -16,7 +16,7 @@ fStripChart(
   cBackgroundColour = "black",
   cComparisonColour = "white",
   cNeutralColour = "grey50",
-  vnExpand = c(-0.25, -0.03, 1.1, 1.15),
+  vnExpand = c(-0.25, -0.03, 1.03, 1.1, 1.15),
   bShrinkOtherPlayerPoints = T,
   compareWith = "median",
   bDisplayCategories = T,

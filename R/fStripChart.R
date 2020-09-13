@@ -216,24 +216,6 @@ fStripChart = function (
          alpha = 0.8
       ) +
       geom_point(
-         data = dtComparison,
-         aes(
-            x = V1,
-            y = variablePosition
-         ),
-         color = cPlayerColour,
-         size = 3,
-         alpha = 0
-      )
-
-   p1 = p1 +
-      # geom_point(
-      #     data = dtPlayer,
-      #     aes(x = MappedValue, y = variable2),
-      #     color = 'black',
-      #     size = 6
-      # ) +
-      geom_point(
          data = dtComparison[ MappedValue >= V1 ],
          aes(
             x = MappedValue,
@@ -241,16 +223,55 @@ fStripChart = function (
          ),
          color = cPlayerColour,
          size = 3
-      ) +
-      geom_point(
-         data = dtComparison[ MappedValue < V1 ],
-         aes(
-            x = MappedValue,
-            y = variablePosition
-         ),
-         color = cComparisonColour,
-         size = 3
       )
+
+   if ( compareWith == 'median' ) {
+
+      p1 = p1 +
+         geom_point(
+            data = dtComparison[ MappedValue < V1 ],
+            aes(
+               x = MappedValue,
+               y = variablePosition
+            ),
+            # color = cPrimaryColour,
+            color = cComparisonColour,
+            size = 3
+         )
+
+   } else {
+
+      p1 = p1 +
+         geom_point(
+            data = dtComparison[ MappedValue < V1 ],
+            aes(
+               x = V1,
+               y = variablePosition
+            ),
+            # color = cPrimaryColour,
+            color = cComparisonColour,
+            size = 3
+         ) +
+         geom_point(
+            data = dtComparison[ MappedValue < V1 ],
+            aes(
+               x = MappedValue,
+               y = variablePosition
+            ),
+            color = cPrimaryColour,
+            size = 3
+         ) +
+         geom_point(
+            data = dtComparison[ MappedValue >= V1 ],
+            aes(
+               x = V1,
+               y = variablePosition
+            ),
+            color = cComparisonColour,
+            size = 3
+         )
+
+   }
 
    p1 = p1 +
       geom_text(
@@ -324,7 +345,21 @@ fStripChart = function (
                label = Label,
                hjust = hjust
             ),
-            color = cComparisonColour,
+            color = ifelse(
+               compareWith == 'median',
+               cComparisonColour,
+               cPrimaryColour
+            ),
+            alpha = ifelse(
+               compareWith == 'median',
+               1,
+               0.4
+            ),
+            # color = ifelse(
+            #    compareWith == 'median',
+            #    cComparisonColour,
+            #    cNeutralColour
+            # ),
             size = 5,
             fontface = 'bold',
             family = cFontFamily
@@ -348,7 +383,11 @@ fStripChart = function (
                label = Label,
                hjust = hjust
             ),
-            color = cPlayerColour,
+            color = ifelse(
+               compareWith == 'median',
+               cPrimaryColour,
+               cPrimaryColour
+            ),
             size = 5,
             fontface = 'bold',
             family = cFontFamily
@@ -358,7 +397,9 @@ fStripChart = function (
 
          p1 = p1 +
             geom_text(
-               data = dtComparison[,
+               data = dtComparison[
+                  MappedValue < V1
+               ][,
                   list(
                      x = c(vnExpand[4]),
                      hjust = c(0),
@@ -373,7 +414,51 @@ fStripChart = function (
                   label = Label,
                   hjust = hjust
                ),
-               color = cNeutralColour,
+               color =  ifelse(
+                  compareWith == 'median',
+                  cNeutralColour,
+                  cComparisonColour
+               ),
+               size = 5,
+               fontface = 'bold',
+               family = cFontFamily
+            )
+
+
+         p1 = p1 +
+            geom_text(
+               data = dtComparison[
+                  MappedValue >= V1
+               ][,
+                  list(
+                     x = c(vnExpand[4]),
+                     hjust = c(0),
+                     # Label = c(NumericLabel, variableLabel)
+                     Label = paste0(c(round(V2, ifelse(suffix == '%', 0, 2))), suffix)
+                  ),
+                  list(variableCategory, variableLabel, variablePosition)
+               ],
+               aes(
+                  x = x,
+                  y = variablePosition,
+                  label = Label,
+                  hjust = hjust
+               ),
+               color = ifelse(
+                  compareWith == 'median',
+                  cNeutralColour,
+                  cComparisonColour
+               ),
+               alpha = ifelse(
+                  compareWith == 'median',
+                  1,
+                  0.4
+               ),
+               # color = ifelse(
+               #    compareWith == 'median',
+               #    cNeutralColour,
+               #    cNeutralColour
+               # ),
                size = 5,
                fontface = 'bold',
                family = cFontFamily

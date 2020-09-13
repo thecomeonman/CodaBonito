@@ -14,7 +14,8 @@ geom_pitch(
   mViewBeginsFromCoordinates = NULL,
   mZAxisVector = c(0, 0, 1),
   cLineColour = "#BBBBBB",
-  cPitchColour = "#038253"
+  cPitchColour = "#038253",
+  bOmitGoalFrames = F
 )
 }
 \arguments{

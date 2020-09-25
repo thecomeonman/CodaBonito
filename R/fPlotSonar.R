@@ -389,7 +389,8 @@ fPlotSonar = function (
             nXEnd = nZoomFactor * nXLimit,
             nYEnd = nZoomFactor * nYLimit,
             cPitchColour = '#111111',
-            cLineColour = '#333333'
+            cLineColour = '#333333',
+            bOmitGoalFrames = T
          )
 
    } else {
@@ -429,7 +430,7 @@ fPlotSonar = function (
                yBucket
             )
         ),
-        fill = '#000000',
+        fill = '#222222',
         alpha = ifelse(
            dtPasses[, length(unique(xBucket))] == 1 &
            dtPasses[, length(unique(yBucket))] == 1,
@@ -439,7 +440,7 @@ fPlotSonar = function (
         color = ifelse(
            dtPasses[, length(unique(xBucket))] == 1 &
            dtPasses[, length(unique(yBucket))] == 1,
-           '#222222',
+           '#444444',
            NA
         ),
         size = ifelse(
@@ -447,6 +448,35 @@ fPlotSonar = function (
            dtPasses[, length(unique(yBucket))] == 1,
            3,
            0
+        )
+      ) +
+      geom_segment(
+         data = dtPasses[
+            x < nXLimit &
+            y < nYLimit
+         ][,
+            list(
+               x = c(-max( nXLimit, nYLimit ),0),
+               y = c(0, -max( nXLimit, nYLimit )),
+               xend = c(max( nXLimit, nYLimit ), 0),
+               yend = c(0, max( nXLimit, nYLimit ))
+            ),
+            list(
+               xBucket = xBucket * nZoomFactor,
+               yBucket = yBucket * nZoomFactor
+             )
+         ],
+         aes(
+            x = x + xBucket,
+            xend = xend + xBucket,
+            y = y + yBucket,
+            yend = yend + yBucket
+        ),
+        color = ifelse(
+           dtPasses[, length(unique(xBucket))] == 1 &
+           dtPasses[, length(unique(yBucket))] == 1,
+           '#444444',
+           '#050505'
         )
       )
 
@@ -457,7 +487,7 @@ fPlotSonar = function (
             x = xBucket,
             y = yBucket
         ),
-        color = '#000000'
+        color = '#222222'
       ) +
       # passing block
       geom_polygon(
@@ -472,7 +502,7 @@ fPlotSonar = function (
                passLengthBucket
             )
         ),
-        color = 'black',
+        color = '#222222',
         size = 0.1
         # alpha = 0.8
       )
@@ -517,18 +547,15 @@ fPlotSonar = function (
          guide = 'none',
          limits = c(0, 1)
       ) +
-      # To prevent gaps around the edges of the blot
-      scale_x_continuous(expand=c(0,0)) +
-      scale_y_continuous(expand=c(0,0)) +
       # aesthetic adjustments
       theme_pitch() +
       theme(
-         plot.background = element_rect(fill = '#000000', color = NA),
-         panel.background = element_rect(fill = '#000000', color = NA),
+         plot.background = element_rect(fill = '#222222', color = NA),
+         panel.background = element_rect(fill = '#222222', color = NA),
          panel.border = element_blank(),
          axis.line = element_blank(),
          legend.text = element_text(colour = 'white'),
-         # legend.background = element_rect(fill = '#000000'),
+         # legend.background = element_rect(fill = '#222222'),
          legend.title = element_text(colour = 'white'),
          title = element_text(size = 14, colour = 'white')
       ) +
@@ -540,6 +567,7 @@ fPlotSonar = function (
             round(100 * dtPasses[, sum(Success) / .N]), '% success rate'
          )
       )
+
 
    p1
 

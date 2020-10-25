@@ -15,7 +15,7 @@ geom_pitch(
   mZAxisVector = c(0, 0, 1),
   cLineColour = "#BBBBBB",
   cPitchColour = "#038253",
-  bOmitGoalFrames = F
+  vcToPlot = c("Markings", "Goalframe", "Goalnet")
 )
 }
 \arguments{

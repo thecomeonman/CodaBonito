@@ -28,7 +28,7 @@ geom_pitch = function (
    mZAxisVector = c(0,0,1),
    cLineColour = '#BBBBBB',
    cPitchColour = '#038253',
-   bOmitGoalFrames = F
+   vcToPlot = c('Markings','Goalframe','Goalnet')
 ) {
 
    # nXStart = 0; nYStart = 0; nXEnd = 120; nYEnd = 80; mZAxisVector = c(0,0,1)
@@ -192,40 +192,50 @@ geom_pitch = function (
    cf = coord_fixed()
    cf$default = TRUE
 
-   lPitchElements = append(
-      lapply(
-         lPitchDimensions$lPitchCoordinates[sapply(lPitchDimensions$lPitchCoordinates, nrow) > 0],
-         function( dtPolygon ) {
-            geom_polygon(
-               data = dtPolygon,
-               aes(
-                  x = x,
-                  y = y
-               ),
-               color = NA,
-               fill = cPitchColour
-            )
-         }
-      ),
-      lapply(
-         lPitchDimensions$lPitchCoordinates[sapply(lPitchDimensions$lPitchCoordinates, nrow) > 0],
-         function( dtPolygon ) {
-            geom_path(
-               data = dtPolygon,
-               aes(
-                  x = x,
-                  y = y,
-                  group = group
-               ),
-               color = cLineColour
-               # fill = NA
-            )
-         }
+   lPitchElements = list()
+
+   if ( 'Markings' %in% vcToPlot ) {
+
+      lPitchElements = append(
+         lPitchElements,
+         lapply(
+            lPitchDimensions$lPitchCoordinates[sapply(lPitchDimensions$lPitchCoordinates, nrow) > 0],
+            function( dtPolygon ) {
+               geom_polygon(
+                  data = dtPolygon,
+                  aes(
+                     x = x,
+                     y = y
+                  ),
+                  color = NA,
+                  fill = cPitchColour
+               )
+            }
+         )
       )
-   )
 
+      lPitchElements = append(
+         lPitchElements,
+         lapply(
+            lPitchDimensions$lPitchCoordinates[sapply(lPitchDimensions$lPitchCoordinates, nrow) > 0],
+            function( dtPolygon ) {
+               geom_path(
+                  data = dtPolygon,
+                  aes(
+                     x = x,
+                     y = y,
+                     group = group
+                  ),
+                  color = cLineColour
+                  # fill = NA
+               )
+            }
+         )
+      )
 
-   if ( !bOmitGoalFrames ) {
+   }
+
+   if ( 'Goalframe' %in% vcToPlot ) {
 
       if ( F ) {
 
@@ -354,6 +364,10 @@ geom_pitch = function (
          lGoalFrameElements
       )
       rm(lGoalFrameElements)
+
+   }
+
+   if ( 'Goalnet' %in% vcToPlot ) {
 
       dtGoalNetElements = rbindlist(
          lapply(

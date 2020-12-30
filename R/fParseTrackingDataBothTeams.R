@@ -199,6 +199,17 @@ fParseTrackingDataBothTeams = function (
 
     dtTrackingData[
         Velocity > nUpperLimitSpeed,
+        VelocityX := VelocityX * nUpperLimitSpeed / Velocity
+    ]
+
+    dtTrackingData[
+        Velocity > nUpperLimitSpeed,
+        VelocityY := VelocityY * nUpperLimitSpeed / Velocity
+    ]
+
+
+    dtTrackingData[
+        Velocity > nUpperLimitSpeed,
         Velocity := nUpperLimitSpeed
     ]
 

@@ -93,7 +93,7 @@ fGetPitchControlProbabilities = function (
             intersect(
                 colnames(dtTrackingSlice),
                 c('Period','Time_s')
-            ):= NULL
+            ) := NULL
         ]
 
         # last team to make a pass is in control
@@ -117,6 +117,8 @@ fGetPitchControlProbabilities = function (
         ][,
             AttackingTeam := na.locf(AttackingTeam, na.rm = F)
         ]
+
+        dtAttackingTeam[, EndFrame := NULL]
 
         dtAttackingTeam = dtAttackingTeam[
             Frame %in% viTrackingFrame

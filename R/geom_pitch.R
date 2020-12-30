@@ -338,8 +338,8 @@ geom_pitch = function (
                      returnObject = geom_polygon(
                         data = dtCoordinates,
                         aes(
-                           x = nXStart + x,
-                           y = nYStart + y
+                           x = x,
+                           y = y
                         ),
                         color = cLineColour,
                         fill = cLineColour

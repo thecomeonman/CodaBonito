@@ -24,58 +24,65 @@ fGetPitchControlProbabilities = function (
     bGetPlayerProbabilities = F
 ) {
 
-    paramsFillin = c()
+    ################################################################################
+    # Frame details extraction
+    ################################################################################
+    {
 
-    if ( !'time_to_control_veto' %in% names(params) ) {
-        params['time_to_control_veto'] = 3
+        paramsFillin = c()
+
+        if ( !'time_to_control_veto' %in% names(params) ) {
+            params['time_to_control_veto'] = 3
+        }
+
+        if ( !'tti_sigma' %in% names(params) ) {
+            params['tti_sigma'] = 0.45 # Standard deviation of sigmoid function in Spearman 2018 ('s') that determines uncertainty in player arrival time
+        }
+
+
+        if ( !'kappa_def' %in% names(params) ) {
+            params['kappa_def'] = 1. # kappa parameter in Spearman 2018 (=1.72 in the paper) that gives the advantage defending players to control ball, I have set to 1 so that home & away players have same ball control probability
+        }
+
+        if ( !'lambda_att' %in% names(params) ) {
+            params['lambda_att'] = 4.3 # ball control parameter for attacking team
+        }
+
+        if ( !'lambda_def' %in% names(params) ) {
+            params['lambda_def'] = 4.3 * params['kappa_def'] # ball control parameter for defending team
+        }
+
+        # model parameters
+        paramsFillin['max_player_accel'] = 7. # maximum player acceleration m/s/s, not used in this implementation
+        paramsFillin['max_player_speed'] = 5. # maximum player speed m/s
+        paramsFillin['reaction_time'] = 0.7 # seconds, time taken for player to react and change trajectory. Roughly determined as vmax/amax
+        paramsFillin['average_ball_speed'] = 15. # average ball travel speed in m/s
+        # numerical parameters for model evaluation
+        paramsFillin['int_dt'] = 0.04 # integration timestep (dt)
+        paramsFillin['max_int_time'] = 10 # upper limit on integral time
+        paramsFillin['model_converge_tol'] = 0.01 # assume convergence when PPCF>0.99 at a given location.
+        # The following are 'short-cut' parameters. We do not need to calculated PPCF explicitly when a player has a sufficient head start.
+        # A sufficient head start is when the a player arrives at the target location at least 'time_to_control' seconds before the next player
+        # params['time_to_control_att'] = params['time_to_control_veto']*np.log(10) * (np.sqrt(3)*params['tti_sigma']/np.pi + 1/params['lambda_att'])
+        # params['time_to_control_def'] = params['time_to_control_veto']*np.log(10) * (np.sqrt(3)*params['tti_sigma']/np.pi + 1/params['lambda_def'])
+        paramsFillin['time_to_control_att'] = params['time_to_control_veto']*log(10) * (sqrt(3)*params['tti_sigma']/pi + 1/params['lambda_att'])
+        paramsFillin['time_to_control_def'] = params['time_to_control_veto']*log(10) * (sqrt(3)*params['tti_sigma']/pi + 1/params['lambda_def'])
+
+        params = c(
+            params,
+            paramsFillin[!names(paramsFillin) %in% names(params)]
+        )
+
+        if ( bGetPlayerProbabilities ) {
+
+            params['time_to_control_att'] = Inf
+            params['time_to_control_def'] = Inf
+
+        }
+
+        rm(paramsFillin)
+
     }
-
-    if ( !'tti_sigma' %in% names(params) ) {
-        params['tti_sigma'] = 0.45 # Standard deviation of sigmoid function in Spearman 2018 ('s') that determines uncertainty in player arrival time
-    }
-
-
-    if ( !'kappa_def' %in% names(params) ) {
-        params['kappa_def'] = 1. # kappa parameter in Spearman 2018 (=1.72 in the paper) that gives the advantage defending players to control ball, I have set to 1 so that home & away players have same ball control probability
-    }
-
-    if ( !'lambda_att' %in% names(params) ) {
-        params['lambda_att'] = 4.3 # ball control parameter for attacking team
-    }
-
-    if ( !'lambda_def' %in% names(params) ) {
-        params['lambda_def'] = 4.3 * params['kappa_def'] # ball control parameter for defending team
-    }
-
-    # model parameters
-    paramsFillin['max_player_accel'] = 7. # maximum player acceleration m/s/s, not used in this implementation
-    paramsFillin['max_player_speed'] = 5. # maximum player speed m/s
-    paramsFillin['reaction_time'] = 0.7 # seconds, time taken for player to react and change trajectory. Roughly determined as vmax/amax
-    paramsFillin['average_ball_speed'] = 15. # average ball travel speed in m/s
-    # numerical parameters for model evaluation
-    paramsFillin['int_dt'] = 0.04 # integration timestep (dt)
-    paramsFillin['max_int_time'] = 10 # upper limit on integral time
-    paramsFillin['model_converge_tol'] = 0.01 # assume convergence when PPCF>0.99 at a given location.
-    # The following are 'short-cut' parameters. We do not need to calculated PPCF explicitly when a player has a sufficient head start.
-    # A sufficient head start is when the a player arrives at the target location at least 'time_to_control' seconds before the next player
-    # params['time_to_control_att'] = params['time_to_control_veto']*np.log(10) * (np.sqrt(3)*params['tti_sigma']/np.pi + 1/params['lambda_att'])
-    # params['time_to_control_def'] = params['time_to_control_veto']*np.log(10) * (np.sqrt(3)*params['tti_sigma']/np.pi + 1/params['lambda_def'])
-    paramsFillin['time_to_control_att'] = params['time_to_control_veto']*log(10) * (sqrt(3)*params['tti_sigma']/pi + 1/params['lambda_att'])
-    paramsFillin['time_to_control_def'] = params['time_to_control_veto']*log(10) * (sqrt(3)*params['tti_sigma']/pi + 1/params['lambda_def'])
-
-    params = c(
-        params,
-        paramsFillin[!names(paramsFillin) %in% names(params)]
-    )
-
-    if ( bGetPlayerProbabilities ) {
-
-        params['time_to_control_att'] = Inf
-        params['time_to_control_def'] = Inf
-
-    }
-
-    rm(paramsFillin)
 
 
     ################################################################################
@@ -99,7 +106,16 @@ fGetPitchControlProbabilities = function (
         # last team to make a pass is in control
         dtAttackingTeam = merge(
             lData$dtEventsData[
-                Type %in% c("PASS", "SHOT", "SET PIECE", "RECOVERY") |
+                Type %in% c(
+                    "PASS", "SHOT", "SET PIECE", "RECOVERY",
+                    "Catch","Catch save",
+                    "Chance",
+                    "Cross", "Cross assist",
+                    "Pass", "Pass assist",
+                    "Reception",
+                    "Running with ball",
+                    "Shot on target", "Shot not on target"
+                ) |
                 Subtype %in% c("GOAL KICK", "KICK OFF"),
                 list(AttackingTeam = Team[1]),
                 list(Frame = StartFrame, EndFrame)
@@ -166,8 +182,11 @@ fGetPitchControlProbabilities = function (
     ################################################################################
     {
 
-        vnXArray = seq(0, nXLimit, nXLimit/iGridCellsX)
-        vnYArray = seq(0, nYLimit, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
+        vnXArray = seq(-nXLimit/2, nXLimit/2, nXLimit/iGridCellsX)
+        vnYArray = seq(-nYLimit/2, nYLimit/2, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
+        # print(vnXArray)
+        # print(vnYArray)
+        # stop()
 
 
         dtDetails = data.table(
@@ -255,6 +274,9 @@ fGetPitchControlProbabilities = function (
         dtTrackingSliceVectorised[, c('TargetX','TargetY') := NULL]
         dtTrackingSliceVectorised[, c('VelocityX','VelocityY') := NULL]
 
+
+        vcUniqueTags = dtTrackingSliceVectorised[Tag != 'Ball', unique(Tag)]
+
         dtDetails = merge(
             dtDetails,
             setnames(
@@ -269,14 +291,14 @@ fGetPitchControlProbabilities = function (
                     SNO ~ Tag,
                     value.var= 'tau_min'
                 ),
-                c('Home','Away'),
+                vcUniqueTags,
                 c('tau_min_att','tau_min_def')
             ),
             c('SNO')
         )
 
         dtDetails[
-            AttackingTeam == 'Away',
+            AttackingTeam == vcUniqueTags[2],
             c('tau_min_att','tau_min_def') := list(tau_min_def, tau_min_att)
         ]
 

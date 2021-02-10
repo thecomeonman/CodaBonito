@@ -104,41 +104,34 @@ fGetPitchControlProbabilities = function (
         ]
 
         # last team to make a pass is in control
-        dtAttackingTeam = merge(
-            lData$dtEventsData[
-                Type %in% c(
-                    "PASS", "SHOT", "SET PIECE", "RECOVERY",
-                    "Catch","Catch save",
-                    "Chance",
-                    "Cross", "Cross assist",
-                    "Pass", "Pass assist",
-                    "Reception",
-                    "Running with ball",
-                    "Shot on target", "Shot not on target"
-                ) |
-                Subtype %in% c("GOAL KICK", "KICK OFF"),
-                list(AttackingTeam = Team[1]),
-                list(Frame = StartFrame, EndFrame)
-            ],
-            data.table(Frame = viTrackingFrame),
-            'Frame',
-            all = T
-        )
-
-        dtAttackingTeam[is.na(EndFrame), EndFrame := Frame]
-
-        dtAttackingTeam = dtAttackingTeam[,
-            .SD[which.max(EndFrame)],
-            list(Frame)
-        ][,
-            AttackingTeam := na.locf(AttackingTeam, na.rm = F)
-        ]
-
-        dtAttackingTeam[, EndFrame := NULL]
+        dtAttackingTeam = fGetAttackingTeam(lData)
 
         dtAttackingTeam = dtAttackingTeam[
             Frame %in% viTrackingFrame
         ]
+
+        viTrackingFrame2 = intersect(
+            dtAttackingTeam[, Frame],
+            viTrackingFrame
+        )
+
+        if ( length(viTrackingFrame2) < length(viTrackingFrame)) {
+
+            warning(
+                paste(
+                    "Dropping frames - ",
+                    paste(
+                        setdiff(
+                            viTrackingFrame,
+                            viTrackingFrame2
+                        ),
+                        collapse = ', '
+                    ),
+                    " since the ball is probably not in possession of any team at these points"
+                )
+            )
+
+        }
 
         if ( F ) {
 

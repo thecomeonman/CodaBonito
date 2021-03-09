@@ -175,8 +175,10 @@ fGetPitchControlProbabilities = function (
     ################################################################################
     {
 
-        vnXArray = seq(-nXLimit/2, nXLimit/2, nXLimit/iGridCellsX)
-        vnYArray = seq(-nYLimit/2, nYLimit/2, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
+        vnXArray = seq(0, nXLimit, nXLimit/iGridCellsX)
+        vnYArray = seq(0, nYLimit, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
+        # vnXArray = seq(-nXLimit/2, nXLimit/2, nXLimit/iGridCellsX)
+        # vnYArray = seq(-nYLimit/2, nYLimit/2, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
         # print(vnXArray)
         # print(vnYArray)
         # stop()

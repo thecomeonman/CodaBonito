@@ -18,41 +18,42 @@ fGetAttackingTeam = function(lData) {
             list(AttackingTeam = Team[1]),
             list(Frame = StartFrame, EndFrame)
         ],
-        lData$dtEventsData[,
-          list(
-            StartFrame = StartFrame[
-              grep(
-                Type,
-                pattern = "Out for"
-              )
-            ],
-            EndFrame = EndFrame[
-              grep(
-                Type,
-                pattern = "Out for"
-              )
-            ],
-            Team = unlist(
-              sapply(
-                grep(
-                  Type,
-                  pattern = "Out for"
-                ),
-                function(x) {
-                  TeamTemp = Team[1:x]
-                  TeamTemp = TeamTemp[TeamTemp != '']
-                  setdiff(
-                    lData$dtEventsData[Team != '', unique(Team)],
-                    TeamTemp[length(TeamTemp)]
-                  )
-                }
-              )
-            )
-          )
-        ][,
-          list(AttackingTeam = Team[1]),
-          list(Frame = StartFrame, EndFrame)
-        ]
+        # lData$dtEventsData[,
+        #   list(
+        #     StartFrame = StartFrame[
+        #       grep(
+        #         Type,
+        #         pattern = "Out for"
+        #       )
+        #     ],
+        #     EndFrame = EndFrame[
+        #       grep(
+        #         Type,
+        #         pattern = "Out for"
+        #       )
+        #     ],
+        #     Team = unlist(
+        #       sapply(
+        #         grep(
+        #           Type,
+        #           pattern = "Out for"
+        #         ),
+        #         function(x) {
+        #           TeamTemp = Team[1:x]
+        #           TeamTemp = TeamTemp[TeamTemp != '']
+        #           setdiff(
+        #             lData$dtEventsData[Team != '', unique(Team)],
+        #             TeamTemp[length(TeamTemp)]
+        #           )
+        #         }
+        #       )
+        #     )
+        #   )
+        # ][,
+        #   list(AttackingTeam = Team[1]),
+        #   list(Frame = StartFrame, EndFrame)
+        # ],
+        data.table()
       ),
       data.table(Frame = lData$dtTrackingData[, unique(Frame)]),
       'Frame',

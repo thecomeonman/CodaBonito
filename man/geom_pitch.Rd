@@ -5,10 +5,10 @@
 \title{Pitch background}
 \usage{
 geom_pitch(
-  nXStart = 0,
-  nYStart = 0,
-  nXEnd = 120,
-  nYEnd = 80,
+  nXStart = -60,
+  nYStart = -40,
+  nXEnd = 60,
+  nYEnd = 40,
   mOriginCoordinates = NULL,
   mScreenCoordinates = NULL,
   mViewBeginsFromCoordinates = NULL,

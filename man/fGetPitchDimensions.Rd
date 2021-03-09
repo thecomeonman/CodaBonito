@@ -4,7 +4,7 @@
 \alias{fGetPitchDimensions}
 \title{Pitch dimension coordinates}
 \usage{
-fGetPitchDimensions(nXStart = 0, nYStart = 0, nXEnd = 120, nYEnd = 80)
+fGetPitchDimensions(nXStart = -60, nYStart = -40, nXEnd = 60, nYEnd = 40)
 }
 \description{
 Pitch dimension coordinates

@@ -175,8 +175,8 @@ fGetPitchControlProbabilities = function (
     ################################################################################
     {
 
-        vnXArray = seq(0, nXLimit, nXLimit/iGridCellsX)
-        vnYArray = seq(0, nYLimit, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
+        vnXArray = seq(-nXLimit/2, nXLimit/2, nXLimit/iGridCellsX)
+        vnYArray = seq(-nYLimit/2, nYLimit/2, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
         # vnXArray = seq(-nXLimit/2, nXLimit/2, nXLimit/iGridCellsX)
         # vnYArray = seq(-nYLimit/2, nYLimit/2, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
         # print(vnXArray)
@@ -458,18 +458,18 @@ fGetPitchControlProbabilities = function (
 
         if ( i > length(dT_array) ) {
 
-            warning(
+            stop(
                 paste0(
                     "Integration failed to converge for some cases"
                 )
             )
 
-            print(
-                paste0(
-                    'SNOS:',
-                    dtPPCF[, SNO]
-                )
-            )
+            # print(
+            #     paste0(
+            #         'SNOS:',
+            #         dtPPCF[, SNO]
+            #     )
+            # )
 
             # stop()
 

@@ -12,8 +12,8 @@ fParseTrackingDataBothTeams = function (
    cRootPath,
    cGameName,
    bOutputLong,
-   nXLimit = 120,
-   nYLimit = 80,
+   nXSpan = 120,
+   nYSpan = 80,
    xMaxBB = 1,
    yMaxBB = 1,
    nUpperLimitSpeed = 10
@@ -28,8 +28,8 @@ fParseTrackingDataBothTeams = function (
             '_RawTrackingData_Away_Team.csv'
          ),
          cTag = 'Away',
-         nXLimit = nXLimit,
-         nYLimit = nYLimit,
+         nXSpan = nXSpan,
+         nYSpan = nYSpan,
          xMaxBB = 1,
          yMaxBB = 1
       ),
@@ -41,8 +41,8 @@ fParseTrackingDataBothTeams = function (
             '_RawTrackingData_Home_Team.csv'
          ),
          cTag = 'Home',
-         nXLimit = nXLimit,
-         nYLimit = nYLimit,
+         nXSpan = nXSpan,
+         nYSpan = nYSpan,
          xMaxBB = 1,
          yMaxBB = 1
       ),
@@ -81,10 +81,10 @@ fParseTrackingDataBothTeams = function (
       c('EventStartX','EventStartY','EventEndX','EventEndY'),
    )
 
-   dtEventsData[, EventStartX := EventStartX * nXLimit / xMaxBB]
-   dtEventsData[, EventEndX := EventEndX * nXLimit / xMaxBB]
-   dtEventsData[, EventStartY := ( yMaxBB - EventStartY ) * nYLimit / xMaxBB]
-   dtEventsData[, EventEndY := ( yMaxBB - EventEndY ) * nYLimit / yMaxBB]
+   dtEventsData[, EventStartX := ( EventStartX * nXSpan / xMaxBB ) - ( 0.5 * nXSpan )]
+   dtEventsData[, EventEndX := ( EventEndX * nXSpan / xMaxBB ) - ( 0.5 * nXSpan )]
+   dtEventsData[, EventStartY := ( ( yMaxBB - EventStartY ) * nYSpan / xMaxBB)  - ( 0.5 * nYSpan )]
+   dtEventsData[, EventEndY := ( ( yMaxBB - EventEndY ) * nYSpan / yMaxBB ) - ( 0.5 * nYSpan )]
 
    # if ( bOutputLong ) {
    if ( T ) {
@@ -120,38 +120,38 @@ fParseTrackingDataBothTeams = function (
       mean(X),
       list(Period, Tag)
    ][
-      Tag == 'Home' & V1 > nXLimit / 2,
+      Tag == 'Home' & V1 > 0,
       Period
    ]
 
    dtTrackingData[
       Period %in% iFlipPeriod,
-      X := nXLimit - X
+      X := -X
    ]
 
    dtTrackingData[
       Period %in% iFlipPeriod,
-      Y := nYLimit - Y
+      Y := -Y
    ]
 
    dtEventsData[
       Period %in% iFlipPeriod,
-      EventStartX := nXLimit - EventStartX
+      EventStartX := -EventStartX
    ]
 
    dtEventsData[
       Period %in% iFlipPeriod,
-      EventStartY := nYLimit - EventStartY
+      EventStartY := -EventStartY
    ]
 
    dtEventsData[
       Period %in% iFlipPeriod,
-      EventEndX := nXLimit - EventEndX
+      EventEndX := -EventEndX
    ]
 
    dtEventsData[
       Period %in% iFlipPeriod,
-      EventEndY := nYLimit - EventEndY
+      EventEndY := -EventEndY
    ]
 
    setorder(

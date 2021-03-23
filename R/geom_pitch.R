@@ -25,13 +25,13 @@ geom_pitch = function (
    mOriginCoordinates = NULL,
    mScreenCoordinates = NULL,
    mViewBeginsFromCoordinates = NULL,
-   mZAxisVector = c(0,0,1),
+   mVectorPointingUpOnScreen = c(0,0,1),
    cLineColour = '#BBBBBB',
    cPitchColour = '#038253',
    vcToPlot = c('Markings','Goalframe','Goalnet')
 ) {
 
-   # nXStart = 0; nYStart = 0; nXEnd = 120; nYEnd = 80; mZAxisVector = c(0,0,1)
+   # nXStart = 0; nYStart = 0; nXEnd = 120; nYEnd = 80; mVectorPointingUpOnScreen = c(0,0,1)
 
    lPitchDimensions = fGetPitchDimensions (
       nXStart = nXStart,
@@ -61,7 +61,7 @@ geom_pitch = function (
                   mOriginCoordinates = mOriginCoordinates,
                   mScreenCoordinates = mScreenCoordinates,
                   iTreatAs = 2,
-                  mZAxisVector = mZAxisVector,
+                  mVectorPointingUpOnScreen = mVectorPointingUpOnScreen,
                   mViewBeginsFromCoordinates = mViewBeginsFromCoordinates
               )
 
@@ -93,7 +93,7 @@ geom_pitch = function (
                      mCoordinates = mCoordinates,
                      mOriginCoordinates = mOriginCoordinates,
                      mScreenCoordinates = mScreenCoordinates,
-                     mZAxisVector = mZAxisVector,
+                     mVectorPointingUpOnScreen = mVectorPointingUpOnScreen,
                      mViewBeginsFromCoordinates = mViewBeginsFromCoordinates
                  )
 
@@ -128,7 +128,7 @@ geom_pitch = function (
                         mCoordinates = mCoordinates,
                         mOriginCoordinates = mOriginCoordinates,
                         mScreenCoordinates = mScreenCoordinates,
-                        mZAxisVector = mZAxisVector,
+                        mVectorPointingUpOnScreen = mVectorPointingUpOnScreen,
                         mViewBeginsFromCoordinates = mViewBeginsFromCoordinates
                     )
 
@@ -163,7 +163,7 @@ geom_pitch = function (
                            mCoordinates = mCoordinates,
                            mOriginCoordinates = mOriginCoordinates,
                            mScreenCoordinates = mScreenCoordinates,
-                           mZAxisVector = mZAxisVector,
+                           mVectorPointingUpOnScreen = mVectorPointingUpOnScreen,
                            iTreatAs = 2,
                            mViewBeginsFromCoordinates = mViewBeginsFromCoordinates
                        )

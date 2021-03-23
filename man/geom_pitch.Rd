@@ -12,7 +12,7 @@ geom_pitch(
   mOriginCoordinates = NULL,
   mScreenCoordinates = NULL,
   mViewBeginsFromCoordinates = NULL,
-  mZAxisVector = c(0, 0, 1),
+  mVectorPointingUpOnScreen = c(0, 0, 1),
   cLineColour = "#BBBBBB",
   cPitchColour = "#038253",
   vcToPlot = c("Markings", "Goalframe", "Goalnet")

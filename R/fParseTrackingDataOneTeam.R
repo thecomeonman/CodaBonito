@@ -13,8 +13,8 @@
 fParseTrackingDataOneTeam = function (
    cFilePath,
    cTag = '',
-   nXLimit = 120,
-   nYLimit = 80,
+   nXSpan = 120,
+   nYSpan = 80,
    xMaxBB = 1,
    yMaxBB = 1
 ) {
@@ -67,7 +67,7 @@ fParseTrackingDataOneTeam = function (
       if ( grepl(cColname, pattern = 'X$') ) {
 
          dtRawData[,
-            (cColname) := dtRawData[, cColname, with = F] * nXLimit / xMaxBB
+            (cColname) := ( dtRawData[, cColname, with = F] * nXSpan / xMaxBB ) - ( nXSpan * 0.5 )
          ]
 
       }
@@ -76,7 +76,7 @@ fParseTrackingDataOneTeam = function (
       if ( grepl(cColname, pattern = 'Y$') ) {
 
          dtRawData[,
-            (cColname) := ( yMaxBB - dtRawData[, cColname, with = F] )  * nYLimit / yMaxBB
+            (cColname) := ( ( yMaxBB - dtRawData[, cColname, with = F] )  * nYSpan / yMaxBB ) - ( nYSpan * 0.5 )
          ]
 
       }

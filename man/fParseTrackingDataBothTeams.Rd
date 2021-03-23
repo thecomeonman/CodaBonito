@@ -8,8 +8,8 @@ fParseTrackingDataBothTeams(
   cRootPath,
   cGameName,
   bOutputLong,
-  nXLimit = 120,
-  nYLimit = 80,
+  nXSpan = 120,
+  nYSpan = 80,
   xMaxBB = 1,
   yMaxBB = 1,
   nUpperLimitSpeed = 10

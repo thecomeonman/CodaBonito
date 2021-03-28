@@ -4,8 +4,8 @@
 #' @param viTrackingFrame frames you want processed
 #' @param params has defaults in the function code but refer to the function
 #' code to see what values are there that you can override
-#' @param nYLimit pitch dimensions, top right corner. Bottom left is 0,0
-#' @param nXLimit pitch dimensions, top right corner value. Bottom left is 0,0
+#' @param nYSpan pitch dimensions, sideline to sideline, centre circle is 0,0
+#' @param nXSpan pitch dimensions goal to goal, centre circle is 0,0
 #' @param iGridCellsX resolution of the calculation
 #' @param bGetPlayerProbabilities Whether only the overall probability per team
 #' should be returned or even the deatils of the break up between players
@@ -18,10 +18,11 @@ fGetPitchControlProbabilities = function (
     lData,
     viTrackingFrame,
     params = c(),
-    nYLimit = 120,
-    nXLimit = 80,
+    nYSpan = 80,
+    nXSpan = 120,
     iGridCellsX = 60,
-    bGetPlayerProbabilities = F
+    bGetPlayerProbabilities = F,
+    bVerbose = F
 ) {
 
     ################################################################################
@@ -84,6 +85,10 @@ fGetPitchControlProbabilities = function (
 
     }
 
+    if ( bVerbose ) {
+        print('Params done')
+    }
+
 
     ################################################################################
     # Frame details extraction
@@ -96,6 +101,12 @@ fGetPitchControlProbabilities = function (
             Frame %in% viTrackingFrame
         ]
 
+        # ugly backward compatibility
+        #
+        if ( 'AttackingTeam' %in% colnames(dtTrackingSlice) ) {
+            dtTrackingSlice[, AttackingTeam := NULL]
+        }
+
         dtTrackingSlice[,
             intersect(
                 colnames(dtTrackingSlice),
@@ -103,34 +114,47 @@ fGetPitchControlProbabilities = function (
             ) := NULL
         ]
 
-        # last team to make a pass is in control
-        dtAttackingTeam = fGetAttackingTeam(lData)
+        if ( 'AttackingTeam' %in% colnames(lData$dtTrackingData) ) {
 
-        dtAttackingTeam = dtAttackingTeam[
-            Frame %in% viTrackingFrame
-        ]
+            dtAttackingTeam = lData$dtTrackingData[, list(AttackingTeam = AttackingTeam[1]), Frame]
 
-        viTrackingFrame2 = intersect(
-            dtAttackingTeam[, Frame],
-            viTrackingFrame
-        )
+        } else {
 
-        if ( length(viTrackingFrame2) < length(viTrackingFrame)) {
+            # last team to make a pass is in control
+            dtAttackingTeam = fGetAttackingTeam(lData)
 
-            warning(
-                paste(
-                    "Dropping frames - ",
-                    paste(
-                        setdiff(
-                            viTrackingFrame,
-                            viTrackingFrame2
-                        ),
-                        collapse = ', '
-                    ),
-                    " since the ball is probably not in possession of any team at these points"
-                )
+            dtAttackingTeam = dtAttackingTeam[
+                Frame %in% viTrackingFrame
+            ]
+
+            viTrackingFrame2 = intersect(
+                dtAttackingTeam[, Frame],
+                viTrackingFrame
             )
 
+            if ( length(viTrackingFrame2) < length(viTrackingFrame)) {
+
+                warning(
+                    paste(
+                        "Dropping frames - ",
+                        paste(
+                            setdiff(
+                                viTrackingFrame,
+                                viTrackingFrame2
+                            ),
+                            collapse = ', '
+                        ),
+                        " since the ball is probably not in possession of any team at these points"
+                    )
+                )
+
+            }
+
+        }
+
+
+        if ( bVerbose ) {
+            print('Attacking team done')
         }
 
         if ( F ) {
@@ -156,8 +180,8 @@ fGetPitchControlProbabilities = function (
 
             p1 = fAddPitchLines(
                 p1,
-                nXLimit = nXLimit,
-                nYLimit = nYLimit,
+                nXSpan = nXSpan,
+                nYSpan = nYSpan,
                 cLineColour = 'black',
                 cPitchColour = NA
             )
@@ -175,10 +199,10 @@ fGetPitchControlProbabilities = function (
     ################################################################################
     {
 
-        vnXArray = seq(-nXLimit/2, nXLimit/2, nXLimit/iGridCellsX)
-        vnYArray = seq(-nYLimit/2, nYLimit/2, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
-        # vnXArray = seq(-nXLimit/2, nXLimit/2, nXLimit/iGridCellsX)
-        # vnYArray = seq(-nYLimit/2, nYLimit/2, nYLimit / round(nYLimit / ( nXLimit/iGridCellsX )))
+        vnXArray = seq(-nXSpan/2, nXSpan/2, nXSpan/iGridCellsX)
+        vnYArray = seq(-nYSpan/2, nYSpan/2, nYSpan / round(nYSpan / ( nXSpan/iGridCellsX )))
+        # vnXArray = seq(-nXSpan/2, nXSpan/2, nXSpan/iGridCellsX)
+        # vnYArray = seq(-nYSpan/2, nYSpan/2, nYSpan / round(nYSpan / ( nXSpan/iGridCellsX )))
         # print(vnXArray)
         # print(vnYArray)
         # stop()

@@ -8,10 +8,11 @@ fGetPitchControlProbabilities(
   lData,
   viTrackingFrame,
   params = c(),
-  nYLimit = 120,
-  nXLimit = 80,
+  nYSpan = 80,
+  nXSpan = 120,
   iGridCellsX = 60,
-  bGetPlayerProbabilities = F
+  bGetPlayerProbabilities = F,
+  bVerbose = F
 )
 }
 \arguments{
@@ -22,9 +23,9 @@ fGetPitchControlProbabilities(
 \item{params}{has defaults in the function code but refer to the function
 code to see what values are there that you can override}
 
-\item{nYLimit}{pitch dimensions, top right corner. Bottom left is 0,0}
+\item{nYSpan}{pitch dimensions, sideline to sideline, centre circle is 0,0}
 
-\item{nXLimit}{pitch dimensions, top right corner value. Bottom left is 0,0}
+\item{nXSpan}{pitch dimensions goal to goal, centre circle is 0,0}
 
 \item{iGridCellsX}{resolution of the calculation}
 

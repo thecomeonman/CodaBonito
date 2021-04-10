@@ -15,5 +15,4 @@ Imports: data.table,
     zoo,
     deldir,
     lpSolveAPI,
-    ggrepel,
-    magick
+    ggrepel

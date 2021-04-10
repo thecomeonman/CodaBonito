@@ -31,7 +31,7 @@ fSimpleTimeToIntercept = function(
 
     time_to_intercept = reaction_time + ( rowSums( ( target - reaction ) ^ 2 ) ^ 0.5 ) / vmax
     # time_to_intercept = reaction_time + ( ( ( ( ( r_final[1] - reaction[, 1] ) ^ 2 ) + ( ( r_final[2] - reaction[, 2] ) ^ 2 ) ) ^ 0.5 ) ) / vmax
-    
+
     return ( time_to_intercept )
 
 }

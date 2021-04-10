@@ -390,7 +390,7 @@ fPlotSonar = function (
             nYEnd = nZoomFactor * nYLimit,
             cPitchColour = '#111111',
             cLineColour = '#333333',
-            bOmitGoalFrames = T
+            vcToPlot = c('Markings')
          )
 
    } else {

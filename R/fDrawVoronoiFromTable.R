@@ -2,7 +2,6 @@
 #'
 #' @param dtTrackingSlice
 #' @examples
-#' @import magick
 #' @import ggplot2
 #' @import data.table
 #' @export

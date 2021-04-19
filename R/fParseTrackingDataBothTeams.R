@@ -27,7 +27,7 @@ fParseTrackingDataBothTeams = function (
             cGameName,
             '_RawTrackingData_Away_Team.csv'
          ),
-         cTag = 'Away',
+         cTag = 'A',
          nXSpan = nXSpan,
          nYSpan = nYSpan,
          xMaxBB = 1,
@@ -40,7 +40,7 @@ fParseTrackingDataBothTeams = function (
             cGameName,
             '_RawTrackingData_Home_Team.csv'
          ),
-         cTag = 'Home',
+         cTag = 'H',
          nXSpan = nXSpan,
          nYSpan = nYSpan,
          xMaxBB = 1,
@@ -50,12 +50,12 @@ fParseTrackingDataBothTeams = function (
       all = T
    )
 
-   dtTrackingData[, c('AwayBallX','AwayBallY') := NULL]
+   dtTrackingData[, c('APlayer0X','APlayer0Y') := NULL]
 
     setnames(
         dtTrackingData,
-        c('HomeBallX','HomeBallY'),
-        c('BallX','BallY')
+        c('HPlayer0X','HPlayer0Y'),
+        c('BPlayer0X','BPlayer0Y')
     )
 
    dtEventsData = fread(
@@ -68,6 +68,10 @@ fParseTrackingDataBothTeams = function (
          )
       )
    )
+
+   dtEventsData[, Team := substr(Team, 1, 1)]
+   dtEventsData[, To := gsub(To, pattern = '.*Player', replacement = '')]
+   dtEventsData[, From := gsub(From, pattern = '.*Player', replacement = '')]
 
    setnames(
       dtEventsData,
@@ -120,7 +124,7 @@ fParseTrackingDataBothTeams = function (
       mean(X),
       list(Period, Tag)
    ][
-      Tag == 'Home' & V1 > 0,
+      Tag == 'H' & V1 > 0,
       Period
    ]
 

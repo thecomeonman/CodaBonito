@@ -85,12 +85,7 @@ fConvertTrackingDataWideToLong = function(
     ]
 
     dtTrackingSlice[
-        Tag %in% c(''),
-        Tag := 'Ball'
-    ]
-
-    dtTrackingSlice[
-         !Tag %in% c('Home','Away','Ball'),
+         !Tag %in% c('H','A','B'),
          Tag := NA
     ]
 
@@ -250,6 +245,8 @@ fConvertTrackingDataWideToLong = function(
         )
 
     }
+
+    dtTrackingSlice[, Player := gsub(Player, pattern = '.*Player', replacement = '')]
 
     dtTrackingSlice
 

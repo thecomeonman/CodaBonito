@@ -57,6 +57,12 @@ fParseTrackingDataOneTeam = function (
       )
    )
 
+   vcColnames = gsub(
+      vcColnames,
+      pattern = 'Ball',
+      replacement = 'Player0'
+   )
+
    setnames(
       dtRawData,
       vcColnames

@@ -160,7 +160,7 @@ fGetPitchControlProbabilities = function (
         if ( F ) {
 
             p1 = ggplot(
-                dtTrackingSlice[Player != 'Ball'][Frame == Frame[1]]
+                dtTrackingSlice[Player != 0][Frame == Frame[1]]
             ) +
                 geom_point(aes(x = X, y = Y, color = Tag)) +
                 # geom_text(aes(x = X, y = Y, label = Player)) +
@@ -227,7 +227,7 @@ fGetPitchControlProbabilities = function (
         dtDetails = merge(
             dtDetails,
             dtTrackingSlice[
-                Player == 'Ball'
+                Player == 0
             ][
                 Frame %in% viTrackingFrame
             ][,
@@ -268,7 +268,7 @@ fGetPitchControlProbabilities = function (
 
         # first get arrival time of 'nearest' attacking player (nearest also dependent on current velocity)
         dtTrackingSliceVectorised[
-            Tag != 'Ball',
+            Tag != 'B',
             time_to_intercept := fSimpleTimeToIntercept(
                 reaction_time = pmax(
                     -Inf,
@@ -294,14 +294,14 @@ fGetPitchControlProbabilities = function (
         dtTrackingSliceVectorised[, c('VelocityX','VelocityY') := NULL]
 
 
-        vcUniqueTags = dtTrackingSliceVectorised[Tag != 'Ball', unique(Tag)]
+        vcUniqueTags = dtTrackingSliceVectorised[Tag != 'B', unique(Tag)]
 
         dtDetails = merge(
             dtDetails,
             setnames(
                 dcast(
                     dtTrackingSliceVectorised[
-                        Tag != 'Ball',
+                        Tag != 'B',
                         list(
                             tau_min = min(time_to_intercept)
                         ),
@@ -522,6 +522,17 @@ fGetPitchControlProbabilities = function (
             ball_travel_time := NULL
         ]
 
+    }
+
+    dtDetails[, AttackingTeam := NULL]
+
+
+    if ( !'AttackingTeam' %in% colnames(dtTrackingSlice) ) {
+        dtTrackingSlice = merge(
+            dtTrackingSlice,
+            dtAttackingTeam,
+            'Frame'
+        )
     }
 
     lReturn = list(

@@ -14,7 +14,8 @@ fGetAttackingTeam = function(lData) {
                 "Running with ball",
                 "Shot on target", "Shot not on target"
             ) |
-            Subtype %in% c("GOAL KICK", "KICK OFF"),
+            # Subtype %in% c("GOAL KICK", "KICK OFF") |
+            F,
             list(AttackingTeam = Team[1]),
             list(Frame = StartFrame, EndFrame)
         ],

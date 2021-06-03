@@ -20,7 +20,7 @@ fGetPitchControlProbabilities = function (
     params = c(),
     nYSpan = 80,
     nXSpan = 120,
-    iGridCellsX = 60,
+    iGridCellsX = 120,
     bGetPlayerProbabilities = F,
     bVerbose = F
 ) {
@@ -42,7 +42,7 @@ fGetPitchControlProbabilities = function (
 
 
         if ( !'kappa_def' %in% names(params) ) {
-            params['kappa_def'] = 1. # kappa parameter in Spearman 2018 (=1.72 in the paper) that gives the advantage defending players to control ball, I have set to 1 so that home & away players have same ball control probability
+            params['kappa_def'] = 1.72 # kappa parameter in Spearman 2018 (=1.72 in the paper) that gives the advantage defending players to control ball, I have set to 1 so that home & away players have same ball control probability
         }
 
         if ( !'lambda_att' %in% names(params) ) {
@@ -199,10 +199,22 @@ fGetPitchControlProbabilities = function (
     ################################################################################
     {
 
-        vnXArray = seq(-nXSpan/2, nXSpan/2, nXSpan/iGridCellsX)
-        vnYArray = seq(-nYSpan/2, nYSpan/2, nYSpan / round(nYSpan / ( nXSpan/iGridCellsX )))
+        dx = nXSpan/iGridCellsX
+        dy = nYSpan / round(nYSpan / ( nXSpan/iGridCellsX ) )
+
+        vnXArray = seq(
+            (-nXSpan/2) + ( 0.5 * dx ),
+            (+nXSpan/2) - ( 0.5 * dx ),
+            dx
+        )
+        vnYArray = seq(
+            (-nYSpan/2) + ( 0.5 * dy ),
+            (+nYSpan/2) - ( 0.5 * dy ),
+            dy
+        )
+
         # vnXArray = seq(-nXSpan/2, nXSpan/2, nXSpan/iGridCellsX)
-        # vnYArray = seq(-nYSpan/2, nYSpan/2, nYSpan / round(nYSpan / ( nXSpan/iGridCellsX )))
+        # vnYArray = seq(-nYSpan/2, nYsSpan/2, nYSpan / round(nYSpan / ( nXSpan/iGridCellsX )))
         # print(vnXArray)
         # print(vnYArray)
         # stop()

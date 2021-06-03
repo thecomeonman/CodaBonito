@@ -10,7 +10,7 @@ fGetPitchControlProbabilities(
   params = c(),
   nYSpan = 80,
   nXSpan = 120,
-  iGridCellsX = 60,
+  iGridCellsX = 120,
   bGetPlayerProbabilities = F,
   bVerbose = F
 )

@@ -2,7 +2,10 @@ Package: CodaBonito
 Type: Package
 Title: Football / soccer related visualisations and analysis
 Version: 0.1.0
-Author: Aditya Kothari
+Author: as.person(c(
+    "Aditya Kothari <mail.thecomeonman@gmail.com> [aut,cre]", 
+    "Laurie Shaw [ctb] (the default EPV grid used in fGetPV)"
+    ))
 Description: Football / soccer related visualisations and analysis
 URL: https://github.com/thecomeonman/CodaBonito
 BugReports: https://github.com/thecomeonman/CodaBonito/issues

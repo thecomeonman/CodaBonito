@@ -40,8 +40,8 @@ fGetVoronoiFromTable = function(
 
 
 
-    Zero = 0
-    Zero = 0
+    Zero = -nXLimit/2
+    # Zero = -nXLimit
 
     x = dtPlayerTag[, X]
     y = dtPlayerTag[, Y]
@@ -52,37 +52,17 @@ fGetVoronoiFromTable = function(
 
     iNbrPoints = length(x)
 
-    if ( F ) {
-
-        x = c(
-            x,
-            Zero - nXLimit,
-            ( Zero + nXLimit ) / 2,
-            ( nXLimit + nXLimit ),
-            ( Zero + nXLimit ) / 2
-        )
-
-
-        y = c(
-            y,
-            ( Zero + nYLimit ) / 2,
-            ( nYLimit + nYLimit ),
-            ( Zero + nYLimit ) / 2,
-            Zero - nYLimit
-        )
-
-    }
 
     bPointsOnPitch =
-        x >= Zero & x <= nXLimit &
-        y >= Zero & y <= nYLimit
+        x >= -nXLimit/2 & x <= nXLimit/2 &
+        y >= -nYLimit/2 & y <= nYLimit/2
 
     BufferedX = x
     BufferedY = y
 
     BufferedX = c(
         BufferedX,
-        Zero - x[bPointsOnPitch]
+        (-nXLimit/2) - (x[bPointsOnPitch] - (-nXLimit/2) )
     )
 
     BufferedY = c(
@@ -92,7 +72,7 @@ fGetVoronoiFromTable = function(
 
     BufferedX = c(
         BufferedX,
-        nXLimit + (nXLimit - x[bPointsOnPitch] )
+        (nXLimit/2) + ((nXLimit/2) - x[bPointsOnPitch] )
     )
 
     BufferedY = c(
@@ -100,9 +80,15 @@ fGetVoronoiFromTable = function(
         y[bPointsOnPitch]
     )
 
+    BufferedX = c(
+        BufferedX,
+        x[bPointsOnPitch]
+    )
 
-
-
+    BufferedY = c(
+        BufferedY,
+        (nYLimit/2) + ((nYLimit/2) - y[bPointsOnPitch])
+    )
 
     BufferedX = c(
         BufferedX,
@@ -111,17 +97,7 @@ fGetVoronoiFromTable = function(
 
     BufferedY = c(
         BufferedY,
-        nYLimit + (nYLimit - y[bPointsOnPitch])
-    )
-
-    BufferedX = c(
-        BufferedX,
-        x[bPointsOnPitch]
-    )
-
-    BufferedY = c(
-        BufferedY,
-        -y[bPointsOnPitch]
+        (-nYLimit/2) - (y[bPointsOnPitch] - (-nYLimit/2))
     )
 
 
@@ -189,32 +165,6 @@ fGetVoronoiFromTable = function(
     dtVoronoiCoordinates = dtVoronoiCoordinates[
         ind <= iNbrPoints
     ]
-
-    if ( F ) {
-
-        dtVoronoiCoordinates[
-            x < Zero,
-            x := Zero
-        ]
-
-        dtVoronoiCoordinates[
-            x > nXLimit,
-            x := nXLimit
-        ]
-
-        dtVoronoiCoordinates[
-            y < Zero,
-            y := Zero
-        ]
-
-        dtVoronoiCoordinates[
-            y > nYLimit,
-            y := nYLimit
-        ]
-
-    }
-
-
 
     dtVoronoiCoordinates = merge(
         dtVoronoiCoordinates,

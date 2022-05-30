@@ -22,7 +22,9 @@ fGetPitchControlProbabilities = function (
     nXSpan = 120,
     iGridCellsX = 120,
     bGetPlayerProbabilities = F,
-    bVerbose = F
+    bVerbose = F,
+    vnXArray = NULL,
+    vnYArray = NULL
 ) {
 
     ################################################################################
@@ -157,39 +159,6 @@ fGetPitchControlProbabilities = function (
             print('Attacking team done')
         }
 
-        if ( F ) {
-
-            p1 = ggplot(
-                dtTrackingSlice[Player != 0][Frame == Frame[1]]
-            ) +
-                geom_point(aes(x = X, y = Y, color = Tag)) +
-                # geom_text(aes(x = X, y = Y, label = Player)) +
-                geom_segment(
-                    data = lData$dtEventsData[StartFrame == dtTrackingSlice[, Frame[1]]],
-                    aes(
-                        x = EventStartX,
-                        y = EventStartY,
-                        xend = EventEndX,
-                        yend = EventEndY
-                    )
-                ) +
-                scale_color_manual(
-                    values = c('Home' = 'red','Ball' = 'black','Away' = 'blue'),
-                    guide = FALSE
-                )
-
-            p1 = fAddPitchLines(
-                p1,
-                nXSpan = nXSpan,
-                nYSpan = nYSpan,
-                cLineColour = 'black',
-                cPitchColour = NA
-            )
-
-            print(p1)
-
-        }
-
     }
 
 
@@ -199,19 +168,23 @@ fGetPitchControlProbabilities = function (
     ################################################################################
     {
 
-        dx = nXSpan/iGridCellsX
-        dy = nYSpan / round(nYSpan / ( nXSpan/iGridCellsX ) )
+        if ( all(is.null(vnXArray)) ) {
 
-        vnXArray = seq(
-            (-nXSpan/2) + ( 0.5 * dx ),
-            (+nXSpan/2) - ( 0.5 * dx ),
-            dx
-        )
-        vnYArray = seq(
-            (-nYSpan/2) + ( 0.5 * dy ),
-            (+nYSpan/2) - ( 0.5 * dy ),
-            dy
-        )
+            dx = nXSpan/iGridCellsX
+            dy = nYSpan / round(nYSpan / ( nXSpan/iGridCellsX ) )
+
+            vnXArray = seq(
+                (-nXSpan/2) + ( 0.5 * dx ),
+                (+nXSpan/2) - ( 0.5 * dx ),
+                dx
+            )
+            vnYArray = seq(
+                (-nYSpan/2) + ( 0.5 * dy ),
+                (+nYSpan/2) - ( 0.5 * dy ),
+                dy
+            )
+
+        }
 
         # vnXArray = seq(-nXSpan/2, nXSpan/2, nXSpan/iGridCellsX)
         # vnYArray = seq(-nYSpan/2, nYsSpan/2, nYSpan / round(nYSpan / ( nXSpan/iGridCellsX )))
@@ -239,7 +212,7 @@ fGetPitchControlProbabilities = function (
         dtDetails = merge(
             dtDetails,
             dtTrackingSlice[
-                Player == 0
+                Tag == 'B'
             ][
                 Frame %in% viTrackingFrame
             ][,

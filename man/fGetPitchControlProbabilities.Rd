@@ -12,7 +12,9 @@ fGetPitchControlProbabilities(
   nXSpan = 120,
   iGridCellsX = 120,
   bGetPlayerProbabilities = F,
-  bVerbose = F
+  bVerbose = F,
+  vnXArray = NULL,
+  vnYArray = NULL
 )
 }
 \arguments{

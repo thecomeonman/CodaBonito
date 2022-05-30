@@ -13,7 +13,6 @@ fDrawVoronoiFromVoronoiCoordinates = function(
     nYLimit
 ) {
 
-
     plotVoronoi = ggplot()
 
     plotVoronoi = plotVoronoi +
@@ -60,28 +59,32 @@ fDrawVoronoiFromVoronoiCoordinates = function(
 
     plotVoronoi = plotVoronoi +
         geom_pitch(
-            nXStart = 0,
-            nYStart = 0,
-            nXEnd = nXLimit,
-            nYEnd = nYLimit,
+            nXStart = -nXLimit/2,
+            nYStart = -nYLimit/2,
+            nXEnd = nXLimit/2,
+            nYEnd = nYLimit/2,
             cLineColour = 'white',
             cPitchColour = NA
-        )
-
-    plotVoronoi = plotVoronoi +
-        scale_color_manual(
-            values = c('Home' = '#1f78b4','Ball' = 'black','Away' = '#33a02c'),
-            guide = FALSE
-        ) +
-        scale_fill_manual(
-            values = c('Home' = '#1f78b4','Ball' = 'black','Away' = '#33a02c'),
-            guide = FALSE
         ) +
         theme_pitch()
 
+    if ( F ) {
+
+        plotVoronoi = plotVoronoi +
+            scale_color_manual(
+                values = c('Home' = '#1f78b4','Ball' = 'black','Away' = '#33a02c'),
+                guide = FALSE
+            ) +
+            scale_fill_manual(
+                values = c('Home' = '#1f78b4','Ball' = 'black','Away' = '#33a02c'),
+                guide = FALSE
+            )
+
+    }
+
     cf = coord_fixed(
-        xlim = c(0,nXLimit),
-        ylim = c(0,nYLimit)
+        xlim = c(-nXLimit/2,nXLimit/2),
+        ylim = c(-nYLimit/2,nYLimit/2)
     )
     cf$default = T
 

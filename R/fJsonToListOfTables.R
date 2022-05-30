@@ -1,9 +1,9 @@
 #' Primarily to convert statsbomb files to a list of data.tables
-#' 
-#' The function has been named generically so that tomorrow it can be used 
+#'
+#' The function has been named generically so that tomorrow it can be used
 #' with other json syntaxes as well. As of right now, it has been coded up
 #' in a manner that it works with StatsBomb data only.
-#' 
+#'
 #' @param lMatchJson refer example
 #' @param vcTagsToExtract refer example
 #' @param vcTagsToExtract refer example
@@ -12,7 +12,7 @@
 #' @examples
 #' # read in the raw json as a list
 #' lMatchJson = rjson::fromJSON(file = cMatchFileName)
-#' 
+#'
 #' # get one table each for the starting XI, passes, and shots
 #' lEvents = fJsonToListOfTables (
 #'    lMatchJson = lMatchJson,
@@ -80,12 +80,38 @@ fJsonToListOfTables = function (
 
    }
 
-
    for ( iEventIndex in seq(length(lEvents)) ) {
 
       # print(iEventIndex)
 
       lEvents[[iEventIndex]] = rbindlist(lEvents[[iEventIndex]], fill = T)
+
+      if ( 'minute' %in% colnames(lEvents[[iEventIndex]]) ) {
+
+         lEvents[[iEventIndex]][, minute := as.integer(minute)]
+         lEvents[[iEventIndex]][, second := as.integer(second)]
+
+      }
+
+      if ( 'timestamp' %in% colnames(lEvents[[iEventIndex]]) ) {
+
+         lEvents[[iEventIndex]][,
+            timestamp := as.numeric(difftime(
+               as.POSIXct(paste0('1970-01-01 ', timestamp)),
+               as.POSIXct(paste0('1970-01-01 00:00:00')),
+               units = 'secs'
+            ))
+         ]
+
+      }
+
+      if ( 'index' %in% colnames(lEvents[[iEventIndex]]) ) {
+
+         lEvents[[iEventIndex]][,
+           index := as.integer(index)
+         ]
+
+      }
 
       for ( i in grep(colnames(lEvents[[iEventIndex]]), pattern = 'location1', value = T) ) {
 
@@ -255,6 +281,75 @@ fJsonToListOfTables = function (
    }
 
    names(lEvents) = make.names(names(lEvents))
+
+   lEvents$Possession.Sequences = rbindlist(
+      lapply(
+         lMatchJson,
+         function(lEvent) {
+
+            dt_event = data.table(
+               id = lEvent$id,
+               player.id = lEvent$player$id,
+               team.id = lEvent$team$id,
+               index = lEvent$index,
+               period = lEvent$period,
+               timestamp = lEvent$timestamp,
+               minute = lEvent$minute,
+               second = lEvent$second,
+               duration = lEvent$duration,
+               type.name = lEvent$type$name,
+               possession = lEvent$possession,
+               possession_team = lEvent$possession_team$id,
+               play_pattern = lEvent$play_pattern$name
+            )
+
+            if ( !is.null(lEvent$location) ) {
+
+               dt_event[, location1 := as.numeric(lEvent$location[1])]
+               dt_event[, location1 := as.numeric(lEvent$location[2])]
+
+            }
+
+            c_outcome = unlist(sapply(
+               names(lEvent),
+               function(x) {
+                  y = NULL
+                  if ( 'outcome' %in% names(lEvent[[x]]) ) {
+                     y = lEvent[[x]]$outcome$name
+                  }
+                  y
+               }
+            ))
+
+            if ( !is.null(c_outcome) ) {
+
+               dt_event[, outcome := c_outcome]
+
+            }
+
+            dt_event
+
+         }
+      ),
+      fill = T
+   )
+
+   lEvents$Possession.Sequences = lEvents$Possession.Sequences[
+      !type.name %in% c('Starting XI','Half Start','Injury Stoppage','Camera On','Substitution','Referee Ball-Drop','Camera off','Half End','Player Off','Player On','Offside','Tactical Shift')
+   ]
+
+   lEvents$Possession.Sequences[, minute := as.integer(minute)]
+   lEvents$Possession.Sequences[, second := as.integer(minute)]
+   lEvents$Possession.Sequences[, duration := as.numeric(duration)]
+   lEvents$Possession.Sequences[, period := as.integer(period)]
+   lEvents$Possession.Sequences[, index := as.integer(index)]
+   lEvents$Possession.Sequences[,
+     timestamp := as.numeric(difftime(
+        as.POSIXct(paste0('1970-01-01 ', timestamp)),
+        as.POSIXct(paste0('1970-01-01 00:00:00')),
+        units = 'secs'
+      ))
+   ]
 
    lEvents
 

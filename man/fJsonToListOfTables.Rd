@@ -16,7 +16,7 @@ fJsonToListOfTables(lMatchJson, vcTagsToExtract, nXLimit = 120, nYLimit = 80)
 \item{nYLimit}{Breadth of the pitch}
 }
 \description{
-The function has been named generically so that tomorrow it can be used 
+The function has been named generically so that tomorrow it can be used
 with other json syntaxes as well. As of right now, it has been coded up
 in a manner that it works with StatsBomb data only.
 }

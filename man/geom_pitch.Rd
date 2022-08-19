@@ -12,10 +12,12 @@ geom_pitch(
   mOriginCoordinates = NULL,
   mScreenCoordinates = NULL,
   mViewBeginsFromCoordinates = NULL,
-  mVectorPointingUpOnScreen = c(0, 0, 1),
+  mVectorPointingUpOnScreen = cbind(0, 0, 1),
   cLineColour = "#BBBBBB",
   cPitchColour = "#038253",
-  vcToPlot = c("Markings", "Goalframe", "Goalnet")
+  vcToPlot = c("Markings", "Stripes", "Goalframe", "Goalnet"),
+  iXStripes = 12,
+  iYStripes = 8
 )
 }
 \arguments{

@@ -289,9 +289,9 @@ fGetPitchCoordinates = function (
       dtGoalPostFloorDefenseLow = data.table(
          Angle_rad = seq(
             pi,
-            3*pi, # so that the missing segment, if at all, is behind
+            (3*pi) - (pi/8), # so that the missing segment, if at all, is behind
             # 0.01
-            pi / 8
+            pi/8
          )
       )[,
          x := ( nXStart ) + (
@@ -540,7 +540,7 @@ fGetPitchCoordinates = function (
          data.table(
             x = seq(nXStart, nXEnd - x_pitch_stripe_width, x_pitch_stripe_width)
          )[
-            x %% (2*x_pitch_stripe_width) == 0
+            seq(.N) %% 2 == 0
          ][,
            xend := x + x_pitch_stripe_width
          ][,
@@ -559,7 +559,7 @@ fGetPitchCoordinates = function (
          data.table(
             y = seq(nYStart, nYEnd - y_pitch_stripe_width, y_pitch_stripe_width)
          )[
-            y %% (2*y_pitch_stripe_width) == 0
+            seq(.N) %% 2 == 0
          ][,
            yend := y + y_pitch_stripe_width
          ][,

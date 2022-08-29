@@ -3,6 +3,7 @@ geom_pitch_from_coords_obj = function(
    lPitchCoordinates,
    cLineColour = '#BBBBBB',
    cPitchColour = '#038253',
+   nSize = 1,
    vcToPlot = c('Markings','Stripes','Goalframe','Goalnet')
 ) {
 
@@ -28,33 +29,12 @@ geom_pitch_from_coords_obj = function(
                      y = y
                   ),
                   color = NA,
-                  fill = cPitchColour
+                  fill = cPitchColour,
+                  size = nSize
                )
             }
          )
       )
-
-      lPitchElements = append(
-         lPitchElements,
-         lapply(
-            lPitchCoordinates$lMarkings[
-               sapply(lPitchCoordinates$lMarkings, nrow) > 0
-            ],
-            function( dtPolygon ) {
-               geom_path(
-                  data = dtPolygon,
-                  aes(
-                     x = x,
-                     y = y,
-                     group = group
-                  ),
-                  color = cLineColour
-                  # fill = NA
-               )
-            }
-         )
-      )
-
    }
 
    if ( 'Stripes' %in% vcToPlot & nrow(lPitchCoordinates$dtPitchStripes) ) {
@@ -70,12 +50,42 @@ geom_pitch_from_coords_obj = function(
                   group = stripe_id
                ),
                fill = 'white',
-               alpha = 0.05
+               alpha = 0.05,
+               size = nSize
             )
          )
       )
 
    }
+
+
+   if ( 'Markings' %in% vcToPlot ) {
+
+
+      lPitchElements = append(
+         lPitchElements,
+         lapply(
+            lPitchCoordinates$lMarkings[
+               sapply(lPitchCoordinates$lMarkings, nrow) > 0
+            ],
+            function( dtPolygon ) {
+               geom_path(
+                  data = dtPolygon,
+                  aes(
+                     x = x,
+                     y = y,
+                     group = group
+                  ),
+                  color = cLineColour,
+                  # fill = NA,
+                  size = nSize
+               )
+            }
+         )
+      )
+
+   }
+
 
    if ( 'Goalframe' %in% vcToPlot ) {
 
@@ -93,7 +103,8 @@ geom_pitch_from_coords_obj = function(
                      y = y
                   ),
                   color = cLineColour,
-                  fill = cLineColour
+                  fill = cLineColour,
+                  size = nSize
                )
             }
          )
@@ -107,8 +118,9 @@ geom_pitch_from_coords_obj = function(
                      lPitchCoordinates$lGoalframes$dtGoalPostAirDefenseLow[x %in% range(x)][rev(order(x))]
                   ),
                   aes(x = x, y = y),
-                  fill = cLineColour
-                  # color = 'black'
+                  fill = cLineColour,
+                  # color = 'black',
+                  size = nSize
                ),
                geom_polygon(
                   data = rbind(
@@ -116,8 +128,9 @@ geom_pitch_from_coords_obj = function(
                      lPitchCoordinates$lGoalframes$dtGoalPostAirDefenseHigh[x %in% range(x)][rev(order(x))]
                   ),
                   aes(x = x, y = y),
-                  fill = cLineColour
-                  # color = 'black'
+                  fill = cLineColour,
+                  # color = 'black',
+                  size = nSize
                ),
                geom_polygon(
                   data = rbind(
@@ -126,7 +139,8 @@ geom_pitch_from_coords_obj = function(
                   ),
                   aes(x = x, y = y),
                   fill = cLineColour,
-                  # color = 'black'
+                  # color = 'black',
+                  size = nSize
                ),
                geom_polygon(
                   data = rbind(
@@ -134,8 +148,9 @@ geom_pitch_from_coords_obj = function(
                      lPitchCoordinates$lGoalframes$dtGoalPostAirOffenseLow[x %in% range(x)][rev(order(x))]
                   ),
                   aes(x = x, y = y),
-                  fill = cLineColour
-                  # color = 'black'
+                  fill = cLineColour,
+                  # color = 'black',
+                  size = nSize
                ),
                geom_polygon(
                   data = rbind(
@@ -143,8 +158,9 @@ geom_pitch_from_coords_obj = function(
                      lPitchCoordinates$lGoalframes$dtGoalPostAirOffenseHigh[x %in% range(x)][rev(order(x))]
                   ),
                   aes(x = x, y = y),
-                  fill = cLineColour
-                  # color = 'black'
+                  fill = cLineColour,
+                  # color = 'black',
+                  size = nSize
                ),
                geom_polygon(
                   data = rbind(
@@ -153,7 +169,8 @@ geom_pitch_from_coords_obj = function(
                   ),
                   aes(x = x, y = y),
                   fill = cLineColour,
-                  # color = 'black'
+                  # color = 'black',
+                  size = nSize
                )
             )
          )
@@ -188,7 +205,8 @@ geom_pitch_from_coords_obj = function(
                            y = y
                         ),
                         color = cLineColour,
-                        fill = cLineColour
+                        fill = cLineColour,
+                        size = nSize
                      )
 
                   } else {
@@ -267,7 +285,8 @@ geom_pitch_from_coords_obj = function(
                yend = yend
             ),
             color = cLineColour,
-            alpha = 0.4
+            alpha = 0.4,
+            size = nSize
          )
       )
    }

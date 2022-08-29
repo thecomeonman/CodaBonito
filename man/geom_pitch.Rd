@@ -17,7 +17,8 @@ geom_pitch(
   cPitchColour = "#038253",
   vcToPlot = c("Markings", "Stripes", "Goalframe", "Goalnet"),
   iXStripes = 12,
-  iYStripes = 8
+  iYStripes = 8,
+  nSize = 1
 )
 }
 \arguments{

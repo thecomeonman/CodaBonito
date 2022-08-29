@@ -30,7 +30,8 @@ geom_pitch = function (
    cPitchColour = '#038253',
    vcToPlot = c('Markings','Stripes','Goalframe','Goalnet'),
    iXStripes = 12,
-   iYStripes = 8
+   iYStripes = 8,
+   nSize = 1
 ) {
 
    # nXStart = 0; nYStart = 0; nXEnd = 120; nYEnd = 80; mVectorPointingUpOnScreen = c(0,0,1)
@@ -56,7 +57,8 @@ geom_pitch = function (
       lPitchCoordinates = lPitchCoordinates,
       cLineColour = cLineColour,
       cPitchColour = cPitchColour,
-      vcToPlot =vcToPlot
+      vcToPlot = vcToPlot,
+      nSize = nSize
    )
 
    return ( lPitchElements )

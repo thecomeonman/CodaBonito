@@ -34,11 +34,7 @@ fGetPitchTransformedCoordinates = function(
                   mViewBeginsFromCoordinates = mViewBeginsFromCoordinates
                )
 
-               data.table(
-                  x = mTransformedCoordinates[, 1],
-                  y = mTransformedCoordinates[, 2],
-                  group = mTransformedCoordinates[, 3]
-               )
+               data.table(data.frame(mTransformedCoordinates))
 
             }
          )
@@ -87,11 +83,7 @@ fGetPitchTransformedCoordinates = function(
                         iTreatAs = 3
                      )
 
-
-                     data.table(
-                        x = mTransformedCoordinates[, 1],
-                        y = mTransformedCoordinates[, 2]
-                     )
+                     data.table(data.frame(mTransformedCoordinates))
 
                   }
                )
@@ -128,10 +120,8 @@ fGetPitchTransformedCoordinates = function(
                         iTreatAs = 2
                      )
 
-                     data.table(
-                        x = mTransformedCoordinates[, 1],
-                        y = mTransformedCoordinates[, 2]
-                     )
+                     data.table(data.frame(mTransformedCoordinates))
+
                   }
                )
 

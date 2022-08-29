@@ -8,6 +8,7 @@ geom_pitch_from_coords_obj(
   lPitchCoordinates,
   cLineColour = "#BBBBBB",
   cPitchColour = "#038253",
+  nSize = 1,
   vcToPlot = c("Markings", "Stripes", "Goalframe", "Goalnet")
 )
 }

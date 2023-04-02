@@ -72,6 +72,7 @@ get_likelihood = function(
 
    }
 
+   setorder(dt_success_probs, successes)
    dt_success_probs[, k := NULL]
    dt_success_probs[, success_pct := successes/length(probs)]
    dt_success_probs[, cdf := cumsum(pdf)]

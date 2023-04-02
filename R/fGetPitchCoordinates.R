@@ -285,13 +285,15 @@ fGetPitchCoordinates = function (
 
    if ( T ) {
 
+      post_panel_width = pi/3
+
       # circle of post on the floor
       dtGoalPostFloorDefenseLow = data.table(
          Angle_rad = seq(
             pi,
-            (3*pi) - (pi/8), # so that the missing segment, if at all, is behind
+            (3*pi) - (post_panel_width), # so that the missing segment, if at all, is behind
             # 0.01
-            pi/8
+            post_panel_width
          )
       )[,
          x := ( nXStart ) + (
